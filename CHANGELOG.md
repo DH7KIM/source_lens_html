@@ -2,6 +2,15 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.16.0 (2026-10-13)
+
+### source-viewer.html
+
+- Compiler output auto refresh: when `build.log` changes (for example after running `build.bat`), the diagnostics on the opened source are drawn again within about one second. If `build.log` is removed or emptied, they disappear.
+  - Works in the same way as the file auto refresh (browsers with the folder picker only; the folder-upload fallback has no auto refresh).
+  - Only the opened file is redrawn; other files read the new log when opened.
+- Version comment at the top v0.16.0.
+
 ## v0.15.0 (2026-10-13)
 
 ### source-viewer.html

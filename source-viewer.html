@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.15.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.16.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -2072,6 +2072,7 @@ let fileSet = new Set(); // 목록에 있는 모든 경로
 let entries = new Map(); // 목록 키 → { md: { lang: path } } 또는 { path }
 let cur = null;          // 지금 보는 파일 경로
 let curMod = 0;          // 지금 파일의 수정 시각 (자동 새로 고침)
+let logMod = -1;         // 소스를 그릴 때 본 build.log의 수정 시각 (-1 = 없음)
 let docLang = uiLang;    // 고른 문서 언어
 let mdRaw = false;       // .md를 원문으로 볼지
 let hlLine = 0;          // 표시한 줄
@@ -2427,6 +2428,11 @@ function parseGccLog(text, paths) {
   }
   return files;
 }
+// build.log의 지금 수정 시각 (목록에 없으면 -1)
+async function buildLogMod() {
+  if (!fileSet.has(BUILD_LOG)) return -1;
+  try { return (await src.get(BUILD_LOG)).lastModified; } catch (e) { return -1; }
+}
 async function loadBuildLog() {
   if (!fileSet.has(BUILD_LOG)) { buildLog = { mod: -1, n: -1, files: new Map() }; return buildLog; }
   try {
@@ -2459,6 +2465,7 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   const changed = path !== cur;
   if (changed) expandTo(path);
   cur = path; curMod = f.lastModified;
+  logMod = await buildLogMod();
   if (changed) hlLine = 0;
   if (line) hlLine = line;
   if (lang === "md") {
@@ -2608,7 +2615,10 @@ $("out").addEventListener("click", e => {
 // 자동 새로 고침 (FSA만): 1초마다 지금 파일의 수정 시각 확인, 창으로 돌아올 때 목록 다시 읽기
 setInterval(async () => {
   if (!src || src.kind !== "fsa" || !cur || document.hidden) return;
-  try { const f = await src.get(cur); if (f.lastModified !== curMod) openFile(cur, { keepScroll: true }); } catch (e) {}
+  try {
+    const f = await src.get(cur);
+    if (f.lastModified !== curMod || (await buildLogMod()) !== logMod) openFile(cur, { keepScroll: true });
+  } catch (e) {}
 }, 1000);
 addEventListener("focus", async () => { if (src && src.kind === "fsa") { try { await refreshList(); } catch (e) {} } });
 
