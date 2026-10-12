@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.3.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.4.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -141,12 +141,42 @@
   .code .r.dg.dw .x, .code .r.dg.dw .dm { color: var(--warn); }
   .code .r.dg .dh { color: var(--muted); }
 
+  /* .ui 배치 미리보기: 위(소스) / 경계 / 아래(배치). 아래 칸 높이 = --pv-h */
+  body.pv-on .code { height: calc(100vh - var(--hdr, 49px) - var(--pv-h, 300px) - 6px); }
+  #pvSize { height: 6px; cursor: row-resize; background: var(--line); }
+  #pvSize:hover, body.resizing-v #pvSize { background: var(--accent); opacity: 0.6; }
+  body.resizing-v { cursor: row-resize; user-select: none; }
+  #pv { height: var(--pv-h, 300px); display: flex; flex-direction: column; background: var(--side); }
+  #pv[hidden], #pvSize[hidden] { display: none; }
+  .pv-bar { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; padding: 6px 12px; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .pv-bar input { width: 6ch; } .pv-bar label { display: inline-flex; gap: 4px; align-items: center; color: var(--muted); }
+  .pv-bar .bad { color: var(--err); font-weight: 600; }
+  .pv-stage { flex: 1; min-height: 0; overflow: auto; padding: 12px; }
+  .pv-msg { color: var(--err); font-weight: 600; padding: 4px; }
+  .pv-win { position: relative; background: var(--bg); border: 1px solid var(--muted); box-sizing: content-box; overflow: hidden; color: var(--fg); }
+  .pv-win > div { position: absolute; box-sizing: border-box; overflow: hidden; white-space: pre; display: flex; align-items: center; }
+  .pv-win .pv-label { justify-content: flex-start; }
+  .pv-win .pv-button, .pv-win .pv-dropdown { border: 1px solid var(--muted); border-radius: 4px; background: var(--panel); justify-content: center; }
+  .pv-win .pv-dropdown { justify-content: space-between; padding: 0 6px; }
+  .pv-win .pv-edit, .pv-win .pv-number { border: 1px solid var(--muted); border-radius: 2px; padding: 0 5px; background: var(--bg); }
+  .pv-win .pv-check { background: var(--bg); }
+  .pv-win .pv-number { justify-content: space-between; }
+  .pv-win .pv-edit .h { color: var(--muted); }
+  .pv-win .pv-canvas { border: 1px solid var(--line); background: repeating-linear-gradient(45deg, var(--line) 0 1px, transparent 1px 8px); }
+  .pv-win .pv-group, .pv-win .pv-row, .pv-win .pv-column { border: 1px dashed var(--muted); align-items: flex-start; }
+  /* 묶음 이름표는 오른쪽 위 구석에 (자식이 왼쪽 위부터 놓이므로 덜 가림). 자식이 뒤에 그려져 위를 덮음 */
+  .pv-win .tag { position: absolute; top: 0; right: 0; font-size: 10px; line-height: 1; color: var(--muted); padding: 1px 3px; opacity: 0.8; }
+  .pv-win .pv-hidden { opacity: 0.3; } .pv-win .pv-disabled { color: var(--muted); }
+  .pv-win > div:hover { outline: 2px solid var(--accent); outline-offset: -1px; z-index: 1; }
+
   @media (max-width: 760px) {
     .wrap { display: block; }
+    #pvSize { display: none; }
     nav { position: static; width: auto; max-height: 40vh; min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); padding: 8px; }
     #navSize { display: none; }
     article, .start { padding: 16px 16px 60px; }
-    .code { position: static; height: auto; }
+    .code, body.pv-on .code { position: static; height: auto; }
+    #pv { height: 60vh; }
   }
 
   /* 마크다운 본문 */
@@ -182,6 +212,7 @@
   <span class="state" id="state"></span>
   <button id="mdMode" hidden></button>
   <button id="diagBtn" hidden></button>
+  <button id="pvBtn" hidden></button>
   <span id="langs"></span>
   <select id="theme"></select>
   <button id="folder" hidden></button>
@@ -203,6 +234,17 @@
     </div>
     <article class="md" id="out" hidden></article>
     <div class="code" id="code" hidden></div>
+    <div id="pvSize" hidden></div>
+    <div id="pv" hidden>
+      <div class="pv-bar">
+        <select id="pvWin"></select>
+        <label id="pvWL"><span id="pvWT"></span><input type="number" id="pvW" min="1" max="10000"></label>
+        <label id="pvHL"><span id="pvHT"></span><input type="number" id="pvH" min="1" max="10000"></label>
+        <select id="pvScale"></select>
+        <span id="pvNote"></span>
+      </div>
+      <div class="pv-stage" id="pvStage"></div>
+    </div>
   </main>
 </div>
 <input type="file" id="dirInput" webkitdirectory multiple hidden>
@@ -229,6 +271,13 @@ const UI = {
     navSizeTip: "끌어서 폭 조절 / 두 번 클릭하면 이름에 맞춤",
     dirTip: "클릭: 폴더 접기 / 펼치기",
     theme: "테마 (글자·문법 색)", light: "밝은 테마", dark: "어두운 테마",
+    pvOn: "배치 보기", pvOff: "배치 숨기기", pvTip: ".ui 파일의 배치(요소 위치)를 아래 칸에 그리거나 숨깁니다.",
+    pvSizeTip: "끌어서 소스 / 배치 칸 높이를 바꿉니다", pvWinTip: "미리 볼 창 크기. '아래 칸에 맞춤'은 아래 칸 크기를 창 크기로 씁니다.",
+    pvFit: "아래 칸에 맞춤", pvCustom: "직접 입력", pvW: "너비", pvH: "높이", pvWHTip: "창 크기를 픽셀로 직접 입력합니다",
+    pvScaleTip: "DPI 배율. 숫자(위치·크기)와 글꼴이 이 배율로 커집니다.",
+    pvRecovered: "오류 {0}개: 틀린 요소를 빼고 그렸습니다", pvRecoveredTip: "프로그램의 '무시'와 같습니다: 오류가 있는 요소는 묶음째 빼고, 가리키는 요소가 없는 right_of·below는 left=0·top=0으로 봅니다.",
+    pvCannot: "이 오류는 배치를 그릴 수 없습니다 (머리 줄 '#ui 1', 파일 크기 등). 위의 오류를 먼저 고쳐 주세요.",
+    pvBox: "{0}  위치 {1}, {2}  크기 {3}×{4}", pvHidden: "(hidden)", pvDisabled: "(disabled)",
     uiErrs: "오류 {0}개", uiWarns: "경고 {0}개", uiOk: "검사 통과",
     uiErrsTip: "ui-check와 같은 전체 검사입니다 (E001~E016, W101·W103, UI 문서 {0}). 설명은 ui-check와 같은 영어 원문입니다. 밑줄에 마우스를 올리면 설명이 보입니다.",
   },
@@ -251,6 +300,13 @@ const UI = {
     navSizeTip: "Drag to resize / double-click to fit",
     dirTip: "Click: collapse / expand the folder",
     theme: "Theme (text and syntax colors)", light: "Light themes", dark: "Dark themes",
+    pvOn: "Show layout", pvOff: "Hide layout", pvTip: "Draw the layout (element positions) of this .ui file in the lower pane, or hide it.",
+    pvSizeTip: "Drag to change the height of the source / layout panes", pvWinTip: "Window size to preview. 'Fit to pane' uses the lower pane size as the window size.",
+    pvFit: "Fit to pane", pvCustom: "Custom", pvW: "Width", pvH: "Height", pvWHTip: "Type the window size in pixels",
+    pvScaleTip: "DPI scale. Numbers (positions, sizes) and the font grow with this scale.",
+    pvRecovered: "{0} error(s): drawn without the wrong elements", pvRecoveredTip: "Same as 'Ignore' in the program: elements with errors are left out with their blocks; right_of/below naming a missing element become left=0/top=0.",
+    pvCannot: "The layout cannot be drawn with this error (header line '#ui 1', file size, …). Fix the errors above first.",
+    pvBox: "{0}  position {1}, {2}  size {3}×{4}", pvHidden: "(hidden)", pvDisabled: "(disabled)",
     uiErrs: "{0} error(s)", uiWarns: "{0} warning(s)", uiOk: "check passed",
     uiErrsTip: "The same full check as ui-check (E001-E016, W101 and W103, UI document {0}). Hover an underline to see the message.",
   },
@@ -1428,7 +1484,7 @@ const uiCheck = (() => {
     return out;
   }
 
-  return { check, format, recover, compute, layoutText };
+  return { check, format, recover, compute, layoutText, text: fromBytes, KIND_NAMES };
 })();
 
 // ---------- .ui 색칠 (검사는 위의 uiCheck가 한다) ----------
@@ -1684,6 +1740,11 @@ const KEY = location.pathname; // file:// 페이지는 저장소를 함께 쓰�
 try { mdRaw = localStorage.getItem("sv-md-raw:" + KEY) === "1"; } catch (e) {}
 let showDiag = true;     // .ui 오류를 줄 아래에 보일지
 try { showDiag = localStorage.getItem("sv-diag:" + KEY) !== "0"; } catch (e) {}
+// .ui 배치 미리보기 설정: 켜짐, 창 크기("fit" | "custom" | "640x480"…), 너비·높이, 배율, 아래 칸 높이
+const pvSet = { on: true, win: "640x480", w: 640, h: 480, scale: 100, paneH: 300 };
+try { Object.assign(pvSet, JSON.parse(localStorage.getItem("sv-preview:" + KEY) || "{}")); } catch (e) {}
+const savePv = () => { try { localStorage.setItem("sv-preview:" + KEY, JSON.stringify(pvSet)); } catch (e) {} };
+let pvCheck = null;      // 지금 .ui 파일의 검사 결과 (배치 미리보기용)
 
 async function scanHandle(dir, prefix = "", depth = 0, out = []) {
   for await (const [name, h] of dir.entries()) {
@@ -1903,7 +1964,7 @@ function drawLangs() {
       docLang = l;
       if (UI[l]) uiLang = l;
       if (cur && isMd(cur)) openFile(pathFor(keyOf(cur), l));
-      else { drawNav(); drawLangs(); drawStatic(); }
+      else { drawNav(); drawLangs(); drawStatic(); drawPreview(); }
     };
     box.append(b);
   }
@@ -2011,7 +2072,8 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
     b.title = t("uiErrsTip", UI_DOC_VERSION);
     $("state").append(b);
   }
-  drawNav(); drawLangs(); drawStatic();
+  pvCheck = lang === "ui" && check ? check : null;
+  drawNav(); drawLangs(); drawStatic(); drawPreview();
   try { localStorage.setItem("sv-last:" + KEY, path); } catch (e) {}
   if (changed || line || hash) setHash(hash);
   if (asDoc) {
@@ -2139,6 +2201,7 @@ let savedDir = null;
 
 function showStart(kind) {
   $("start").hidden = false; $("out").hidden = true; $("code").hidden = true;
+  pvCheck = null; drawPreview();
   $("pick").hidden = !hasFsa; $("pickFiles").hidden = hasFsa;
   $("regrant").hidden = kind !== "regrant";
   $("startMsg").innerHTML = kind === "regrant" ? esc(t("startRegrant", savedDir.name)) : kind === "noFiles" ? esc(t("noFiles")) : t("startNew");
@@ -2156,6 +2219,8 @@ function drawStatic() {
   const ui = cur && langOf(cur) === "ui";
   $("diagBtn").hidden = !ui;
   if (ui) { $("diagBtn").textContent = showDiag ? t("diagOff") : t("diagOn"); $("diagBtn").title = t("diagTip"); }
+  $("pvBtn").hidden = !ui;
+  if (ui) { $("pvBtn").textContent = pvSet.on ? t("pvOff") : t("pvOn"); $("pvBtn").title = t("pvTip"); }
   if (md) { $("mdMode").textContent = mdRaw ? t("doc") : t("raw"); $("mdMode").title = mdRaw ? t("docTip") : t("rawTip"); }
   $("code").dataset.tip = t("noTip");
   drawThemes();
@@ -2297,6 +2362,103 @@ function applyTheme(id) {
 }
 try { applyTheme(localStorage.getItem("sv-theme") || ""); } catch (e) { applyTheme(""); }
 $("theme").onchange = () => { applyTheme($("theme").value); try { localStorage.setItem("sv-theme", themeId); } catch (e) {} };
+
+// ======================= .ui 배치 미리보기 =======================
+// v0.3.0의 uiCheck.compute()로 위치를 계산해서 아래 칸에 그린다. 글자 너비는 브라우저에서 실제로 잰다.
+// 오류가 있으면 uiCheck.recover()("무시"와 같음)로 틀린 요소를 빼고 그린다.
+const PV_SIZES = ["640x480", "800x600", "1024x768", "1280x720"], PV_SCALES = [100, 125, 150, 175, 200];
+const PV_FONT = '"Segoe UI", system-ui, sans-serif';
+let pvCtx = null;
+function setPaneH(px, save) {
+  const max = Math.max(80, innerHeight - (document.querySelector("header").offsetHeight) - 80);
+  pvSet.paneH = Math.round(Math.min(max, Math.max(80, px)));
+  document.body.style.setProperty("--pv-h", pvSet.paneH + "px");
+  if (save) savePv();
+}
+function drawPreview() {
+  const on = !!pvCheck && pvSet.on;
+  $("pv").hidden = $("pvSize").hidden = !on;
+  document.body.classList.toggle("pv-on", on);
+  if (!on) { $("pvStage").innerHTML = ""; return; }
+  setPaneH(pvSet.paneH, false);
+  // 머리 줄: 창 크기 목록, 너비·높이, 배율
+  const sel = $("pvWin");
+  sel.innerHTML = [["fit", t("pvFit")], ...PV_SIZES.map(v => [v, v.replace("x", " × ")]), ["custom", t("pvCustom")]]
+    .map(([v, l]) => `<option value="${v}"${v === pvSet.win ? " selected" : ""}>${esc(l)}</option>`).join("");
+  sel.title = t("pvWinTip");
+  $("pvScale").innerHTML = PV_SCALES.map(v => `<option value="${v}"${v === pvSet.scale ? " selected" : ""}>${v}%</option>`).join("");
+  $("pvScale").title = t("pvScaleTip");
+  $("pvWT").textContent = t("pvW"); $("pvHT").textContent = t("pvH");
+  $("pvWL").title = $("pvHL").title = t("pvWHTip");
+  $("pvSize").title = t("pvSizeTip");
+  const stage = $("pvStage"), fit = pvSet.win === "fit";
+  let w = pvSet.w, h = pvSet.h;
+  if (fit) { w = Math.max(1, stage.clientWidth - 26); h = Math.max(1, stage.clientHeight - 26); }
+  else if (pvSet.win !== "custom") [w, h] = pvSet.win.split("x").map(Number);
+  $("pvW").value = w; $("pvH").value = h;
+  $("pvW").disabled = $("pvH").disabled = fit;
+  // 오류: 복구해서 그림 / 복구할 수 없으면 안내만
+  const note = $("pvNote");
+  note.textContent = ""; note.className = ""; note.title = "";
+  let doc = pvCheck;
+  if (doc.errorCount) {
+    doc = uiCheck.recover(doc);
+    if (!doc) { stage.innerHTML = `<div class="pv-msg">${esc(t("pvCannot"))}</div>`; return; }
+    note.textContent = t("pvRecovered", pvCheck.errorCount); note.className = "bad"; note.title = t("pvRecoveredTip");
+  }
+  // 글꼴: 12px, 줄 높이 16 (96 DPI) × 배율
+  const scale = pvSet.scale, fontPx = 12 * scale / 100, lineH = Math.round(16 * scale / 100);
+  pvCtx ||= document.createElement("canvas").getContext("2d");
+  pvCtx.font = `${fontPx}px ${PV_FONT}`;
+  const textWidth = b => Math.ceil(pvCtx.measureText(uiCheck.text(b)).width);
+  const rects = uiCheck.compute(doc, w, h, { textWidth, lineHeight: lineH, scale });
+  const K = uiCheck.KIND_NAMES;
+  let html = `<div class="pv-win" style="width:${w}px;height:${h}px;font:${fontPx}px/${lineH}px ${esc(PV_FONT)}">`;
+  for (let i = 1; i < rects.length; i++) {
+    const n = doc.nodes[i], kind = K[n.kind];
+    if (n.dropped || !["label", "button", "edit", "number", "dropdown", "check", "canvas", "group", "row", "column"].includes(kind)) continue;
+    const r = rects[i], name = uiCheck.text(n.name), txt = esc(uiCheck.text(n.text));
+    const tip = t("pvBox", `${kind} ${name}`.trim(), r.x, r.y, r.w, r.h) + (n.hidden ? " " + t("pvHidden") : "") + (n.disabled ? " " + t("pvDisabled") : "");
+    let body = "";
+    switch (kind) {
+      case "label": body = txt; break;
+      case "button": body = txt; break;
+      case "dropdown": body = `<span>${txt}</span><span>▾</span>`; break;
+      case "edit": body = `<span class="h">${esc(uiCheck.text(n.hint))}</span>`; break;
+      case "number": body = `<span>${n.hex ? "0x" + n.minValue.toString(16).toUpperCase() : n.minValue}</span><span>⇕</span>`; break;
+      case "check": body = `${n.checked ? "☑" : "☐"} ${txt}`; break;
+      case "group": case "row": case "column": body = `<span class="tag">${esc(`${kind} ${name}`.trim())}</span>`; break;
+    }
+    const just = kind === "label" ? ` justify-content:${n.align === "center" ? "center" : n.align === "right" ? "flex-end" : "flex-start"};` : "";
+    html += `<div class="pv-${kind}${n.hidden ? " pv-hidden" : ""}${n.disabled ? " pv-disabled" : ""}" style="left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px;${just}" title="${esc(tip)}">${body}</div>`;
+  }
+  stage.innerHTML = html + "</div>";
+}
+$("pvBtn").onclick = () => { pvSet.on = !pvSet.on; savePv(); drawStatic(); drawPreview(); };
+$("pvWin").onchange = () => {
+  pvSet.win = $("pvWin").value;
+  if (pvSet.win === "custom") { pvSet.w = +$("pvW").value || 640; pvSet.h = +$("pvH").value || 480; }
+  savePv(); drawPreview();
+};
+$("pvScale").onchange = () => { pvSet.scale = +$("pvScale").value || 100; savePv(); drawPreview(); };
+for (const id of ["pvW", "pvH"]) $(id).onchange = () => {
+  const clampWH = v => Math.min(10000, Math.max(1, Math.round(+v) || 1));
+  pvSet.win = "custom"; pvSet.w = clampWH($("pvW").value); pvSet.h = clampWH($("pvH").value);
+  savePv(); drawPreview();
+};
+$("pvSize").addEventListener("pointerdown", e => {
+  e.preventDefault();
+  const h = $("pvSize"); h.setPointerCapture(e.pointerId);
+  document.body.classList.add("resizing-v");
+  const move = ev => { setPaneH(innerHeight - ev.clientY - 3, false); if (pvSet.win === "fit") drawPreview(); };
+  const up = ev => {
+    setPaneH(innerHeight - ev.clientY - 3, true); drawPreview();
+    document.body.classList.remove("resizing-v");
+    h.removeEventListener("pointermove", move); h.removeEventListener("pointerup", up);
+  };
+  h.addEventListener("pointermove", move); h.addEventListener("pointerup", up);
+});
+addEventListener("resize", () => { if (pvCheck && pvSet.on) drawPreview(); });
 
 // 머리 막대 높이 (창이 좁아 두 줄이 되어도 목록·소스 영역이 맞게)
 new ResizeObserver(() => document.body.style.setProperty("--hdr", document.querySelector("header").offsetHeight + "px"))

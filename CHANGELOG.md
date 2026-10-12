@@ -2,7 +2,19 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
-## v0.3.0 (2026-10-12)
+## v0.4.0 (2026-10-12)
+
+### source-viewer.html
+
+- `.ui` layout preview (step 2): when a `.ui` file is open, the screen is split into source (top) and layout (bottom).
+  Drag the border to change the height. The "Hide layout" / "Show layout" button turns it off and on (on by default, remembered).
+- Window size: 640×480, 800×600, 1024×768, 1280×720, "Fit to pane", or type the width and height. DPI scale 100-200%.
+- Positions come from the v0.3.0 calculation; text widths are measured in the browser (12px font, line height 16, × scale).
+- Simple real shapes: buttons, input boxes, ☐ check boxes, hatched canvases, dashed group/row/column outlines with their names.
+  `hidden` elements are faded. Hover a box to see its kind, name, position and size.
+- With errors, the wrong elements are left out ("Ignore") and a red note says so. Errors that cannot be recovered (E001, …) show a red message only.
+
+ (2026-10-12)
 
 ### source-viewer.html
 

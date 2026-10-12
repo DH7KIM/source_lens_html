@@ -7,7 +7,7 @@ No install, no external libraries. Chrome or Edge recommended.
 
 | File | For | What it shows |
 |---|---|---|
-| `source-viewer.html` | Developers | Source files with syntax colors and line numbers, Markdown documents, `.ui` layout files with a checker |
+| `source-viewer.html` | Developers | Source files with syntax colors and line numbers, Markdown documents, `.ui` layout files with a checker and a layout preview |
 | `docs-viewer.html` | Anyone reading the docs | Markdown (`.md`) documents only |
 
 ## How to use
@@ -25,6 +25,7 @@ No install, no external libraries. Chrome or Edge recommended.
 - **Markdown**: document view or raw view, English `name.md` / Korean `name.ko.md` switch, links to other files (`file.rs#L12` opens line 12).
 - **`.ui` layout files** (UI layout format 1, guideline 0.7): colors and the same full check as `ui-check` (E001-E016, W101 and W103).
   Errors get a red wavy underline, warnings an orange one, plus `error[...]` / `warning[...]` / `help:` lines under the line. Messages are the English originals, the same as `ui-check`.
+- **`.ui` layout preview**: the lower pane draws where each element goes (drag the border to resize it). Choose the window size (640×480, …, fit to pane, or type it) and the DPI scale (100-200%). With errors, the wrong elements are left out, like "Ignore" in the program.
 - **Encodings**: UTF-8, EUC-KR (CP949) and UTF-16 are detected (`.ui` files: UTF-8 only).
 - **Themes**: light and dark themes (GitHub, Solarized, Gruvbox, Nord, Dracula, …).
 
