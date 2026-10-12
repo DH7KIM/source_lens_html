@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.16.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.17.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -313,7 +313,7 @@ const UI = {
     pvModeL: "배치", pvModeV: "보기", pvModeLTip: "배치 모드: 상자를 클릭하면 소스의 그 줄로 갑니다.",
     pvModeVTip: "보기 모드: 프로그램처럼 보입니다. 상자에 마우스를 올리면 풍선 도움말(tooltip, disabled면 disabled_tooltip), menu_button을 클릭하면 연결된 menu가 펼쳐집니다 (보기만, 바깥 클릭·Esc로 닫기).",
     pvDropGo: "클릭하면 메뉴를 펼칩니다.", pvNoMenu: "연결된 menu가 없습니다", pvEmpty: "(빈 메뉴)", pvItem: "{0}  {1}번 줄",
-    gccTip: "컴파일러 결과입니다. 연 폴더 맨 위의 build.log(GCC)에서 이 파일의 error·warning·note를 읽어 소스 줄에 보여 줍니다. 밑줄에 마우스를 올리면 설명이 보입니다. (build.log는 폴더를 열 때와 파일을 열 때 읽습니다)",
+    gccTip: "컴파일러 결과입니다. 연 폴더 맨 위의 build.log(GCC)·cargo.json(Rust)에서 이 파일의 error·warning·note를 읽어 소스 줄에 보여 줍니다. 밑줄에 마우스를 올리면 설명이 보입니다. (폴더를 열 때와 파일을 열 때, 그리고 결과 파일이 바뀌면 다시 읽습니다)",
     uiErrs: "오류 {0}개", uiWarns: "경고 {0}개", uiOk: "검사 통과",
     uiErrsTip: "ui-check와 같은 전체 검사입니다 (E001~E016, W101·W103·W104, UI 문서 {0}. W104(옛 이름)는 ui-check에 아직 없음). 설명은 한국어로 보여 줍니다 (오류 코드는 그대로). 밑줄에 마우스를 올리면 설명과 함께 ui-check와 같은 영어 원문이 보입니다.",
   },
@@ -347,7 +347,7 @@ const UI = {
     pvModeL: "Layout", pvModeV: "View", pvModeLTip: "Layout mode: click a box to go to its line in the source.",
     pvModeVTip: "View mode: looks like the program. Hover a box to see its tooltip (tooltip, or disabled_tooltip when disabled); click a menu_button to open its menu (view only; click outside or press Esc to close).",
     pvDropGo: "Click to open the menu.", pvNoMenu: "No menu is linked", pvEmpty: "(empty menu)", pvItem: "{0}  line {1}",
-    gccTip: "Compiler output. Reads build.log (GCC) at the top of the opened folder and shows the errors, warnings and notes for this file on the source lines. Hover an underline to see the message. (build.log is read when the folder is opened and when a file is opened)",
+    gccTip: "Compiler output. Reads build.log (GCC) and cargo.json (Rust) at the top of the opened folder and shows the errors, warnings and notes for this file on the source lines. Hover an underline to see the message. (read when the folder or a file is opened, and again when the result file changes)",
     uiErrs: "{0} error(s)", uiWarns: "{0} warning(s)", uiOk: "check passed",
     uiErrsTip: "The same full check as ui-check (E001-E016, W101, W103 and W104, UI document {0}; W104 for old names is not in ui-check yet). Hover an underline to see the message.",
   },
@@ -2072,7 +2072,7 @@ let fileSet = new Set(); // 목록에 있는 모든 경로
 let entries = new Map(); // 목록 키 → { md: { lang: path } } 또는 { path }
 let cur = null;          // 지금 보는 파일 경로
 let curMod = 0;          // 지금 파일의 수정 시각 (자동 새로 고침)
-let logMod = -1;         // 소스를 그릴 때 본 build.log의 수정 시각 (-1 = 없음)
+let logMod = "";         // 소스를 그릴 때 본 컴파일러 결과 파일들의 수정 시각
 let docLang = uiLang;    // 고른 문서 언어
 let mdRaw = false;       // .md를 원문으로 볼지
 let hlLine = 0;          // 표시한 줄
@@ -2391,12 +2391,14 @@ async function uiTable(lang) {
 
 // ---------- 컴파일러 결과: 연 폴더 맨 위 build.log (GCC)의 "파일:줄:칸: error/warning/note: 메시지" ----------
 // 파일 경로는 프로젝트 안 경로의 끝부분과 맞춰 찾는다 (로그에 절대 경로·역슬래시·./ 가 있어도 됨). 색 코드(ESC[..m)는 뗀다.
-const BUILD_LOG = "build.log";
-let buildLog = { mod: -1, n: -1, files: new Map() };   // 소스 경로 → 진단 목록
-function parseGccLog(text, paths) {
+// 컴파일러 결과 파일: [이름, 읽는 함수]  (GCC: build.log, Rust: cargo.json)
+const BUILD_LOGS = [["build.log", parseGccLog], ["cargo.json", parseCargoJson]];
+let buildLog = { mod: "", n: -1, files: new Map() };   // 소스 경로 → 진단 목록
+// 로그의 경로 → 프로젝트 안의 파일 (끝부분 맞춤, 못 찾거나 동점이면 null)
+function makePathFinder(paths) {
   const lower = paths.map(p => [p, p.toLowerCase()]);
   const cache = new Map();
-  const find = raw => {
+  return raw => {
     const lp = raw.replace(/\\/g, "/").replace(/^(\.\/)+/, "").toLowerCase();
     if (cache.has(lp)) return cache.get(lp);
     let best = null, score = 0, tie = false;
@@ -2409,6 +2411,9 @@ function parseGccLog(text, paths) {
     cache.set(lp, r);
     return r;
   };
+}
+function parseGccLog(text, paths) {
+  const find = makePathFinder(paths);
   const files = new Map(), seen = new Set();
   for (const raw of text.split("\n")) {
     const line = raw.replace(/\x1b\[[0-9;]*[A-Za-z]/g, "");
@@ -2428,26 +2433,66 @@ function parseGccLog(text, paths) {
   }
   return files;
 }
-// build.log의 지금 수정 시각 (목록에 없으면 -1)
+// Rust (cargo build --message-format=json > cargo.json): 줄마다 JSON, compiler-message만 읽음
+function parseCargoJson(text, paths) {
+  const find = makePathFinder(paths);
+  const files = new Map(), seen = new Set();
+  for (const raw of text.split("\n")) {
+    const line = raw.trim();
+    if (line[0] !== "{") continue;
+    let o;
+    try { o = JSON.parse(line); } catch (e) { continue; }
+    const m = o && o.reason === "compiler-message" ? o.message : null;
+    if (!m || !m.spans) continue;
+    const severity = m.level === "warning" ? "warning" : /^error/.test(m.level) ? "error" : "";
+    if (!severity) continue;
+    let sp = m.spans.find(x => x.is_primary), path = null;
+    for (let i = 0; sp && i < 8; i++) {   // 매크로 안이면 부른 곳으로 따라감
+      path = find(sp.file_name);
+      if (path || !sp.expansion || !sp.expansion.span) break;
+      sp = sp.expansion.span;
+    }
+    if (!sp || !path) continue;
+    const msg = String(m.message || "");
+    const code = m.code && m.code.code ? m.code.code : "";
+    const key = [path, sp.line_start, sp.column_start, severity, msg].join("\u0001");
+    if (seen.has(key)) continue;
+    seen.add(key);
+    const help = [(sp.label || "").replace(/^help: /, ""), ...(m.children || []).filter(c => c.level === "help").map(c => c.message)].filter(Boolean).join(" / ");
+    const length = sp.line_start === sp.line_end ? Math.max(sp.column_end - sp.column_start, 1) : 0;
+    if (!files.has(path)) files.set(path, []);
+    files.get(path).push({ line: sp.line_start, col: sp.column_start || 1, length, severity, code, msg, help });
+  }
+  return files;
+}
+// 컴파일러 결과 파일들의 수정 시각 묶음 (없으면 -1) — 바뀌었는지 비교용
 async function buildLogMod() {
-  if (!fileSet.has(BUILD_LOG)) return -1;
-  try { return (await src.get(BUILD_LOG)).lastModified; } catch (e) { return -1; }
+  const k = [];
+  for (const [name] of BUILD_LOGS) {
+    if (!fileSet.has(name)) { k.push(-1); continue; }
+    try { k.push((await src.get(name)).lastModified); } catch (e) { k.push(-1); }
+  }
+  return k.join("|");
 }
 async function loadBuildLog() {
-  if (!fileSet.has(BUILD_LOG)) { buildLog = { mod: -1, n: -1, files: new Map() }; return buildLog; }
-  try {
-    const f = await src.get(BUILD_LOG);
-    if (buildLog.mod !== f.lastModified || buildLog.n !== fileSet.size) {
-      const { text } = await readText(f);
-      buildLog = { mod: f.lastModified, n: fileSet.size, files: parseGccLog(text, [...fileSet]) };
-    }
-  } catch (e) { buildLog = { mod: -1, n: -1, files: new Map() }; }
+  const key = await buildLogMod();
+  if (buildLog.mod === key && buildLog.n === fileSet.size) return buildLog;
+  const files = new Map();
+  for (const [name, parse] of BUILD_LOGS) {
+    if (!fileSet.has(name)) continue;
+    try {
+      const { text } = await readText(await src.get(name));
+      for (const [p, ds] of parse(text, [...fileSet])) files.set(p, (files.get(p) || []).concat(ds));
+    } catch (e) {}
+  }
+  buildLog = { mod: key, n: fileSet.size, files };
   return buildLog;
 }
 // 밑줄 길이: 칸에서 시작하는 낱말·"문자열"·<헤더> (없으면 한 글자). note는 밑줄 없이 진단 줄만
 function gccFit(diags, text) {
   const rows = text.split("\n");
   return diags.map(d => {
+    if (d.length > 0 && d.severity !== "note") return d;   // 길이를 아는 것(Rust)은 그대로
     const ch = [...(rows[d.line - 1] || "")].slice(d.col - 1);
     const w = (ch.join("").match(/^(?:[\p{L}\p{N}_]+|"[^"]*"?|<[^>]*>?)/u) || [ch[0] || ""])[0];
     return Object.assign({}, d, { length: d.severity === "note" ? 0 : [...w].length });

@@ -24,7 +24,7 @@
 ## 다음 버전 (순서대로)
 
 - [x] 컴파일러 결과 자동 새로 고침: `build.log`가 바뀌면 열려 있는 소스에 다시 그리기 — 2026.10.13 (v0.16.0)
-- [ ] Rust 컴파일러 결과: `cargo build --message-format=json` 로그 읽기 — 2026.10.12 요청
+- [x] Rust 컴파일러 결과: `cargo build --message-format=json > cargo.json` 읽기 — 2026.10.12 요청, 2026.10.13 (v0.17.0)
 
 - [ ] toml 검사 (`Cargo.toml` 등): 문법이 작아 .ui처럼 정확히 검사 가능 — 2026.10.12 요청
 - [ ] `.rc`(리소스 스크립트) 검사기: GCC `windres`를 기준으로, `tests/rc`에 windres 결과를 `.expected`로 모아 맞춤 (DIALOG·MENU·STRINGTABLE·BEGIN/END·#include 등) — 2026.10.12 요청

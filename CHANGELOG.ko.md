@@ -2,6 +2,18 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.17.0 (2026-10-13)
+
+### source-viewer.html
+
+- 컴파일러 결과 보기 (Rust): 연 폴더 맨 위에 `cargo.json`이 있으면(`cargo build --message-format=json > cargo.json`), `compiler-message`를 `build.log`(GCC)와 같은 방식으로 소스 줄에 보여 줌.
+  - `error`는 빨간 물결 밑줄, `warning`은 주황 밑줄. 코드는 `error[E0599]` / `warning[unused_variables]`로 보임.
+  - 밑줄은 주된 구간(primary span)의 시작·끝 칸 그대로. 구간 설명(label)과 `help` 메시지는 `help:` 줄에 보임.
+  - 매크로 안의 구간은 부른 곳으로 따라가고, 프로젝트에 없는 파일(예: cargo 레지스트리)의 줄은 무시.
+  - 한 폴더에 `build.log`와 `cargo.json`을 같이 써도 됨. 둘 다 바뀌면 다시 읽음 (v0.16.0 자동 새로 고침).
+- 예제 `tests/samples/project/cargo.json`, 그 폴더의 `build.bat`이 이것도 만들도록 함.
+- 맨 위 버전 주석 v0.17.0.
+
 ## v0.16.0 (2026-10-13)
 
 ### source-viewer.html

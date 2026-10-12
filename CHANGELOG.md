@@ -2,6 +2,18 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.17.0 (2026-10-13)
+
+### source-viewer.html
+
+- Compiler output (Rust): if the opened folder has `cargo.json` at its top (`cargo build --message-format=json > cargo.json`), the `compiler-message` lines are shown on the source lines, the same way as `build.log` (GCC).
+  - `error` gets a red wavy underline, `warning` an orange one. The code is shown as `error[E0599]` / `warning[unused_variables]`.
+  - The underline covers the primary span (exact start and end column). The span label and the `help` messages are shown on the `help:` line.
+  - Spans inside macros follow the call site; lines for files that are not in the project (for example the cargo registry) are ignored.
+  - `build.log` and `cargo.json` can be used together in one folder. Both are read again when they change (auto refresh, v0.16.0).
+- Example `tests/samples/project/cargo.json`, and `build.bat` there now writes it.
+- Version comment at the top v0.17.0.
+
 ## v0.16.0 (2026-10-13)
 
 ### source-viewer.html
