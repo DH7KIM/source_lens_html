@@ -2,6 +2,23 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.2.0 (2026-10-12)
+
+### source-viewer.html
+
+- `.ui` 전체 검사기: 간단 검사(E002·E003·E013)를 `ui-check`와 같은 전체 검사로 바꿈.
+  E001~E016, W101·W103 (가이드라인 0.7). `tile_font_editor_cpp`의 `src/uilayout.cppm`(검사기)을 JavaScript로 옮겨,
+  `tests/ui/error/*.expected` 21개와 글자 하나까지 같은 결과, `tests/ui/fix`의 오류 범위·수정 분류도 같음.
+- 오류 설명은 `ui-check`와 같은 영어 원문.
+- 경고(W1xx)는 주황 물결 밑줄과 `warning[...]` 줄로 따로 보여 줌. 상태줄에 "오류 N개 · 경고 M개" (없으면 "검사 통과").
+- 길이 0인 진단(줄 끝에서 빠진 것, 빈 파일의 E001 등)도 진단 줄로 보여 줌.
+- `.ui` 파일은 UTF-8로만 읽음 (EUC-KR로 바꿔 읽지 않음). 틀린 바이트는 `�`로 보이고 E004 "invalid UTF-8"로 알림.
+- 마크다운 코드 블록 안의 `.ui`는 색칠만 함 (예제 조각이라 검사하지 않음).
+
+### 저장소
+
+- `.gitattributes` 줄 끝 정리: `* text=auto eol=lf`, `*.bat`·`*.cmd`는 `eol=crlf`.
+
 ## v0.1.0 (2026-10-12)
 
 따로 프로젝트(`source_lens_html`)로 만든 첫 버전.

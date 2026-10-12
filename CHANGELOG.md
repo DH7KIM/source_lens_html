@@ -2,6 +2,23 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.2.0 (2026-10-12)
+
+### source-viewer.html
+
+- Full `.ui` checker: the quick check (E002, E003, E013) is replaced by the same full check as `ui-check`:
+  E001-E016, W101 and W103 (guideline 0.7). The checker in `tile_font_editor_cpp` (`src/uilayout.cppm`) was ported to JavaScript;
+  it gives exactly the same output as the 21 `tests/ui/error/*.expected` files, and the same ranges and fix kinds as `tests/ui/fix`.
+- Messages are the English originals, the same as `ui-check`.
+- Warnings (W1xx) have their own orange wavy underline and `warning[...]` line. The status bar shows "N error(s) · M warning(s)" (or "check passed").
+- Zero-length diagnostics (something missing at the end of a line, E001 for an empty file, …) are shown as diagnostic lines too.
+- `.ui` files are read as UTF-8 only (never as EUC-KR). Invalid bytes show as `�` and are reported as E004 "invalid UTF-8".
+- `.ui` code blocks in Markdown are only colored, not checked (they are example snippets).
+
+### Repository
+
+- `.gitattributes` line endings: `* text=auto eol=lf`, and `eol=crlf` for `*.bat` and `*.cmd`.
+
 ## v0.1.0 (2026-10-12)
 
 First version as its own project (`source_lens_html`).

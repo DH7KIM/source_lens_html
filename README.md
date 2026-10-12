@@ -7,7 +7,7 @@ No install, no external libraries. Chrome or Edge recommended.
 
 | File | For | What it shows |
 |---|---|---|
-| `source-viewer.html` | Developers | Source files with syntax colors and line numbers, Markdown documents, `.ui` layout files with a quick check |
+| `source-viewer.html` | Developers | Source files with syntax colors and line numbers, Markdown documents, `.ui` layout files with a checker |
 | `docs-viewer.html` | Anyone reading the docs | Markdown (`.md`) documents only |
 
 ## How to use
@@ -23,8 +23,9 @@ No install, no external libraries. Chrome or Edge recommended.
 - **Syntax colors + line numbers** (`source-viewer`): C++ (`.cpp .cppm .ixx .h .hpp` …), Rust, TOML, JSON, BAT/CMD, shell / YAML / Makefile / `.gitignore`.
   Line numbers are not copied. Click a line number to mark it (`#path:L12` in the address).
 - **Markdown**: document view or raw view, English `name.md` / Korean `name.ko.md` switch, links to other files (`file.rs#L12` opens line 12).
-- **`.ui` layout files** (UI layout format 1, guideline 0.7): colors and a quick check for E002, E003 and E013, shown as red wavy underlines and as `error[...]` / `help:` lines under the line. Run `ui-check` for the full check.
-- **Encodings**: UTF-8, EUC-KR (CP949) and UTF-16 are detected.
+- **`.ui` layout files** (UI layout format 1, guideline 0.7): colors and the same full check as `ui-check` (E001-E016, W101 and W103).
+  Errors get a red wavy underline, warnings an orange one, plus `error[...]` / `warning[...]` / `help:` lines under the line. Messages are the English originals, the same as `ui-check`.
+- **Encodings**: UTF-8, EUC-KR (CP949) and UTF-16 are detected (`.ui` files: UTF-8 only).
 - **Themes**: light and dark themes (GitHub, Solarized, Gruvbox, Nord, Dracula, …).
 
 Skipped folders: `obj`, `gcm.cache`, `.git`, `target`, `node_modules`, `bin`, `build`, and folders starting with `.`.
@@ -32,6 +33,7 @@ Skipped folders: `obj`, `gcm.cache`, `.git`, `target`, `node_modules`, `bin`, `b
 ## Tests
 
 `tests/samples/` holds example folders (`project`, `docs`). Open a viewer and choose one of them to check every file type, the tree and the `.ui` errors.
+The `.ui` check must give exactly the same output as `tests/ui/error/*.expected` in `tile_font_editor_cpp`.
 
 ## License
 

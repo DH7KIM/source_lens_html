@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.1.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.2.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
   - 목록은 트리 구조(가지 연결선 ├ └): 폴더를 눌러 접기·펼치기 (브라우저에 기억). 접힌 폴더 안에 지금 파일이 있으면 강조색.
   - 문법 색칠 + 줄 번호 (C++, Rust, TOML, JSON, BAT, 셸/YAML/Makefile). 줄 번호는 복사할 때 딸려 오지 않는다.
-  - .ui (UI 레이아웃 형식 1, ui-guideline 문서 0.7): 색칠 + 간단 검사(E002, E003, E013)를 빨간 밑줄로,
-    오류 줄 아래에 오류 코드·설명·추천(help)을 표시 (끄고 켤 수 있음). .ui.log도 색칠.
+  - .ui (UI 레이아웃 형식 1, ui-guideline 문서 0.7): 색칠 + 전체 검사(E001~E016, W101·W103, ui-check와 같은 결과).
+    오류는 빨간 밑줄, 경고는 주황 밑줄. 줄 아래에 코드·설명·추천(help)을 표시 (끄고 켤 수 있음). .ui.log도 색칠.
   - .md는 문서로 보기 / 원문 보기 전환. 한국어(이름.ko.md) / 영어(이름.md) 전환.
   - 파일을 고쳐서 저장하면 1초 안에 화면이 바뀐다. UTF-8이 아니면 EUC-KR(CP949)·UTF-16으로 읽는다.
 -->
@@ -25,18 +25,19 @@
     /* 문법 색: 키워드, 타입, 문자열, 주석, 숫자·상수, 전처리·속성, 함수·매크로 */
     --hk: #a0365e; --ht: #2a6f97; --hs: #3d7a2a; --hc: #8a8780; --hn: #b5651d; --hp: #7b4fa0; --hf: #2f6fc0;
     --err: #d03030; /* 오류: 빨간 글자 */
+    --warn: #b06a00; /* 경고: 주황 (.ui W1xx) */
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme]) {
       --bg: #262624; --fg: #ecebe6; --muted: #a3a29c; --line: #3d3c38; --panel: #1f1e1c;
       --code-fg: #f08ab4; --link: #7fb0f0; --th: #2f2e2b; --side: #2b2a27; --sel: #3a3935;
-      --hk: #f08ab4; --ht: #7fc7d9; --hs: #a6d189; --hc: #85837c; --hn: #f2a86b; --hp: #c6a0f6; --hf: #7fb0f0; --err: #ff6b6b;
+      --hk: #f08ab4; --ht: #7fc7d9; --hs: #a6d189; --hc: #85837c; --hn: #f2a86b; --hp: #c6a0f6; --hf: #7fb0f0; --err: #ff6b6b; --warn: #e8a33d;
     }
   }
   :root[data-theme="dark"] {
     --bg: #262624; --fg: #ecebe6; --muted: #a3a29c; --line: #3d3c38; --panel: #1f1e1c;
     --code-fg: #f08ab4; --link: #7fb0f0; --th: #2f2e2b; --side: #2b2a27; --sel: #3a3935;
-    --hk: #f08ab4; --ht: #7fc7d9; --hs: #a6d189; --hc: #85837c; --hn: #f2a86b; --hp: #c6a0f6; --hf: #7fb0f0; --err: #ff6b6b;
+    --hk: #f08ab4; --ht: #7fc7d9; --hs: #a6d189; --hc: #85837c; --hn: #f2a86b; --hp: #c6a0f6; --hf: #7fb0f0; --err: #ff6b6b; --warn: #e8a33d;
   }
   /* 그 밖의 테마는 아래 스크립트의 THEMES 표에서 CSS 변수로 넣는다 */
 
@@ -51,6 +52,8 @@
   header .state { color: var(--muted); font-size: 13px; }
   header .state.err, header .state .bad { color: var(--err); }
   header .state .bad { font-weight: 600; cursor: help; }
+  header .state .warn { color: var(--warn); font-weight: 600; cursor: help; }
+  header .state .okay { cursor: help; }
   button, select {
     font: inherit; font-size: 14px; color: var(--fg); background: var(--panel);
     border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; cursor: pointer;
@@ -124,14 +127,18 @@
   .n { color: var(--hn); } .p { color: var(--hp); } .f { color: var(--hf); }
   /* 오류: 빨간 글자 + 물결 밑줄 (색만으로 구분하지 않게), 줄 번호도 빨강 */
   .e { color: var(--err); text-decoration: underline wavy var(--err); text-underline-offset: 3px; text-decoration-skip-ink: none; cursor: help; }
+  .wn { text-decoration: underline wavy var(--warn); text-underline-offset: 3px; text-decoration-skip-ink: none; cursor: help; }
   .x { color: var(--err); font-weight: 600; }
   .code .r.bad .no { color: var(--err); font-weight: 700; }
+  .code .r.warn .no { color: var(--warn); font-weight: 700; }
   /* 줄 아래 진단: 줄 번호 없음, 선택·복사 안 됨 */
   .code .r.dg { user-select: none; background: color-mix(in srgb, var(--err) 7%, transparent); }
   .code .r.dg .no { cursor: default; }
   .code .r.dg [data-t]::before { content: attr(data-t); }
   .code .r.dg .pad { color: transparent; }
   .code .r.dg .dm { color: var(--err); }
+  .code .r.dg.dw { background: color-mix(in srgb, var(--warn) 9%, transparent); }
+  .code .r.dg.dw .x, .code .r.dg.dw .dm { color: var(--warn); }
   .code .r.dg .dh { color: var(--muted); }
 
   @media (max-width: 760px) {
@@ -215,19 +222,15 @@ const UI = {
     lines: "{0}줄",
     folder: "폴더 바꾸기", folderTip: "다른 소스 폴더를 고릅니다",
     raw: "원문 보기", rawTip: "마크다운 원문을 줄 번호와 함께 봅니다",
-    diagOff: "오류 설명 끄기", diagOn: "오류 설명 켜기", diagTip: "오류 줄 아래의 오류 코드·설명·추천(help)을 보이거나 숨깁니다. 빨간 밑줄은 늘 보입니다.",
+    diagOff: "오류 설명 끄기", diagOn: "오류 설명 켜기", diagTip: "오류·경고 줄 아래의 코드·설명·추천(help)을 보이거나 숨깁니다. 밑줄은 늘 보입니다.",
     doc: "문서 보기", docTip: "마크다운을 문서 모양으로 봅니다",
     langTip: "문서(.md)를 이 언어로 봅니다",
     noTip: "클릭: 이 줄 표시 (주소에 줄 번호가 남아 다음에 바로 열림)",
     navSizeTip: "끌어서 폭 조절 / 두 번 클릭하면 이름에 맞춤",
     dirTip: "클릭: 폴더 접기 / 펼치기",
     theme: "테마 (글자·문법 색)", light: "밝은 테마", dark: "어두운 테마",
-    uiKind: "알 수 없는 요소 종류 '{0}'", uiAttr: "알 수 없는 속성 '{0}'",
-    uiResChar: "예약 문자 '{0}'는 따옴표 밖에서 쓸 수 없습니다", uiUpper: "'{0}'에 대문자를 쓸 수 없습니다",
-    uiResWord: "'{0}'는 예약 단어라 이름으로 쓸 수 없습니다",
-    uiDidYouMean: "'{0}'이(가) 맞나요?", uiSupports: "이 뷰어는 UI 문서 {0}까지 압니다",
-    uiQuick: "(뷰어의 간단 검사입니다. 전체 검사는 ui-check)",
-    uiErrs: "오류 {0}개", uiErrsTip: "모르는 요소 종류(E002)·속성(E003), 예약 문자·대문자·예약 단어(E013)만 검사합니다. 전체 검사는 ui-check로 하세요.",
+    uiErrs: "오류 {0}개", uiWarns: "경고 {0}개", uiOk: "검사 통과",
+    uiErrsTip: "ui-check와 같은 전체 검사입니다 (E001~E016, W101·W103, UI 문서 {0}). 설명은 ui-check와 같은 영어 원문입니다. 밑줄에 마우스를 올리면 설명이 보입니다.",
   },
   en: {
     pick: "Choose source folder", regrant: "Open folder", pickFiles: "Choose folder",
@@ -241,19 +244,15 @@ const UI = {
     lines: "{0} lines",
     folder: "Change folder", folderTip: "Choose another source folder",
     raw: "Raw", rawTip: "Show the markdown source with line numbers",
-    diagOff: "Hide details", diagOn: "Show details", diagTip: "Show or hide the error code, message and suggestion (help) under each error line. Red underlines always stay.",
+    diagOff: "Hide details", diagOn: "Show details", diagTip: "Show or hide the code, message and suggestion (help) under each error or warning line. Underlines always stay.",
     doc: "Document", docTip: "Show the markdown as a document",
     langTip: "Show documents (.md) in this language",
     noTip: "Click: mark this line (the line number stays in the address)",
     navSizeTip: "Drag to resize / double-click to fit",
     dirTip: "Click: collapse / expand the folder",
     theme: "Theme (text and syntax colors)", light: "Light themes", dark: "Dark themes",
-    uiKind: "unknown element kind '{0}'", uiAttr: "unknown attribute '{0}'",
-    uiResChar: "reserved character '{0}' outside quotes", uiUpper: "uppercase letters are not allowed in '{0}'",
-    uiResWord: "'{0}' is a reserved word and cannot be a name",
-    uiDidYouMean: "did you mean '{0}'?", uiSupports: "this viewer supports UI {0}",
-    uiQuick: "(quick check by the viewer; run ui-check for the full check)",
-    uiErrs: "{0} error(s)", uiErrsTip: "Checks only unknown element kinds (E002), unknown attributes (E003), and reserved characters, uppercase and reserved words (E013). Run ui-check for the full check.",
+    uiErrs: "{0} error(s)", uiWarns: "{0} warning(s)", uiOk: "check passed",
+    uiErrsTip: "The same full check as ui-check (E001-E016, W101 and W103, UI document {0}). Hover an underline to see the message.",
   },
 };
 const LANG_NAMES = { ko: "한국어", en: "English", ja: "日本語", zh: "中文" };
@@ -468,58 +467,822 @@ function highlight(src, lang) {
   return out;
 }
 
-// ---------- .ui (UI 레이아웃 형식 1, ui-guideline 문서 0.7) ----------
-// 색칠 + 간단 검사만: E002 모르는 요소 종류, E003 모르는 속성, E013 예약 문자·대문자·예약 단어.
-// 나머지 검사(E001, E004~E012, E014~E016, W1xx)는 ui-check가 한다.
+// ---------- .ui 전체 검사기 (UI 형식 1, ui-guideline 문서 0.7) ----------
+// tile_font_editor_cpp의 src/uilayout.cppm(Parser)를 그대로 옮긴 것. ui-check와 글자 하나까지 같은 결과를 낸다.
+// 바이트 단위로 검사한다: 글자 하나 = 바이트 하나인 "바이트 글"(0~255)로 바꿔서 C++와 같은 위치·길이를 쓰고,
+// 메시지를 만들 때만 UTF-8로 되돌린다. 메시지는 영어 원문 (ui-check와 같음).
 const UI_DOC_VERSION = "0.7";
+const uiCheck = (() => {
+  const MAX_FILE = 1 << 20, MAX_LINE = 4096, MAX_STRING = 1024, MAX_DEPTH = 16, MAX_NODES = 4096, MAX_STORED = 1000;
+  const INT_MIN = -2147483648, INT_MAX = 2147483647, POS_MIN = -32768, POS_MAX = 32767;
+  const KIND_NAMES = ["", "label", "button", "edit", "number", "dropdown", "check", "canvas", "spacer",
+    "group", "row", "column", "menu", "item", "separator", "?"];
+  const [ROOT, LABEL, BUTTON, EDIT, NUMBER, DROPDOWN, CHECK, CANVAS, SPACER, GROUP, ROW, COLUMN, MENU, ITEM, SEPARATOR, UNKNOWN] =
+    KIND_NAMES.map((_, i) => i);
+  const KIND_WORDS = ["label", "button", "edit", "number", "dropdown", "check", "canvas", "spacer",
+    "group", "row", "column", "menu", "item", "separator", "defaults"];
+  const RESERVED_WORDS = ["include", "style", "true", "false", "if", "else", "use", "ref"];
+  const RESERVED_CHARS = ".$@%:;[](),+*/\\!?&|<>~^'#";
+  const bit = k => 1 << k;
+  const SCREEN = bit(LABEL) | bit(BUTTON) | bit(EDIT) | bit(NUMBER) | bit(DROPDOWN) | bit(CHECK) | bit(CANVAS) | bit(GROUP) | bit(ROW) | bit(COLUMN);
+  const DEFAULT_KINDS = SCREEN | bit(ITEM);
+  const TIP_KINDS = bit(LABEL) | bit(BUTTON) | bit(EDIT) | bit(NUMBER) | bit(DROPDOWN) | bit(CHECK) | bit(CANVAS);
+  const INPUT_KINDS = bit(BUTTON) | bit(EDIT) | bit(NUMBER) | bit(DROPDOWN) | bit(CHECK);
+  // 값 형식: Pos(-32768~32767), Size(Pos 또는 auto), Int(32비트), PosInt(1 이상), Str, Enum, Ref, Flag, Word
+  const SPECS = [
+    ["left", "Pos", SCREEN], ["top", "Pos", SCREEN], ["right", "Pos", SCREEN], ["bottom", "Pos", SCREEN],
+    ["width", "Size", SCREEN], ["height", "Size", SCREEN], ["right_of", "Ref", SCREEN], ["below", "Ref", SCREEN],
+    ["gap", "Pos", SCREEN], ["hidden", "Flag", SCREEN], ["disabled", "Flag", SCREEN],
+    ["text", "Str", bit(LABEL) | bit(BUTTON) | bit(EDIT) | bit(DROPDOWN) | bit(CHECK) | bit(MENU) | bit(ITEM)],
+    ["align", "Enum", bit(LABEL) | bit(ROW) | bit(COLUMN)], ["hint", "Str", bit(EDIT)], ["max_length", "PosInt", bit(EDIT)],
+    ["min", "Int", bit(NUMBER)], ["max", "Int", bit(NUMBER)], ["step", "PosInt", bit(NUMBER)], ["hex", "Flag", bit(NUMBER)],
+    ["menu", "Ref", bit(DROPDOWN)], ["checked", "Flag", bit(CHECK) | bit(ITEM)],
+    ["padding", "Pos", bit(GROUP) | bit(ROW) | bit(COLUMN)], ["check", "Flag", bit(ITEM)], ["radio", "Flag", bit(ITEM)],
+    ["tip", "Str", TIP_KINDS], ["disabled_tip", "Str", TIP_KINDS], ["section", "Word", 0],
+  ].map(([key, type, kinds]) => ({ key, type, kinds }));
+  const NO_DEFAULT_KEYS = ["left", "top", "right", "bottom", "right_of", "below", "text", "hint", "tip", "disabled_tip", "menu"];
+  const POSITION_KEYS = ["left", "top", "right", "bottom", "right_of", "below"];
+  const findSpec = key => SPECS.find(s => s.key === key) || null;
+  const kindFrom = w => { const i = KIND_NAMES.indexOf(w); return i >= 1 && i < UNKNOWN ? i : null; };
+  const isContainer = k => k === GROUP || k === ROW || k === COLUMN || k === MENU;
+  const isScreen = k => (SCREEN & bit(k)) !== 0;
+  const autoOk = (k, axis) => [LABEL, BUTTON, DROPDOWN, CHECK, ROW, COLUMN].includes(k) || ((k === EDIT || k === NUMBER) && axis === 1);
+  const attrsOf = k => SPECS.filter(s => s.kinds & bit(k)).map(s => s.key).join(", ");
+
+  function initNode(k) {
+    const n = { kind: k, name: "", line: 0, col: 0, kindLen: 0, nameCol: 0, nameLen: 0, parent: -1, children: [],
+      left: null, top: null, right: null, bottom: null, w: { mode: "none", value: 0 }, h: { mode: "none", value: 0 },
+      wLine: false, hLine: false, rightOf: -1, below: -1, hasRightOf: false, hasBelow: false, gap: 6, padding: 0,
+      hidden: false, disabled: false, text: "", hint: "", tip: null, disabledTip: null, maxLength: 256,
+      minValue: 0, maxValue: INT_MAX, step: 1, hex: false, menu: -1, check: false, radio: false, checked: false,
+      checkedCol: 0, checkedLen: 0, align: "left", bad: false };
+    const fixed = v => ({ mode: "fixed", value: v }), a = () => ({ mode: "auto", value: 0 });
+    switch (k) {
+      case LABEL: n.w = a(); n.h = a(); break;
+      case BUTTON: n.w = a(); n.h = fixed(28); break;
+      case EDIT: n.w = fixed(100); n.h = fixed(28); break;
+      case NUMBER: n.w = fixed(80); n.h = fixed(28); break;
+      case DROPDOWN: n.w = a(); n.h = fixed(28); break;
+      case CHECK: n.w = a(); n.h = fixed(24); break;
+      case ROW: n.w = a(); n.h = a(); n.align = "center"; break;
+      case COLUMN: n.w = a(); n.h = a(); n.align = "fill"; break;
+    }
+    return n;
+  }
+
+  /// 편집 거리 (Damerau–Levenshtein, 이웃 맞바꾸기만). 바이트 단위, 64바이트가 넘으면 99
+  function distance(a, b) {
+    if (a.length > 64 || b.length > 64) return 99;
+    const w = b.length + 1, d = new Array((a.length + 1) * w);
+    for (let i = 0; i <= a.length; i++) d[i * w] = i;
+    for (let j = 0; j <= b.length; j++) d[j] = j;
+    for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) {
+      let v = Math.min(d[(i - 1) * w + j] + 1, d[i * w + j - 1] + 1, d[(i - 1) * w + j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) v = Math.min(v, d[(i - 2) * w + j - 2] + 1);
+      d[i * w + j] = v;
+    }
+    return d[a.length * w + b.length];
+  }
+  /// 추천: 거리 2 이하, 단어 길이보다 작고, 가장 가까운 후보가 하나뿐일 때만
+  function suggest(word, cands) {
+    let best = 2, count = 0, r = "";
+    for (const c of cands) {
+      const x = distance(word, c);
+      if (x >= word.length || x > best) continue;
+      if (x < best) { best = x; count = 0; }
+      if (count === 0 || c !== r) { r = c; count++; }
+    }
+    return count === 1 ? r : null;
+  }
+
+  const isWs = c => c === " " || c === "\t";
+  const isDigit = c => c >= "0" && c <= "9";
+  const isLower = c => (c >= "a" && c <= "z") || c === "_";
+  const isHex = c => isDigit(c) || (c >= "a" && c <= "f") || (c >= "A" && c <= "F");
+  const cpLen = c => { const b = c.charCodeAt(0); return b < 0x80 ? 1 : b < 0xE0 ? 2 : b < 0xF0 ? 3 : 4; };
+  const cpAt = (s, i) => i >= s.length ? "" : s.substr(i, Math.min(cpLen(s[i]), s.length - i));
+  const lower = s => s.replace(/[A-Z]/g, c => c.toLowerCase());
+  /// 틀린 UTF-8의 첫 바이트 위치 (없으면 -1)
+  function badUtf8(s) {
+    let i = 0;
+    while (i < s.length) {
+      const c = s.charCodeAt(i);
+      if (c < 0x80) { i++; continue; }
+      let n, v, lo;
+      if (c >= 0xC2 && c <= 0xDF) { n = 1; v = c & 0x1F; lo = 0x80; }
+      else if (c >= 0xE0 && c <= 0xEF) { n = 2; v = c & 0x0F; lo = 0x800; }
+      else if (c >= 0xF0 && c <= 0xF4) { n = 3; v = c & 0x07; lo = 0x10000; }
+      else return i;
+      for (let k = 1; k <= n; k++) {
+        if (i + k >= s.length) return i;
+        const d = s.charCodeAt(i + k);
+        if ((d & 0xC0) !== 0x80) return i;
+        v = (v << 6) | (d & 0x3F);
+      }
+      if (v < lo || v > 0x10FFFF || (v >= 0xD800 && v <= 0xDFFF)) return i;
+      i += n + 1;
+    }
+    return -1;
+  }
+  const startsAt = (s, i, p) => s.startsWith(p, i);
+  const tok = (type, col, len, key = "") => ({ type, col, len, key, klen: len, vk: "none", num: 0, str: "", vcol: 0, vlen: 0 });
+  const NODE_FILE = -2;
+
+  function parse(bytes) {
+    const nodes = [], diags = [];
+    let errorCount = 0, warningCount = 0;
+    const root = initNode(ROOT); root.gap = 0; nodes.push(root);
+    const stack = [], refs = [], names = new Map(), defaults = new Map(), defaultLines = new Map();
+    let colmap = [1], seenElement = false, tooMany = false, lineFirst = 0, lineErrors = 0;
+    const dummy = {};
+
+    function diag(code, line, col, len, message, args = [], help = "", helpArgs = []) {
+      const warn = code[0] === "W";
+      if (warn) warningCount++; else errorCount++;
+      if (diags.length >= MAX_STORED) return dummy;
+      const d = { severity: warn ? "warning" : "error", line, col, length: Math.max(len, 0), code, message, help, args, helpArgs,
+        fix: "none", replacement: "", removeSpace: false, node: -1 };
+      diags.push(d);
+      return d;
+    }
+    const fix = (d, f, r) => { d.fix = f; d.replacement = r; };
+    const remove = (d, f = "confirm") => { d.fix = f; d.replacement = ""; d.removeSpace = true; };
+    const col = b => colmap[Math.min(b, colmap.length - 1)];
+    const cps = (a, b) => col(b) - col(a);
+    function makeColmap(s) {
+      colmap = new Array(s.length + 1).fill(1);
+      let c = 0;
+      for (let i = 0; i < s.length; i++) {
+        if ((s.charCodeAt(i) & 0xC0) !== 0x80) c++;
+        colmap[i] = Math.max(c, 1);
+      }
+      colmap[s.length] = c + 1;
+    }
+    function markLine(c, idx) {
+      for (let k = lineFirst; k < diags.length; k++) if (diags[k].col === c && diags[k].severity === "error") diags[k].node = idx;
+    }
+
+    function oneLine(s, ln) {
+      lineFirst = diags.length;
+      lineErrors = errorCount;
+      if (s.length > MAX_LINE) { colmap = [1]; diag("E014", ln, 1, 0, "line is longer than {} bytes", [String(MAX_LINE)], "split it into several lines"); return; }
+      const b = badUtf8(s);
+      if (b >= 0) { colmap = [1]; makeColmap(s.slice(0, b)); diag("E004", ln, col(b), 1, "invalid UTF-8", [], "save the file as UTF-8"); return; }
+      makeColmap(s);
+      if (ln === 1) {
+        if (s.startsWith("#ui")) { header(s, ln); return; }
+        let e = 0;
+        while (e < s.length && !isWs(s[e])) e++;
+        diag("E001", 1, 1, cps(0, e), "the first line must be '#ui 1'", [], "add '#ui 1' as the first line").node = NODE_FILE;
+      }
+      const st = { bad: false };
+      const toks = lex(s, 0, ln, st);
+      if (toks.length) lineTokens(toks, ln, st.bad);
+    }
+
+    function header(s, ln) {
+      let i = 3;
+      const endTok = k => k >= s.length || isWs(s[k]) || startsAt(s, k, "//");
+      if (!endTok(i)) {
+        while (!endTok(i)) i++;
+        diag("E001", ln, 1, cps(0, i), "the first line must be '#ui 1'", [], "write '#ui', a space and the format version").node = NODE_FILE;
+        return;
+      }
+      while (i < s.length && isWs(s[i])) i++;
+      const vs = i;
+      while (!endTok(i)) i++;
+      const ver = s.slice(vs, i);
+      if (!ver) diag("E001", ln, col(vs), 0, "missing format version after '#ui'", [], "write '#ui 1'").node = NODE_FILE;
+      else if (ver !== "1") diag("E001", ln, col(vs), cps(vs, i), "unsupported format version '{}'", [ver], "this program reads format 1 (UI {})", [UI_DOC_VERSION]).node = NODE_FILE;
+      const toks = lex(s, i, ln, { bad: false });
+      const seen = new Map();
+      for (const t of toks) {
+        if (t.type === "bad") continue;
+        if (t.type === "open" || t.type === "close") { diag("E009", ln, t.col, 1, "'{' and '}' cannot be used on the '#ui' line", [], "remove it"); continue; }
+        if (t.key !== "section") {
+          if (findSpec(t.key)) remove(diag("E010", ln, t.col, t.len, "'{}' cannot be used on the '#ui' line", [t.key], "the '#ui' line takes: section"));
+          else unknownAttr(t, ln, ["section"]);
+          continue;
+        }
+        if (seen.has(t.key)) { remove(diag("E006", ln, t.col, t.len, "'{}' is set twice", [t.key], "first set at column {}", [String(seen.get(t.key))])); continue; }
+        seen.set(t.key, t.col);
+        if (t.type === "word") diag("E004", ln, t.col, t.klen, "'{}' needs a value", [t.key], "write {}=<name>", [t.key]);
+        else if (t.vk !== "word") diag("E004", ln, t.vcol, t.vlen, "'{}' expects a name", [t.key], "write {}=<name>", [t.key]);
+      }
+    }
+
+    function unknownAttr(t, ln, cands) {
+      const s = suggest(t.key, cands);
+      if (s) fix(diag("E003", ln, t.col, t.klen, "unknown attribute '{}'", [t.key], "did you mean '{}'?", [s]), "auto", s);
+      else diag("E003", ln, t.col, t.klen, "unknown attribute '{}'", [t.key], "this program supports UI {}; '{}' may need a newer version", [UI_DOC_VERSION, t.key]);
+    }
+    function unknownKind(t, ln) {
+      const s = suggest(t.key, KIND_WORDS);
+      if (s) fix(diag("E002", ln, t.col, t.klen, "unknown element kind '{}'", [t.key], "did you mean '{}'?", [s]), "auto", s);
+      else diag("E002", ln, t.col, t.klen, "unknown element kind '{}'", [t.key], "this program supports UI {}; '{}' may need a newer version", [UI_DOC_VERSION, t.key]);
+    }
+
+    function wordOk(w, off, ln) {
+      const wl = cps(off, off + w.length);
+      for (let k = 0; k < w.length; k++) {
+        const c = w[k];
+        if (isLower(c)) continue;
+        if (isDigit(c)) {
+          if (k === 0) { diag("E013", ln, col(off), wl, "'{}' starts with a digit", [w], "names start with a-z or _"); return false; }
+          continue;
+        }
+        if (c >= "A" && c <= "Z") {
+          if ([...w].every(x => isLower(x) || isDigit(x) || (x >= "A" && x <= "Z"))) {
+            fix(diag("E013", ln, col(off), wl, "uppercase letter in '{}'", [w], "use lowercase: '{}'", [lower(w)]), "auto", lower(w));
+            return false;
+          }
+          continue;
+        }
+        const ch = cpAt(w, k), cl = cps(off + k, off + k + ch.length);
+        if (RESERVED_CHARS.includes(c)) diag("E013", ln, col(off + k), cl, "reserved character '{}'", [ch], "names use only a-z, 0-9 and _");
+        else diag("E013", ln, col(off + k), cl, "character '{}' cannot be used here", [ch], "names use only a-z, 0-9 and _");
+        return false;
+      }
+      return true;
+    }
+
+    /// 문자열 읽기: s[p.i] === '"'. 끝나면 p.i는 닫는 따옴표 다음
+    function readString(s, p, ln, t) {
+      const q = p.i++;
+      let ok = true, tooLong = false, longDiag = -1, out = "";
+      const done = end => { if (longDiag >= 0) diags[longDiag].length = cps(q, end); };
+      for (;;) {
+        if (p.i >= s.length) {
+          diag("E004", ln, col(q), cps(q, s.length), "unclosed string", [], "close it with '\"' on the same line");
+          done(s.length); t.str = out; return false;
+        }
+        const c = s[p.i];
+        if (c === '"') { p.i++; done(p.i); t.str = out; return ok; }
+        if (c === "\\" && p.i + 1 < s.length) {
+          const e = s[p.i + 1], el = cpLen(e);
+          if (e === '"' || e === "\\") out += e;
+          else if (e === "n") out += "\n";
+          else {
+            diag("E004", ln, col(p.i), cps(p.i, Math.min(p.i + 1 + el, s.length)), "unknown escape '\\{}'", [cpAt(s, p.i + 1)], "only \\\", \\\\ and \\n can be used");
+            ok = false;
+          }
+          p.i += 1 + el;
+        } else { out += c; p.i++; }
+        if (out.length > MAX_STRING && !tooLong) {
+          tooLong = true;
+          const before = diags.length;
+          diag("E014", ln, col(q), 1, "string is longer than {} bytes", [String(MAX_STRING)], "shorten it");
+          if (diags.length > before) longDiag = before;
+          ok = false;
+        }
+      }
+    }
+
+    function skipToken(s, p) {
+      while (p.i < s.length && !isWs(s[p.i]) && !startsAt(s, p.i, "//")) {
+        if (s[p.i] === '"') {
+          p.i++;
+          while (p.i < s.length && s[p.i] !== '"') p.i += s[p.i] === "\\" ? 2 : 1;
+        }
+        p.i++;
+      }
+      p.i = Math.min(p.i, s.length);
+    }
+
+    function value(v, off, ln, t) {
+      const vl = cps(off, off + v.length);
+      if (v[0] === "-" || isDigit(v[0])) {
+        let val = 0, good = true, big = false, zero = false;
+        const neg = v[0] === "-", hex = v.startsWith("0x");
+        if (hex) {
+          const d = v.slice(2);
+          good = d.length > 0 && [...d].every(isHex);
+          for (const c of d) {
+            if (!good || big) break;
+            val = val * 16 + (isDigit(c) ? c.charCodeAt(0) - 48 : (c.charCodeAt(0) | 0x20) - 97 + 10);
+            big = val > INT_MAX;
+          }
+        } else {
+          const d = v.slice(neg ? 1 : 0);
+          good = d.length > 0 && [...d].every(isDigit);
+          zero = good && d.length > 1 && d[0] === "0";
+          for (const c of d) {
+            if (!good || big) break;
+            val = val * 10 + (c.charCodeAt(0) - 48);
+            big = val > INT_MAX + 1;
+          }
+          if (neg) val = -val;
+          big = big || val > INT_MAX || val < INT_MIN;
+        }
+        if (!good) { diag("E004", ln, col(off), vl, "invalid number '{}'", [v], "write a decimal integer like 90 or -4, or hex like 0x1F"); return false; }
+        if (zero) {
+          let d = v.slice(neg ? 1 : 0);
+          while (d.length > 1 && d[0] === "0") d = d.slice(1);
+          const r = (neg ? "-" : "") + d;
+          fix(diag("E004", ln, col(off), vl, "number '{}' starts with 0", [v], "write it without the leading zeros: {}", [r]), "confirm", r);
+          return false;
+        }
+        if (big) {
+          const dg = diag("E004", ln, col(off), vl, "number '{}' is out of range", [v], "integers are -2147483648 to 2147483647 (hex up to 0x7FFFFFFF)");
+          const sp = findSpec(t.key);
+          if (sp) {
+            if (sp.type === "Pos" || sp.type === "Size") fix(dg, "confirm", String(neg ? POS_MIN : POS_MAX));
+            else if (sp.type === "PosInt" || sp.type === "Int")
+              fix(dg, "confirm", neg ? (sp.type === "PosInt" ? "1" : String(INT_MIN)) : hex ? "0x7FFFFFFF" : String(INT_MAX));
+          }
+          return false;
+        }
+        t.vk = "int"; t.num = val;
+        return true;
+      }
+      if (!wordOk(v, off, ln)) return false;
+      t.vk = "word"; t.str = v;
+      return true;
+    }
+
+    function lex(s, i, ln, st) {
+      const out = [];
+      const atEnd = k => k >= s.length || isWs(s[k]) || startsAt(s, k, "//");
+      const skipWs = k => { while (k < s.length && isWs(s[k])) k++; return k; };
+      const p = { i };
+      for (;;) {
+        p.i = skipWs(p.i);
+        if (p.i >= s.length || startsAt(s, p.i, "//")) break;
+        const s0 = p.i, c = s[p.i];
+        if (c === "{" || c === "}") { out.push(tok(c === "{" ? "open" : "close", col(p.i), 1)); p.i++; continue; }
+        if (c === '"' || c === "=") {
+          skipToken(s, p);
+          if (c === '"') diag("E004", ln, col(s0), cps(s0, p.i), "a string needs an attribute name before it", [], "write it as text=\"...\"");
+          else diag("E004", ln, col(s0), cps(s0, p.i), "'=' needs an attribute name right before it", [], "write key=value with no spaces around '='");
+          out.push(tok("bad", col(s0), cps(s0, p.i)));
+          st.bad = true;
+          continue;
+        }
+        while (p.i < s.length && !isWs(s[p.i]) && !"={}\"".includes(s[p.i]) && !startsAt(s, p.i, "//")) p.i++;
+        const wend = p.i, word = s.slice(s0, wend);
+        let ok = wordOk(word, s0, ln);
+        const t = tok("word", col(s0), cps(s0, wend), word);
+        // '=' 찾기: 바로 뒤, 또는 공백 뒤 ("left = 50": 공백 오류, 고칠 수 있음)
+        let eq = -1, vstart = 0, spaced = false;
+        if (p.i < s.length && s[p.i] === "=") eq = p.i;
+        else { const j = skipWs(p.i); if (j > p.i && j < s.length && s[j] === "=") eq = j; }
+        if (eq >= 0) {
+          const k = skipWs(eq + 1);
+          const hasValue = !(k >= s.length || startsAt(s, k, "//") || s[k] === "{" || s[k] === "}" || s[k] === "=");
+          if (eq !== p.i || k !== eq + 1) {
+            if (hasValue) { spaced = true; vstart = k; }
+            else if (eq !== p.i) eq = -1;   // "w =" 뒤에 값이 없음: '='는 따로 오류
+          }
+        }
+        if (eq >= 0) {
+          t.type = "attr";
+          p.i = spaced ? vstart : eq + 1;
+          if (atEnd(p.i) || s[p.i] === "{" || s[p.i] === "}") {
+            diag("E004", ln, col(s0), cps(s0, p.i), "'{}' needs a value after '='", [t.key], "write key=value with no spaces around '='");
+            ok = false;
+          } else if (s[p.i] === '"') {
+            const vs = p.i;
+            t.vcol = col(p.i); t.vk = "str";
+            ok = readString(s, p, ln, t) && ok;
+            t.vlen = cps(vs, p.i);
+          } else {
+            const vs = p.i;
+            while (!atEnd(p.i) && s[p.i] !== "{" && s[p.i] !== "}" && s[p.i] !== '"') p.i++;
+            t.vcol = col(vs); t.vlen = cps(vs, p.i);
+            ok = value(s.slice(vs, p.i), vs, ln, t) && ok;
+          }
+          if (spaced) {
+            fix(diag("E004", ln, col(s0), cps(s0, p.i), "spaces around '=' after '{}'", [t.key], "write key=value with no spaces around '='"),
+              "auto", word + "=" + s.slice(vstart, p.i));
+            ok = false;
+          }
+          if (!atEnd(p.i) && s[p.i] !== "{" && s[p.i] !== "}") {
+            const x = p.i;
+            skipToken(s, p);
+            diag("E004", ln, col(x), cps(x, p.i), "expected a space after the value of '{}'", [t.key], "put a space between attributes");
+            ok = false;
+          }
+        } else if (p.i < s.length && s[p.i] === '"') {
+          const x = p.i;
+          skipToken(s, p);
+          diag("E004", ln, col(x), cps(x, p.i), "missing '=' between '{}' and the string", [t.key], "write {}=\"...\"", [t.key]);
+          ok = false;
+        }
+        t.len = cps(s0, p.i);
+        if (!ok) { t.type = "bad"; st.bad = true; }
+        out.push(t);
+      }
+      return out;
+    }
+
+    function pushBlock(node, ln, openCol, kcol, klen) {
+      if (stack.length === MAX_DEPTH)
+        diag("E014", ln, openCol, 1, "blocks are nested too deeply (max {})", [String(MAX_DEPTH)], "use fewer nested groups").node = node;
+      stack.push({ node, line: ln, kcol, klen });
+    }
+
+    function lineTokens(toks, ln, bad) {
+      if (toks[0].type === "close") {
+        if (toks.length > 1) {
+          const b = toks[toks.length - 1];
+          diag("E009", ln, toks[1].col, b.col + b.len - toks[1].col, "'}' must be alone on its line", [], "move the rest to another line");
+        }
+        if (!stack.length) diag("E009", ln, toks[0].col, 1, "'}' without a matching '{'", [], "remove it, or end an element line with '{'");
+        else stack.pop();
+        return;
+      }
+      const opens = toks[toks.length - 1].type === "open", openCol = toks[toks.length - 1].col;
+      if (opens) toks.pop();
+      for (const t of toks) {
+        if (t.type === "open") { diag("E009", ln, t.col, 1, "'{' must be at the end of the line", [], "put the children on the following lines"); bad = true; }
+        else if (t.type === "close") { diag("E009", ln, t.col, 1, "'}' must be alone on its line", [], "move it to its own line"); bad = true; }
+      }
+      toks = toks.filter(t => t.type !== "open" && t.type !== "close");
+      if (!toks.length) { diag("E009", ln, openCol, 1, "'{' must follow an element on the same line", [], "put '{' at the end of the element line"); return; }
+      const first = toks[0];
+      if (first.type === "word" && first.key === "defaults") { defaultsLine(toks, ln, opens, openCol); return; }
+      let kind = null;
+      if (first.type === "attr") diag("E002", ln, first.col, first.klen, "expected an element kind, got '{}='", [first.key], "start the line with a kind such as button, label or row");
+      else if (first.type === "word") { kind = kindFrom(first.key); if (kind === null) unknownKind(first, ln); }
+      element(kind ?? UNKNOWN, toks, ln, bad || kind === null, opens, openCol);
+    }
+
+    function defaultsLine(toks, ln, opens, openCol) {
+      const c = toks[0].col, cl = toks[0].len;
+      if (opens) { diag("E009", ln, openCol, 1, "'defaults' cannot open a block", [], "write defaults on one line"); stack.push({ node: -1, line: ln, kcol: c, klen: cl }); }
+      if (stack.length && !(opens && stack.length === 1)) { diag("E012", ln, c, cl, "'defaults' must be at the top level", [], "move it right after the '#ui' line"); return; }
+      if (seenElement) { diag("E012", ln, c, cl, "'defaults' must come before all elements", [], "move it right after the '#ui' line"); return; }
+      if (toks.length < 2 || toks[1].type !== "word") {
+        if (toks.length < 2) diag("E002", ln, c, cl, "'defaults' needs an element kind", [], "for example: defaults button height=28");
+        else if (toks[1].type !== "bad") diag("E002", ln, toks[1].col, toks[1].klen, "'defaults' needs an element kind", [], "for example: defaults button height=28");
+        return;
+      }
+      const kt = toks[1], kind = kindFrom(kt.key);
+      if (kind === null) { unknownKind(kt, ln); return; }
+      if (!(DEFAULT_KINDS & bit(kind))) {
+        diag("E012", ln, kt.col, kt.klen, "'{}' cannot have defaults", [kt.key], "defaults work for: label, button, edit, number, dropdown, check, canvas, group, row, column, item");
+        return;
+      }
+      const scratch = initNode(kind);
+      for (let k = 2; k < toks.length; k++) {
+        const t = toks[k];
+        if (t.type === "bad") continue;
+        const sp = findSpec(t.key);
+        if (NO_DEFAULT_KEYS.includes(t.key) && sp && (sp.kinds & bit(kind))) { remove(diag("E010", ln, t.col, t.len, "'{}' cannot be a default", [t.key], "set it on each element")); continue; }
+        const key = kind + "\u0000" + t.key;
+        if (defaultLines.has(key)) {
+          remove(diag("E006", ln, t.col, t.len, "'{}' already has a default for '{}'", [t.key, kt.key], "first set at line {}", [String(defaultLines.get(key))]));
+          continue;
+        }
+        if (apply(scratch, ROOT, t, ln, true, false)) {
+          defaultLines.set(key, ln);
+          if (!defaults.has(kind)) defaults.set(kind, []);
+          defaults.get(kind).push(t);
+        }
+      }
+    }
+
+    function element(kind, toks, ln, bad, opens, openCol) {
+      const parent = stack.length ? stack[stack.length - 1].node : 0;
+      const front = toks[0];
+      if (parent < 0) { if (opens) pushBlock(-1, ln, openCol, front.col, front.klen); return; }
+      if (nodes.length > MAX_NODES) {
+        if (!tooMany) { diag("E014", ln, front.col, front.klen, "too many elements (max {})", [String(MAX_NODES)], "split the layout into smaller files"); tooMany = true; }
+        if (opens) pushBlock(-1, ln, openCol, front.col, front.klen);
+        return;
+      }
+      const pk = nodes[parent].kind;
+      const n = initNode(kind);
+      n.line = ln; n.col = front.col; n.kindLen = front.klen; n.parent = parent; n.bad = bad;
+      const idx = nodes.length;
+      seenElement = true;
+      if (kind === UNKNOWN) markLine(n.col, idx);
+      const elemDiag = (code, c, len, msg, args, help, hargs = []) => { diag(code, ln, c, len, msg, args, help, hargs).node = idx; n.bad = true; };
+      const parentOk = pk === ROOT || isContainer(pk);
+      const kn = KIND_NAMES[kind];
+      if (kind !== UNKNOWN && parentOk) {
+        let err = null;
+        if ((kind === ITEM || kind === SEPARATOR) && pk !== MENU) err = ["'{}' must be inside a 'menu'", "move it into a menu block"];
+        else if (kind === MENU && pk !== ROOT && pk !== MENU) err = ["'{}' must be at the top level or inside another 'menu'", "move the menu out of this block; a dropdown opens it"];
+        else if ((isScreen(kind) || kind === SPACER) && pk === MENU) err = ["'{}' cannot be inside a 'menu'", "a menu holds item, separator and menu"];
+        else if (kind === SPACER && pk !== ROW && pk !== COLUMN) err = ["'{}' must be inside a 'row' or 'column'", "use left/right/top/bottom to leave space in a group"];
+        if (err) elemDiag("E012", n.col, n.kindLen, err[0], [kn], err[1]);
+      }
+      // 이름
+      let k = 1;
+      const named = kind !== SPACER && kind !== SEPARATOR;
+      if (kind === UNKNOWN) {
+        if (toks.length > 1 && toks[1].type === "word" && !names.has(toks[1].key)) {
+          n.name = toks[1].key; n.nameCol = toks[1].col; n.nameLen = toks[1].klen;
+          names.set(n.name, idx);
+        }
+        k = toks.length;
+      } else if (named) {
+        if (toks.length > 1 && toks[1].type === "bad") {
+          k = 2; n.bad = true; n.nameCol = toks[1].col; n.nameLen = toks[1].klen;
+          markLine(n.nameCol, idx);
+        } else if (toks.length < 2 || toks[1].type !== "word") {
+          elemDiag("E015", n.col, n.kindLen, "'{}' needs a name", [kn], "write: {} <name> ...", [kn]);
+        } else {
+          const nt = toks[1];
+          k = 2; n.nameCol = nt.col; n.nameLen = nt.klen;
+          if (KIND_WORDS.includes(nt.key) || RESERVED_WORDS.includes(nt.key)) elemDiag("E013", nt.col, nt.klen, "'{}' is a reserved word", [nt.key], "choose another name");
+          else if (names.has(nt.key)) elemDiag("E005", nt.col, nt.klen, "the name '{}' is already used", [nt.key], "first defined at line {}", [String(nodes[names.get(nt.key)].line)]);
+          else { n.name = nt.key; names.set(n.name, idx); }
+        }
+      } else if (toks.length > 1 && toks[1].type === "word" && !findSpec(toks[1].key)) {
+        elemDiag("E015", toks[1].col, toks[1].klen, "'{}' does not take a name", [kn], "remove '{}'", [toks[1].key]);
+        k = 2;
+      }
+      // 기본값 줄 → 요소 줄
+      if (kind !== UNKNOWN && defaults.has(kind)) for (const t of defaults.get(kind)) apply(n, ROOT, t, ln, false, false);
+      const seen = new Map();
+      let hasMenu = false;
+      for (; k < toks.length; k++) {
+        const t = toks[k];
+        if (t.type === "bad") continue;
+        if (seen.has(t.key)) {
+          remove(diag("E006", ln, t.col, t.len, "'{}' is set twice", [t.key], "first set at column {}", [String(seen.get(t.key))]));
+          n.bad = true;
+          continue;
+        }
+        seen.set(t.key, t.col);
+        if (!apply(n, pk, t, ln, true, true)) { n.bad = true; continue; }
+        if (t.key === "checked") { n.checkedCol = t.col; n.checkedLen = t.len; }
+        if (t.key === "right_of" || t.key === "below" || t.key === "menu") {
+          refs.push({ node: idx, key: t.key, name: t.str, line: ln, col: t.vcol, len: t.vlen });
+          n.hasRightOf ||= t.key === "right_of";
+          n.hasBelow ||= t.key === "below";
+          hasMenu ||= t.key === "menu";
+        }
+      }
+      if (!n.bad) checkElement(n, idx, pk, hasMenu);
+      const noTip = kind !== UNKNOWN && (INPUT_KINDS & bit(kind)) && n.tip === null;
+      const who = n.name || kn;
+      nodes[parent].children.push(idx);
+      nodes.push(n);
+      if (opens) {
+        if (kind !== UNKNOWN && !isContainer(kind))
+          diag("E009", ln, openCol, 1, "'{}' cannot have children", [kn], "only group, row, column and menu can open a block with '{'").node = idx;
+        pushBlock(idx, ln, openCol, front.col, front.klen);
+      }
+      if (noTip && errorCount === lineErrors)
+        diag("W103", ln, n.col, n.kindLen, "'{}' has no tip", [who], "add tip=\"...\" to say what it does, or tip=\"\" if it needs none");
+    }
+
+    /// 속성 하나 적용. report = 오류를 알림, fromLine = 요소 줄에 쓴 것 (기본값 줄이 아님)
+    function apply(n, pk, t, ln, report, fromLine) {
+      const kn = KIND_NAMES[n.kind], sp = findSpec(t.key);
+      const err = (code, c, len, msg, args, help, hargs = []) => report ? diag(code, ln, c, len, msg, args, help, hargs) : null;
+      if (!sp) {
+        if (report) unknownAttr(t, ln, SPECS.filter(s => s.kinds).map(s => s.key));
+        return false;
+      }
+      if (!(sp.kinds & bit(n.kind))) {
+        const list = attrsOf(n.kind);
+        const d = list ? err("E010", t.col, t.len, "'{}' cannot be used on '{}'", [t.key, kn], "'{}' takes: {}", [kn, list])
+                       : err("E010", t.col, t.len, "'{}' cannot be used on '{}'", [t.key, kn], "'{}' takes no attributes", [kn]);
+        if (d) remove(d);
+        return false;
+      }
+      if ((pk === ROW || pk === COLUMN) && POSITION_KEYS.includes(t.key)) {
+        const d = err("E011", t.col, t.len, "'{}' cannot be used inside a '{}'", [t.key, KIND_NAMES[pk]], "inside a row or column, only width and height set the size");
+        if (d) remove(d);
+        return false;
+      }
+      if (sp.type === "Flag") {
+        if (t.type === "attr") {
+          const d = err("E004", t.col, t.len, "'{}' takes no value", [t.key], "write just '{}'", [t.key]);
+          if (d) {
+            if (t.vk === "word" && t.str === "true") fix(d, "auto", t.key);
+            else if (t.vk === "word" && t.str === "false") remove(d, "auto");
+          }
+          return false;
+        }
+      } else if (t.type !== "attr") {
+        err("E004", t.col, t.klen, "'{}' needs a value", [t.key], "write {}=<value>", [t.key]);
+        return false;
+      }
+      const expect = (what, example) => { err("E004", t.vcol, t.vlen, "'{}' expects {}", [t.key, what], "for example: {}={}", [t.key, example]); return false; };
+      switch (sp.type) {
+        case "Pos": case "Size": {
+          if (sp.type === "Size" && t.vk === "word" && t.str === "auto") {
+            const axis = t.key === "width" ? 0 : 1;
+            if (!autoOk(n.kind, axis)) { err("E004", t.vcol, t.vlen, "'{}' cannot be auto on '{}'", [t.key, kn], "write a number"); return false; }
+            if (axis === 0) { n.w = { mode: "auto", value: 0 }; n.wLine = fromLine; } else { n.h = { mode: "auto", value: 0 }; n.hLine = fromLine; }
+            return true;
+          }
+          if (t.vk !== "int") return expect(sp.type === "Size" ? "an integer or auto" : "an integer", sp.type === "Size" ? "90" : "8");
+          if (t.num < POS_MIN || t.num > POS_MAX) {
+            const d = err("E004", t.vcol, t.vlen, "'{}' must be between {} and {}", [t.key, String(POS_MIN), String(POS_MAX)], "positions and sizes use 16-bit numbers");
+            if (d) fix(d, "confirm", String(t.num < POS_MIN ? POS_MIN : POS_MAX));
+            return false;
+          }
+          const iv = t.num;
+          if (report) {
+            const sizeish = ["width", "height", "gap", "padding"].includes(t.key);
+            if (sizeish && iv < 0) diag("W101", ln, t.vcol, t.vlen, "'{}' is negative ({})", [t.key, String(iv)], "use 0 or more");
+            else if (iv > 10000 || iv < -10000) diag("W101", ln, t.vcol, t.vlen, "'{}' is very large ({})", [t.key, String(iv)], "the usual range is -10000 to 10000");
+          }
+          if (t.key === "width") { n.w = { mode: "fixed", value: iv }; n.wLine = fromLine; }
+          else if (t.key === "height") { n.h = { mode: "fixed", value: iv }; n.hLine = fromLine; }
+          else n[t.key] = iv;   // left top right bottom gap padding
+          return true;
+        }
+        case "Int": case "PosInt": {
+          if (t.vk !== "int") return expect("an integer", "1");
+          if (sp.type === "PosInt" && t.num < 1) {
+            const d = err("E004", t.vcol, t.vlen, "'{}' must be 1 or more", [t.key], "write {}=1 or more", [t.key]);
+            if (d) fix(d, "confirm", "1");
+            return false;
+          }
+          ({ max_length: () => n.maxLength = t.num, min: () => n.minValue = t.num, max: () => n.maxValue = t.num, step: () => n.step = t.num })[t.key]();
+          return true;
+        }
+        case "Str":
+          if (t.vk !== "str") return expect("a string", "\"...\"");
+          if (t.key === "hint") n.hint = t.str;
+          else if (t.key === "tip") n.tip = t.str;
+          else if (t.key === "disabled_tip") n.disabledTip = t.str;
+          else n.text = t.str;
+          return true;
+        case "Enum": {
+          const list = n.kind === LABEL ? ["left", "center", "right"] : n.kind === ROW ? ["top", "center", "bottom", "fill"] : ["left", "center", "right", "fill"];
+          if (t.vk !== "word" || !list.includes(t.str)) {
+            err("E004", t.vcol, t.vlen, "'{}' on '{}' must be one of: {}", [t.key, kn, list.join(", ")], "for example: {}={}", [t.key, list[0]]);
+            return false;
+          }
+          n.align = t.str;
+          return true;
+        }
+        case "Ref": case "Word":
+          if (t.vk !== "word") return expect("a name", "name");
+          return true;
+        case "Flag":
+          n[t.key] = true;   // hidden disabled hex checked check radio
+          return true;
+      }
+      return false;
+    }
+
+    function checkElement(n, idx, pk, hasMenu) {
+      const kn = KIND_NAMES[n.kind], who = n.name || kn;
+      const elem = (code, msg, args, help, hargs = []) => { diag(code, n.line, n.col, n.kindLen, msg, args, help, hargs).node = idx; };
+      if (n.kind === ITEM) {
+        if (n.check && n.radio) elem("E016", "'check' and 'radio' cannot be used together", [], "use one of them");
+        else if (n.checked && !n.check && !n.radio)
+          remove(diag("E016", n.line, n.checkedCol, n.checkedLen, "'checked' needs 'check' or 'radio'", [], "add check or radio to the item, or remove checked"));
+      }
+      if (n.kind === NUMBER && n.minValue > n.maxValue)
+        elem("E004", "min ({}) is greater than max ({})", [String(n.minValue), String(n.maxValue)], "make min less than or equal to max");
+      if (n.kind === DROPDOWN && !hasMenu) elem("E008", "'dropdown' needs menu=<menu name>", [], "add menu= with the name of a menu");
+      if (!isScreen(n.kind)) return;
+      if (pk === ROW || pk === COLUMN) {
+        const row = pk === ROW, pa = nodes[n.parent].align;
+        const mainOk = (row ? n.w : n.h).mode !== "none";
+        const crossOk = (row ? n.h : n.w).mode !== "none" || pa === "fill";
+        const mainKey = row ? "width" : "height", crossKey = row ? "height" : "width";
+        if (!mainOk) elem("E007", "'{}' needs {} inside a '{}'", [who, mainKey, KIND_NAMES[pk]], "write {}=<number>", [mainKey]);
+        if (!crossOk) elem("E007", "'{}' needs {} inside a '{}'", [who, crossKey, KIND_NAMES[pk]], "write {}=<number>, or align=fill on the {}", [crossKey, KIND_NAMES[pk]]);
+        return;
+      }
+      const axis = (a, b, ref, sizeLine, hasSize, horizontal) => {
+        const cnt = +a + +b + +ref;
+        const r = ref && a ? 2 : cnt >= 2 ? (sizeLine ? 2 : 0) : (hasSize ? 0 : 1);
+        if (!r) return;
+        const help = horizontal ? "use one of: left+width, right+width, left+right, right_of+width, right_of+right, width only"
+                                : "use one of: top+height, bottom+height, top+bottom, below+height, below+bottom, height only";
+        elem("E007", r === 1 ? "'{}' needs a {} size or position" : "'{}' has too many {} values", [who, horizontal ? "horizontal" : "vertical"], help);
+      };
+      let hasRightOf = false, hasBelow = false;
+      for (const r of refs) if (r.node === idx) { hasRightOf ||= r.key === "right_of"; hasBelow ||= r.key === "below"; }
+      axis(n.left !== null, n.right !== null, hasRightOf, n.wLine, n.w.mode !== "none", true);
+      axis(n.top !== null, n.bottom !== null, hasBelow, n.hLine, n.h.mode !== "none", false);
+    }
+
+    function finish() {
+      for (const b of stack) diag("E009", b.line, b.kcol, b.klen, "'{' is never closed", [], "add a '}' line").node = b.node;
+      stack.length = 0;
+      for (const r of refs) resolve(r);
+      for (const n of nodes) {
+        if (n.kind !== MENU) continue;
+        let first = 0;
+        for (const c of n.children) {
+          const it = nodes[c];
+          if (it.kind === ITEM && it.radio && !it.check) {
+            if (it.checked) {
+              if (first) remove(diag("E016", it.line, it.checkedCol, it.checkedLen, "only one item in a radio group can be checked", [], "the first checked item is at line {}", [String(first)]));
+              else first = it.line;
+            }
+          } else first = 0;
+        }
+      }
+      checkUpperNames();
+      diags.sort((a, b) => a.line - b.line || a.col - b.col);
+    }
+
+    function checkUpperNames() {
+      const nameAt = new Set(nodes.filter(n => n.nameCol > 0).map(n => n.line + ":" + n.nameCol));
+      const isNameFix = d => d.code === "E013" && d.fix === "auto" && nameAt.has(d.line + ":" + d.col);
+      const count = new Map();
+      for (const d of diags) if (isNameFix(d)) count.set(d.replacement, (count.get(d.replacement) || 0) + 1);
+      for (const d of diags) if (isNameFix(d) && (names.has(d.replacement) || count.get(d.replacement) > 1)) { d.fix = "none"; d.replacement = ""; }
+    }
+
+    function resolve(r) {
+      const n = nodes[r.node], menu = r.key === "menu";
+      if (!names.has(r.name)) {
+        // C++ std::map은 이름순 (바이트 비교) → 추천 후보도 이름순
+        const cands = [...names].sort((a, b) => a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0).filter(([, i]) => {
+          const k = nodes[i].kind;
+          return menu ? k === MENU : isScreen(k) && nodes[i].parent === n.parent && i < r.node;
+        }).map(([name]) => name);
+        const s = suggest(r.name, cands);
+        if (s) fix(diag("E008", r.line, r.col, r.len, "no element named '{}'", [r.name], "did you mean '{}'?", [s]), "auto", s);
+        else diag("E008", r.line, r.col, r.len, "no element named '{}'", [r.name], "check the name");
+        return;
+      }
+      const ti = names.get(r.name), t = nodes[ti];
+      if (t.kind === UNKNOWN) return;
+      if (menu) {
+        if (t.kind !== MENU) { diag("E008", r.line, r.col, r.len, "'{}' is not a menu", [r.name], "menu= must name a 'menu'"); return; }
+        n.menu = ti;
+        return;
+      }
+      if (!isScreen(t.kind)) { diag("E008", r.line, r.col, r.len, "'{}' is a '{}', not a screen element", [r.name, KIND_NAMES[t.kind]], "{} can only name a screen element", [r.key]); return; }
+      if (ti === r.node) { diag("E008", r.line, r.col, r.len, "'{}' refers to itself", [r.name], "name an element that comes before it"); return; }
+      if (t.parent !== n.parent) { diag("E008", r.line, r.col, r.len, "'{}' is in a different block", [r.name], "name an element in the same block, or the block itself"); return; }
+      if (ti > r.node) { diag("E008", r.line, r.col, r.len, "'{}' comes later (line {})", [r.name, String(t.line)], "an element can only name elements before it"); return; }
+      if (r.key === "right_of") n.rightOf = ti; else n.below = ti;
+    }
+
+    // ---- 실행 ----
+    let text = bytes;
+    if (text.length > MAX_FILE) {
+      diag("E014", 1, 1, 0, "file is larger than {} bytes", [String(MAX_FILE)], "split the layout into smaller files").node = NODE_FILE;
+    } else {
+      if (text.startsWith("\xEF\xBB\xBF")) text = text.slice(3);
+      let ln = 0, pos = 0;
+      while (pos < text.length) {
+        let e = text.indexOf("\n", pos);
+        if (e < 0) e = text.length;
+        let s = text.slice(pos, e);
+        pos = e + 1;
+        if (s.endsWith("\r")) s = s.slice(0, -1);
+        oneLine(s, ++ln);
+      }
+      if (!ln) diag("E001", 1, 1, 0, "the first line must be '#ui 1'", [], "add '#ui 1' as the first line").node = NODE_FILE;
+    }
+    finish();
+    return { nodes, diags, errorCount, warningCount };
+  }
+
+  const fill = (fmt, args) => { let a = 0; return fmt.replace(/\{\}/g, m => a < args.length ? args[a++] : m); };
+  /// 바이트 글 → UTF-8 글
+  const fromBytes = s => new TextDecoder().decode(Uint8Array.from(s, c => c.charCodeAt(0)));
+  /// Uint8Array → 바이트 글
+  function toBytes(u8) {
+    let s = "";
+    for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000));
+    return s;
+  }
+
+  /// .ui 파일 바이트(Uint8Array) 검사 → { diags: [{severity, line, col, length, code, msg, help}], errorCount, warningCount, nodes }
+  function check(u8) {
+    const doc = parse(toBytes(u8));
+    doc.diags = doc.diags.map(d => ({ ...d, msg: fromBytes(fill(d.message, d.args)), help: d.help ? fromBytes(fill(d.help, d.helpArgs)) : "" }));
+    return doc;
+  }
+  /// ui-check와 같은 출력 (최대 50개, 나머지는 개수만)
+  function format(doc, file) {
+    let out = "", shown = 0;
+    for (const d of doc.diags) {
+      if (shown === 50) break;
+      out += `${file}:${d.line}:${d.col}: ${d.severity}[${d.code}]: ${d.msg}\n`;
+      if (d.help) out += `    help: ${d.help}\n`;
+      shown++;
+    }
+    const total = doc.errorCount + doc.warningCount;
+    if (total > shown) out += `${file}: ${total - shown} more not shown\n`;
+    return out;
+  }
+  return { check, format };
+})();
+
+// ---------- .ui 색칠 (검사는 위의 uiCheck가 한다) ----------
 const UI_KINDS = words("label button edit number dropdown check canvas spacer group row column menu item separator defaults");
 const UI_ATTRS = words(`left top right bottom width height right_of below gap hidden disabled text align hint max_length
   min max step hex menu checked padding check radio tip disabled_tip section`);
 const UI_RESERVED = new Set([...UI_KINDS, ...words("include style true false if else use ref")]);
 const UI_NO_NAME = words("spacer separator");
-const UI_RES_CHARS = ".$@%:;[](),+*/\\!?&|<>~^'#";
 
-/// 거리: 넣기·빼기·바꾸기·이웃한 두 글자 맞바꾸기 = 1 (Damerau–Levenshtein, 이웃 맞바꾸기만)
-function editDistance(a, b) {
-  const d = Array.from({ length: a.length + 1 }, (_, i) => [i]);
-  for (let j = 0; j <= b.length; j++) d[0][j] = j;
-  for (let i = 1; i <= a.length; i++) for (let j = 1; j <= b.length; j++) {
-    d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
-    if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
-  }
-  return d[a.length][b.length];
-}
-/// 추천: 거리 2 이하, 틀린 단어 길이보다 작고, 가장 가까운 후보가 하나뿐일 때만
-function suggest(word, cands) {
-  let best = 3, hit = null, n = 0;
-  for (const c of cands) {
-    const x = editDistance(word, c);
-    if (x < best) { best = x; hit = c; n = 1; } else if (x === best) n++;
-  }
-  return best <= 2 && best < word.length && n === 1 ? hit : null;
-}
-
+/// 색칠만: 첫 단어 종류(k), 둘째 이름(f), 속성(t), 값: 숫자(n)·단어(p)·문자열(s), 주석(c).
+/// 모르는 단어는 색 없이 두고, 오류 밑줄은 markUiDiags()가 검사 결과로 긋는다.
 function highlightUi(src) {
   const out = [];
-  out.diags = [];          // 진단: { ln 줄(0부터), prefix 줄 앞부분, len 범위(코드 포인트), code, msg, help }
-  let ln = 0, line = "", ts = 0;   // 지금 줄, 지금 토큰의 시작 위치
-  const push = (cls, text, tip) => { if (text) out.push([cls, text, tip]); };
-  const err = (code, text, msgKey, help) => {
-    const msg = t(msgKey, text);
-    out.diags.push({ ln, prefix: line.slice(0, ts), len: [...text].length, code, msg, help });
-    push("e", text, `error[${code}]: ${msg}` + (help ? `\nhelp: ${help}` : "") + "\n" + t("uiQuick"));
-  };
-  const upper = (text) => err("E013", text, "uiUpper", t("uiDidYouMean", text.toLowerCase()));
-  // 종류 단어: 알면 k, 모르면 E002 (+추천)
-  const kindWord = w => {
-    if (/[A-Z]/.test(w)) return upper(w);
-    if (UI_KINDS.has(w)) return push("k", w);
-    const s = suggest(w, UI_KINDS);
-    err("E002", w, "uiKind", s ? t("uiDidYouMean", s) : t("uiSupports", UI_DOC_VERSION));
-  };
+  const push = (cls, text) => { if (text) out.push([cls, text]); };
   const lex = /[ \t]+|\/\/.*|"(?:\\.|[^"\\])*"?|-?[A-Za-z0-9_]+|[\s\S]/y;
-  src.split("\n").forEach((l, n) => {
-    ln = n; line = l;
+  src.split("\n").forEach((line, ln) => {
     if (ln) push(null, "\n");
     let i = 0, state = "kind";
     if (ln === 0 && /^\uFEFF?#ui(?![A-Za-z0-9_])/.test(line)) {   // 머리 줄
@@ -530,56 +1293,72 @@ function highlightUi(src) {
       lex.lastIndex = i;
       const tok = lex.exec(line)[0];
       const before = line[i - 1], after = line[i + tok.length];
-      ts = i;
       i += tok.length;
       if (/^[ \t]/.test(tok)) { push(null, tok); continue; }
       if (tok.startsWith("//")) { push("c", tok); continue; }
       if (tok[0] === '"') { push("s", tok); continue; }
-      if (!/^-?[A-Za-z0-9_]+$/.test(tok)) {         // 글자 하나
-        if (UI_RES_CHARS.includes(tok)) err("E013", tok, "uiResChar");
-        else push(null, tok);
-        continue;
-      }
+      if (!/^-?[A-Za-z0-9_]+$/.test(tok)) { push(null, tok); continue; }   // 글자 하나
       if (state === "version") { push("n", tok); state = "attr"; continue; }
-      if (before === "=") {                          // 값: 숫자 또는 단어
-        if (/^-?\d/.test(tok)) push("n", tok);
-        else if (/[A-Z]/.test(tok)) upper(tok);
-        else push("p", tok);
-        continue;
-      }
-      if (state === "kind") { kindWord(tok); state = tok === "defaults" ? "dkind" : UI_NO_NAME.has(tok) ? "attr" : "name"; continue; }
-      if (state === "dkind") { kindWord(tok); state = "attr"; continue; }
+      if (before === "=") { push(/^-?\d/.test(tok) ? "n" : /[A-Z]/.test(tok) ? null : "p", tok); continue; }   // 값
+      if (state === "kind") { push(UI_KINDS.has(tok) ? "k" : null, tok); state = tok === "defaults" ? "dkind" : UI_NO_NAME.has(tok) ? "attr" : "name"; continue; }
+      if (state === "dkind") { push(UI_KINDS.has(tok) ? "k" : null, tok); state = "attr"; continue; }
       if (state === "name" && after !== "=") {       // 요소 이름
         state = "attr";
-        if (/[A-Z]/.test(tok)) upper(tok);
-        else if (UI_RESERVED.has(tok)) err("E013", tok, "uiResWord");
-        else push("f", tok);
+        push(/[A-Z]/.test(tok) || UI_RESERVED.has(tok) ? null : "f", tok);
         continue;
       }
       state = "attr";                                // 속성 이름 (값 있음/없음)
-      if (/^-?\d/.test(tok)) { push("n", tok); continue; }   // 'left = 50'의 50 (E004는 ui-check가)
-      if (/[A-Z]/.test(tok)) { upper(tok); continue; }
-      if (UI_ATTRS.has(tok)) { push("t", tok); continue; }
-      const s = suggest(tok, UI_ATTRS);
-      err("E003", tok, "uiAttr", s ? t("uiDidYouMean", s) : t("uiSupports", UI_DOC_VERSION));
+      push(/^-?\d/.test(tok) ? "n" : UI_ATTRS.has(tok) ? "t" : null, tok);
     }
   });
   return out;
 }
 
-/// 토큰 → 줄별 HTML (여러 줄 주석·문자열도 줄마다 나눔). lines.bad = 오류(e)가 있는 줄 번호(0부터)
+/// 검사 결과(diags)의 범위(줄, 칸, 길이: 코드 포인트)에 밑줄 클래스(오류 e, 경고 wn)와 풍선 도움말을 붙인다.
+/// 길이 0인 진단(줄 끝에서 빠진 것 등)은 밑줄 없이 진단 줄로만 보인다.
+function markUiDiags(tokens, diags) {
+  const byLine = new Map();   // 줄(1부터) → [{ a 시작 칸, b 끝 칸(포함 안 함), d }]
+  for (const d of diags) {
+    if (!d.length) continue;
+    if (!byLine.has(d.line)) byLine.set(d.line, []);
+    byLine.get(d.line).push({ a: d.col, b: d.col + d.length, d });
+  }
+  const tipOf = d => `${d.severity}[${d.code}]: ${d.msg}` + (d.help ? `\nhelp: ${d.help}` : "");
+  const out = [];
+  let ln = 1, col = 1;
+  for (const [cls, text] of tokens) {
+    let piece = "", key = null;
+    const flush = () => {
+      if (!piece) return;
+      if (!key) out.push([cls, piece]);
+      else {
+        const sev = key.some(r => r.d.severity === "error") ? "e" : "wn";
+        out.push([(cls ? cls + " " : "") + sev, piece, key.map(r => tipOf(r.d)).join("\n\n")]);
+      }
+      piece = "";
+    };
+    for (const ch of text) {   // 코드 포인트 단위
+      if (ch === "\n") { flush(); key = null; out.push([null, "\n"]); ln++; col = 1; continue; }
+      const hits = (byLine.get(ln) || []).filter(r => col >= r.a && col < r.b);
+      const k = hits.length ? hits : null;
+      if (String(k && k.map(r => r.d.line + ":" + r.d.col + r.d.code)) !== String(key && key.map(r => r.d.line + ":" + r.d.col + r.d.code))) { flush(); key = k; }
+      piece += ch;
+      col++;
+    }
+    flush();
+  }
+  return out;
+}
+
+/// 토큰 → 줄별 HTML (여러 줄 주석·문자열도 줄마다 나눔)
 function tokensToLines(tokens) {
   const lines = [];
-  lines.bad = new Set();
-  lines.errors = 0;
   let cur = "";
   for (const [cls, s, tip] of tokens) {
-    if (cls === "e") lines.errors++;
     const parts = s.split("\n");
     parts.forEach((part, k) => {
       if (k) { lines.push(cur); cur = ""; }
       if (!part) return;
-      if (cls === "e") lines.bad.add(lines.length);
       cur += cls ? `<span class="${cls}"${tip ? ` title="${esc(tip)}"` : ""}>${esc(part)}</span>` : esc(part);
     });
   }
@@ -979,16 +1758,21 @@ function resolve(fromPath, href) {
 }
 
 /// 파일 → 글. UTF-8이 아니면 EUC-KR(CP949), BOM이 있으면 UTF-16
-async function readText(f) {
+/// .ui는 UTF-8로만 읽는다 (형식이 UTF-8만 허용). 틀린 바이트는 �로 보이고 검사기가 E004로 알린다.
+async function readText(f, utf8Only = false) {
   const b = new Uint8Array(await f.arrayBuffer());
   let text, enc;
   if (b[0] === 0xFF && b[1] === 0xFE) { text = new TextDecoder("utf-16le").decode(b); enc = "UTF-16"; }
   else if (b[0] === 0xFE && b[1] === 0xFF) { text = new TextDecoder("utf-16be").decode(b); enc = "UTF-16"; }
   else {
     try { text = new TextDecoder("utf-8", { fatal: true }).decode(b); enc = "UTF-8"; }
-    catch (e) { text = new TextDecoder("euc-kr").decode(b); enc = "EUC-KR"; }
+    catch (e) {
+      if (utf8Only) { text = new TextDecoder("utf-8").decode(b); enc = "UTF-8 (!)"; }
+      else { text = new TextDecoder("euc-kr").decode(b); enc = "EUC-KR"; }
+    }
   }
-  return { text: text.replace(/^\uFEFF/, "").replace(/\r\n?/g, "\n"), enc, size: b.length };
+  // .ui는 검사기와 같게 CRLF만 LF로 (줄 번호가 맞게)
+  return { text: text.replace(/^\uFEFF/, "").replace(utf8Only ? /\r\n/g : /\r\n?/g, "\n"), enc, size: b.length, bytes: b };
 }
 
 const fmtSize = n => n < 1024 ? n + " B" : n < 1048576 ? (n / 1024).toFixed(1) + " KB" : (n / 1048576).toFixed(1) + " MB";
@@ -1001,20 +1785,20 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   catch (e) { setState(t("notFound", path), true); return; }
   const codeEl = $("code"), art = $("out");
   const prevY = !codeEl.hidden ? codeEl.scrollTop : scrollY;
-  const { text, enc, size } = await readText(f);
+  const lang = langOf(path);
+  const { text, enc, size, bytes } = await readText(f, lang === "ui");
   const changed = path !== cur;
   if (changed) expandTo(path);
   cur = path; curMod = f.lastModified;
   if (changed) hlLine = 0;
   if (line) hlLine = line;
-  const lang = langOf(path);
   if (lang === "md") {
     docLang = splitLang(path).lang;
     if (UI[docLang]) uiLang = docLang;
     document.documentElement.lang = docLang;
   }
   const asDoc = lang === "md" && !mdRaw;
-  let lineCount = 0, note = "", errors = 0;
+  let lineCount = 0, note = "", check = null;
   if (asDoc) {
     art.innerHTML = renderMarkdown(text);
     await loadImages();
@@ -1026,20 +1810,27 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
     } else {
       const big = text.length > HL_MAX;
       if (big) note = t("tooBig");
-      const toks = big || lang === "plain" ? [[null, text]] : highlight(text, lang);
+      let toks = big || lang === "plain" ? [[null, text]] : highlight(text, lang);
+      // .ui 전체 검사 (ui-check와 같은 결과). 오류·경고 범위에 밑줄, 줄 아래에 진단
+      if (lang === "ui") { check = uiCheck.check(bytes); if (!big) toks = markUiDiags(toks, check.diags); }
+      const diags = check ? check.diags : [];
       const lines = tokensToLines(toks);
-      const diags = toks.diags || [];
       if (lines.length > 1 && lines[lines.length - 1] === "") lines.pop();
-      lineCount = lines.length; errors = lines.errors;
+      lineCount = lines.length;
+      const sevOf = new Map();   // 줄(0부터) → "bad"(오류) | "warn"(경고만)
+      for (const d of diags) if (d.severity === "error" || !sevOf.has(d.line - 1)) sevOf.set(d.line - 1, d.severity === "error" ? "bad" : "warn");
       codeEl.style.setProperty("--no-w", (String(lineCount).length + 3) + "ch");
       let html = '<div class="lines">';
       // 오류 줄 아래에 진단 끼워 넣기 (줄 번호 없음, 복사 안 됨)
       const byLine = new Map();
-      if (showDiag) for (const d of diags) { if (!byLine.has(d.ln)) byLine.set(d.ln, []); byLine.get(d.ln).push(d); }
+      if (showDiag) for (const d of diags) { if (!byLine.has(d.line - 1)) byLine.set(d.line - 1, []); byLine.get(d.line - 1).push(d); }
+      const srcLines = text.split("\n");
       lines.forEach((l, k) => {
-        html += `<div class="r${k + 1 === hlLine ? " hl" : ""}${lines.bad.has(k) ? " bad" : ""}" id="L${k + 1}"><span class="no" data-n="${k + 1}"></span><span class="tx">${l}</span></div>`;
-        for (const d of byLine.get(k) || []) html += diagRows(d);
+        html += `<div class="r${k + 1 === hlLine ? " hl" : ""}${sevOf.has(k) ? " " + sevOf.get(k) : ""}" id="L${k + 1}"><span class="no" data-n="${k + 1}"></span><span class="tx">${l}</span></div>`;
+        for (const d of byLine.get(k) || []) html += diagRows(d, srcLines[k] || "");
       });
+      // 파일 끝을 넘는 줄의 진단 (빈 파일의 E001 등)은 마지막 줄 아래에
+      for (const [k, list] of byLine) if (k >= lines.length) for (const d of list) html += diagRows(d, "");
       codeEl.innerHTML = html + "</div>";
     }
     art.hidden = true; codeEl.hidden = false;
@@ -1048,9 +1839,14 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   $("name").textContent = (src.name ? src.name + " / " : "") + path;
   document.title = path + " - Source Viewer";
   setState([lineCount ? t("lines", lineCount) : "", fmtSize(size), enc, src.kind === "fsa" ? t("auto") : t("noAuto"), note].filter(Boolean).join(" · "));
-  if (errors) {   // .ui 간단 검사 결과
+  if (check) {   // .ui 검사 결과: 오류(빨강)·경고(주황)·문제 없음
     const b = document.createElement("span");
-    b.className = "bad"; b.textContent = " · " + t("uiErrs", errors); b.title = t("uiErrsTip");
+    const parts = [];
+    if (check.errorCount) parts.push(t("uiErrs", check.errorCount));
+    if (check.warningCount) parts.push(t("uiWarns", check.warningCount));
+    b.className = check.errorCount ? "bad" : check.warningCount ? "warn" : "okay";
+    b.textContent = " · " + (parts.length ? parts.join(" · ") : t("uiOk"));
+    b.title = t("uiErrsTip", UI_DOC_VERSION);
     $("state").append(b);
   }
   drawNav(); drawLangs(); drawStatic();
@@ -1067,15 +1863,15 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   }
 }
 
-/// 진단 2줄: "   ^^^^ error[E003]: 메시지" / "        help: 추천"
-/// 앞부분은 원래 줄의 글자를 투명하게 그대로 써서, 탭·한글이 있어도 칸이 맞는다.
+/// 진단 2줄: "   ^^^^ error[E003]: 메시지" / "        help: 추천" (경고는 warning[W103], 주황)
+/// 앞부분은 원래 줄의 글자(칸 = 코드 포인트)를 투명하게 그대로 써서, 탭·한글이 있어도 칸이 맞는다.
 /// 글자는 모두 CSS ::before(data-t)로 그려서 선택·복사되지 않는다 (줄 번호와 같은 방식)
-function diagRows(d) {
+function diagRows(d, line) {
   const span = (cls, text) => `<span class="${cls}" data-t="${esc(text)}"></span>`;
-  const pad = span("pad", d.prefix);
-  const row = body => `<div class="r dg"><span class="no"></span><span class="tx">${body}</span></div>`;
-  const w = Math.max(d.len, 1);
-  let html = row(pad + span("x", "^".repeat(w) + " error[" + d.code + "]") + span("dm", ": " + d.msg));
+  const pad = span("pad", [...line].slice(0, d.col - 1).join(""));
+  const row = body => `<div class="r dg${d.severity === "warning" ? " dw" : ""}"><span class="no"></span><span class="tx">${body}</span></div>`;
+  const w = Math.max(d.length, 1);
+  let html = row(pad + span("x", "^".repeat(w) + " " + d.severity + "[" + d.code + "]") + span("dm", ": " + d.msg));
   if (d.help) html += row(pad + span("dh", " ".repeat(w + 1) + "help: " + d.help));
   return html;
 }
@@ -1332,6 +2128,7 @@ function applyTheme(id) {
   if (th.s) th.s.split(" ").forEach((c, k) => root.style.setProperty("--" + HL_NAMES[k], c));
   if (th.font) root.style.setProperty("--font", th.font);
   if (th.v) root.style.setProperty("--err", th.dark ? "#ff6b6b" : "#d03030");
+  if (th.v) root.style.setProperty("--warn", th.dark ? "#e8a33d" : "#b06a00");
   if (th.id) root.style.colorScheme = th.dark ? "dark" : "light";
   themeId = th.id;
   $("theme").value = th.id;
