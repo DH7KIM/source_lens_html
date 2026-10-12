@@ -2,6 +2,17 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.7.0 (2026-10-12)
+
+### tests
+
+- `.ui` 레이아웃 샘플 `tests/samples/ui` (각각 하나의 완성된 화면, 뷰어 코드는 바뀌지 않음):
+  - `positions.ui`: 찾기·바꾸기 대화상자 — group 안 위치(left·right·top·bottom, right_of·below, gap, padding).
+  - `rows_columns.ui`: 설정 창 — row·column 중첩, spacer, align, defaults.
+  - `all_elements.ui`: 타일 에디터 화면 — 모든 요소 종류, hidden·disabled, 메뉴 3개(radio 묶음, check, 하위 메뉴).
+  - `errors_recover.ui`: 일부러 넣은 오류 7개 — 틀린 요소를 빼고 그리는 모습.
+  - `errors_cannot.ui`: 머리 줄 `#ui 1` 없음(E001) — 그릴 수 없다는 안내.
+
 ## v0.6.0 (2026-10-12)
 
 ### source-viewer.html

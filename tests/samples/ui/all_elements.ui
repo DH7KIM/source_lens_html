@@ -1,0 +1,80 @@
+#ui 1  section=tile_editor
+// Tile editor main window: every element kind, defaults, hidden/disabled, menus (radio groups, check, submenus)
+// View mode: click "File", "Format" and "View" to open the menus.
+defaults button    height=26
+defaults dropdown  height=26
+defaults row       gap=4 padding=4
+
+// Menu bar
+row menubar  left=0 right=0 top=0 height=34 {
+    dropdown file_btn    text="File"    menu=file_menu    tip="Open and save"
+    dropdown format_btn  text="Format"  menu=format_menu  tip="Tile format"
+    dropdown view_btn    text="View"    menu=view_menu    tip="What to show"
+    spacer
+    label    file_name   text="font.gba"  align=right
+}
+
+// Tool bar
+row toolbar  left=0 right=0 below=menubar gap=0 height=36 align=center {
+    button   open     text="Open"   tip="Open a ROM file"
+    button   save     text="Save"   disabled  tip="Save the ROM file"  disabled_tip="Nothing changed yet"
+    button   undo     text="Undo"   hidden  tip="Undo"          // hidden still takes its space
+    label    offset_l text="Offset"
+    number   offset   min=0 max=0x1FFFFFF step=0x10 hex width=100  tip="Start address of the tiles"
+    edit     search   width=120 max_length=64 hint="Find text"  tip="Text to find in the font"
+    check    grid     text="Grid"  checked  tip="Show the tile grid"
+}
+
+// Left: tile list, right: one tile larger, bottom: status line
+canvas tiles   left=0 width=360 below=toolbar gap=0 bottom=24
+column side    right_of=tiles gap=0 right=0 top=70 bottom=24 padding=8 {
+    label  zoom_l   text="Selected tile"
+    canvas zoom     height=160
+    row    nav      align=center {
+        button prev  text="◀"  width=40  tip="Previous tile"
+        spacer
+        label  index text="0 / 256"
+        spacer
+        button next  text="▶"  width=40  tip="Next tile"
+    }
+    spacer
+}
+label  status  text="Ready"  left=6 right=6 bottom=4
+
+menu file_menu {
+    item open_item   text="Open..."
+    item save_item   text="Save"
+    item save_as     text="Save as..."
+    separator
+    menu recent      text="Recent files" {
+        item r1  text="font.gba"
+        item r2  text="title.gba"
+    }
+    separator
+    item quit        text="Quit"
+}
+
+menu format_menu {
+    item bpp1  text="1bpp"  radio checked     // one radio group
+    item bpp2  text="2bpp"  radio
+    item bpp4  text="4bpp"  radio
+    separator                                // a separator starts a new radio group
+    item w8    text="8 × 8"    radio checked
+    item w16   text="16 × 16"  radio
+    separator
+    menu order text="Byte order" {
+        item little  text="Little endian"  radio checked
+        item big     text="Big endian"     radio
+    }
+}
+
+menu view_menu {
+    item show_grid  text="Grid"      check checked
+    item show_addr  text="Address"   check
+    separator
+    menu zoom_menu  text="Zoom" {
+        item z1  text="100%"  radio checked
+        item z2  text="200%"  radio
+        item z4  text="400%"  radio
+    }
+}

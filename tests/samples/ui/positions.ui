@@ -1,0 +1,27 @@
+#ui 1  section=find_dialog
+// Find and replace dialog: positions inside a group (left/right/top/bottom, right_of/below, gap)
+// Try "Fit to pane" and change the window size: elements with left+right or top+bottom stretch.
+
+label   find_label     text="Find"      left=12 top=14 width=60
+edit    find_text      right_of=find_label  right=110  top=10  hint="Text to find"  tip="Text to find"
+label   replace_label  text="Replace"   left=12 below=find_label gap=14 width=60
+edit    replace_text   right_of=replace_label  right=110  below=find_text  hint="New text"  tip="Text to put in its place"
+
+// Buttons stick to the right edge
+button  find_next      text="Find next"    right=12 top=10 width=90  tip="Find the next match"
+button  replace_one    text="Replace"      right=12 below=find_next width=90  tip="Replace this match"
+button  replace_all    text="Replace all"  right=12 below=replace_one width=90  tip="Replace every match"
+
+// Options: a group with its own inner area (padding).
+// gap is shared by right_of and below, so the second line uses top= instead of below=
+group   options  left=12 right=110 below=replace_text gap=12 height=80 padding=8 {
+    check  match_case   text="Match case"    left=0 top=0  tip="Upper and lower case must match"
+    check  whole_word   text="Whole word"    right_of=match_case gap=20 top=0  tip="Match whole words only"
+    check  wrap         text="Wrap around"   left=0 top=26  checked  tip="Continue from the start"
+    check  regex        text="Regular expression"  right_of=wrap gap=20 top=26            disabled  tip="Use a regular expression"  disabled_tip="Not supported yet"
+}
+
+// Result area: all the space that is left
+canvas  results  left=12 right=12 below=options gap=12 bottom=40
+label   status   text="0 matches"  left=12 bottom=12
+button  close    text="Close"  right=12 bottom=8 width=90  tip="Close this dialog"

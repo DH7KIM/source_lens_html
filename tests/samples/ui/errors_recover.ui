@@ -1,0 +1,15 @@
+#ui 1  section=errors
+// Errors on purpose: the preview leaves out the wrong elements ("Ignore" in the program) and draws the rest.
+// The status line shows the error count; hover an underline to see the message.
+row bar  left=0 right=0 top=0 height=40 padding=6 gap=6 {
+    button  open   text="Open"   tip="Open a file"
+    buton   save   text="Save"   tip="Save"           // E002 unknown kind: save is left out
+    button  close  text="Close"  colour=red  tip=""    // E003 unknown attribute: ignored, close stays
+    label   info   text="Info"   left=4                // E011 left inside a row: ignored
+}
+canvas  view   left=0 right=0 below=bar gap=0 bottom=30
+button  ok     text="OK"  right_of=missing width=80 bottom=4  tip=""   // E008 no element 'missing': left=0
+number  count  min=10 max=1  right=4 bottom=4 width=60  tip=""         // E004 min is larger than max
+group   box    left=100 {                                              // E007 position is not complete: box and its children are left out
+    label inside  text="Inside"
+}

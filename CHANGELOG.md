@@ -2,6 +2,17 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.7.0 (2026-10-12)
+
+### tests
+
+- `.ui` layout samples in `tests/samples/ui` (each one a complete screen; the viewer code is unchanged):
+  - `positions.ui`: find and replace dialog — positions in a group (left, right, top, bottom, right_of, below, gap, padding).
+  - `rows_columns.ui`: settings window — nested row and column, spacer, align, defaults.
+  - `all_elements.ui`: tile editor screen — every element kind, hidden and disabled, three menus (radio groups, check, submenus).
+  - `errors_recover.ui`: seven errors on purpose — the preview leaves out the wrong elements.
+  - `errors_cannot.ui`: no `#ui 1` header (E001) — the preview shows that it cannot draw.
+
 ## v0.6.0 (2026-10-12)
 
 ### source-viewer.html
