@@ -2,6 +2,14 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.13.0 (2026-10-13)
+
+### source-viewer.html, docs-viewer.html
+
+- 맨 위 프로젝트 이름 옆에 프로젝트 버전 표시: `source_lens_html v0.13.0 / source/tests/...`. 버전은 연 폴더 `CHANGELOG.md`의 첫 `## vX.Y.Z` (영어판이 없으면 `CHANGELOG.ko.md`). 변경 기록이 없거나 버전이 없으면 전과 같이 이름만 표시.
+- 파일 목록을 다시 읽을 때 버전도 다시 읽음.
+- 맨 위 버전 주석: source-viewer v0.13.0, docs-viewer v0.13.0 (docs-viewer도 이제 프로젝트 버전을 따름).
+
 ## v0.12.0 (2026-10-13)
 
 ### source-viewer.html

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.12.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.13.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -2034,8 +2034,23 @@ function splitLang(path) {
 }
 const keyOf = p => isMd(p) ? splitLang(p).base + ".md" : p;
 
+// 프로젝트 버전: 폴더 맨 위 CHANGELOG.md(없으면 CHANGELOG.ko.md)의 첫 "## vX.Y.Z". 없으면 빈 글
+let projectVersion = "";
+async function readProjectVersion(paths) {
+  for (const p of ["CHANGELOG.md", "CHANGELOG.ko.md"]) {
+    if (!paths.includes(p)) continue;
+    try {
+      const m = (await (await src.get(p)).text()).match(/^##[ \t]+v?(\d+\.\d+\.\d+[\w.+-]*)/m);
+      if (m) return "v" + m[1];
+    } catch (e) {}
+  }
+  return "";
+}
+const projectLabel = () => src.name ? src.name + (projectVersion ? " " + projectVersion : "") + " / " : "";
+
 async function refreshList() {
   const paths = (await src.list()).sort();
+  projectVersion = await readProjectVersion(paths);
   fileSet = new Set(paths);
   entries = new Map();
   for (const p of paths) {
@@ -2312,7 +2327,7 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
     art.hidden = true; codeEl.hidden = false;
   }
   $("start").hidden = true;
-  $("name").textContent = (src.name ? src.name + " / " : "") + path;
+  $("name").textContent = projectLabel() + path;
   document.title = path + " - Source Viewer";
   setState([lineCount ? t("lines", lineCount) : "", fmtSize(size), enc, src.kind === "fsa" ? t("auto") : t("noAuto"), note].filter(Boolean).join(" · "));
   if (check) {   // .ui 검사 결과: 오류(빨강)·경고(주황)·문제 없음

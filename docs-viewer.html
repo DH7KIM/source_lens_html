@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Docs Viewer</title>
 <!--
-  Docs Viewer v0.2.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Docs Viewer v0.13.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Docs Viewer: 이 폴더의 마크다운(.md) 문서를 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 문서를 본다.
@@ -380,8 +380,23 @@ function splitLang(path) {
   return { base: m[1], lang: (m[2] || "en").toLowerCase() };
 }
 
+// 프로젝트 버전: 폴더 맨 위 CHANGELOG.md(없으면 CHANGELOG.ko.md)의 첫 "## vX.Y.Z". 없으면 빈 글
+let projectVersion = "";
+async function readProjectVersion(paths) {
+  for (const p of ["CHANGELOG.md", "CHANGELOG.ko.md"]) {
+    if (!paths.includes(p)) continue;
+    try {
+      const m = (await (await src.get(p)).text()).match(/^##[ \t]+v?(\d+\.\d+\.\d+[\w.+-]*)/m);
+      if (m) return "v" + m[1];
+    } catch (e) {}
+  }
+  return "";
+}
+const projectLabel = () => src.name ? src.name + (projectVersion ? " " + projectVersion : "") + " / " : "";
+
 async function refreshList() {
   const paths = (await src.list()).sort();
+  projectVersion = await readProjectVersion(paths);
   docs = new Map();
   for (const p of paths) {
     const { base, lang } = splitLang(p);
@@ -579,7 +594,7 @@ async function openDoc(path, { hash = "", keepScroll = false } = {}) {
   $("out").innerHTML = renderMarkdown(text);
   await loadImages();
   $("start").hidden = true; $("out").hidden = false;
-  $("name").textContent = (src.name ? src.name + " / " : "") + path;
+  $("name").textContent = projectLabel() + path;
   document.title = path + " - Docs Viewer";
   $("state").textContent = src.kind === "fsa" ? t("auto") : t("noAuto");
   drawNav(); drawLangs(); drawStatic();

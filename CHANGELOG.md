@@ -2,6 +2,14 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.13.0 (2026-10-13)
+
+### source-viewer.html, docs-viewer.html
+
+- The project version is shown next to the project name at the top: `source_lens_html v0.13.0 / source/tests/...`. The version is the first `## vX.Y.Z` in `CHANGELOG.md` of the opened folder (`CHANGELOG.ko.md` if there is no English one). With no changelog or no version, the name is shown as before.
+- The version is read again when the file list is refreshed.
+- Version comments at the top: source-viewer v0.13.0, docs-viewer v0.13.0 (docs-viewer now follows the project version).
+
 ## v0.12.0 (2026-10-13)
 
 ### source-viewer.html

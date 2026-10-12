@@ -17,10 +17,10 @@
 - [x] 뷰어가 ui-guideline 0.9 따르기: `edit`→`text_field`, `number`→`number_field`, `dropdown`→`menu_button` (옛 이름은 W104), 메시지·미리보기·샘플 `.ui`, `w104_old_names.ui`·`w104_mixed.ui` 추가. 다음은 C++(tile_font_editor_cpp `docs/ui-changes.ko.md`) — 2026.10.13 (v0.10.0)
 - [x] .ui 오류 설명 한국어로 보기: 번역 원본 tile_font_editor_cpp `language\ko\ui-check.json5`(섹션 `ui-check`, 159개), 뷰어에 `UI_MSG`로 내장. 화면 언어가 한국어면 진단 줄·풍선이 한국어, 풍선에 영어 원문도. 코드·ui-check 출력은 영어 그대로 — 2026.10.13 (v0.11.0)
 - [x] json5 색칠: 주석, 따옴표 없는 키, 작은따옴표 문자열, 16진수, `+2.`·`.5`, Infinity·NaN, 끝 쉼표. `json5`는 따로 둔 언어, 예제 `tests/samples/project/language/ko/main.json5` — 2026.10.13 (v0.12.0)
+- [x] 경로에 프로젝트 버전 표시: `source_lens_html v0.13.0 / source/...`. 버전은 연 폴더 CHANGELOG.md(없으면 CHANGELOG.ko.md) 첫 `## vX.Y.Z`, 없으면 이름만. 두 뷰어 모두 — 2026.10.13 (v0.13.0)
 
 ## 다음 버전 (순서대로)
 
-- [ ] 경로에 프로젝트 버전 표시 (v0.13.0): `source_lens_html / source/tests/...` → `source_lens_html v0.12.0 / source/tests/...`. 버전은 연 폴더 CHANGELOG.md(없으면 CHANGELOG.ko.md) 맨 위 `## vX.Y.Z`에서 읽고, 없으면 지금처럼 버전 없이 표시 — 2026.10.13 요청
 - [ ] json5 언어팩 읽기 (v0.14.0): 연 폴더에 `language\ko\ui-check.json5`가 있으면 내장 표(`UI_MSG`)보다 우선. 읽는 형식은 tile_font_editor_cpp `src\i18n.cppm`(`<import files>`, 섹션) 참고 — 2026.10.12 요청 (색칠은 v0.12.0에서 끝)
 - [ ] 컴파일러 결과 보기 (GCC 먼저): 빌드 출력을 파일로 저장(예: `build.bat`에서 `2> build.log`)하면, 그 로그의 `파일:줄:칸: error/warning: ...`를 읽어 해당 소스 줄에 밑줄 + 진단 줄 표시 (.ui 진단 표시 재사용, 자동 새로 고침과 함께). Rust는 `cargo build --message-format=json` 다음 단계 — 2026.10.12 요청
 - [ ] toml 검사 (`Cargo.toml` 등): 문법이 작아 .ui처럼 정확히 검사 가능 — 2026.10.12 요청
