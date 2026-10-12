@@ -1,0 +1,17 @@
+#ui 1
+// test: W104 old names (ui-guideline 0.8, 0.9). Each old name gives one warning.
+defaults row  gap=4
+defaults edit  height=26
+row bar  left=0 right=0 top=0 height=40 padding=6 {
+    button   open   text="Open"  tip="Open a file"
+    button   save   text="Save"  disabled  tooltip="Save"  disabled_tip="Nothing changed"
+    edit     find   width=120  hint="Find"  tooltip="Text to find"
+    number   addr   width=80  tooltip="Address"
+    check    wrap   text="Wrap"  tooltip="Wrap lines"
+    dropdown view   text="View"  menu=view_menu  tooltip="What to show"
+}
+canvas page  left=0 right=0 below=bar spacing=0 bottom=0
+menu view_menu {
+    item     grid   text="Grid"   check checked
+    menu_item ruler  text="Ruler"  checkable
+}

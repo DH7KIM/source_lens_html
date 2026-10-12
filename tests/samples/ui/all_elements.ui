@@ -1,28 +1,28 @@
 #ui 1  section=tile_editor
 // Tile editor main window: every element kind, defaults, hidden/disabled, menus (radio groups, checkable, submenus)
 // View mode: click "File", "Format" and "View" to open the menus.
-defaults button    height=26
-defaults dropdown  height=26
-defaults row       spacing=4 padding=4
+defaults button      height=26
+defaults menu_button height=26
+defaults row         spacing=4 padding=4
 
 // Menu bar
 row menubar  left=0 right=0 top=0 height=34 {
-    dropdown file_btn    text="File"    menu=file_menu    tooltip="Open and save"
-    dropdown format_btn  text="Format"  menu=format_menu  tooltip="Tile format"
-    dropdown view_btn    text="View"    menu=view_menu    tooltip="What to show"
+    menu_button file_btn    text="File"    menu=file_menu    tooltip="Open and save"
+    menu_button format_btn  text="Format"  menu=format_menu  tooltip="Tile format"
+    menu_button view_btn    text="View"    menu=view_menu    tooltip="What to show"
     spacer
     label    file_name   text="font.gba"  align=right
 }
 
 // Tool bar
 row toolbar  left=0 right=0 below=menubar spacing=0 height=36 align=center {
-    button   open     text="Open"   tooltip="Open a ROM file"
-    button   save     text="Save"   disabled  tooltip="Save the ROM file"  disabled_tooltip="Nothing changed yet"
-    button   undo     text="Undo"   hidden  tooltip="Undo"          // hidden still takes its space
-    label    offset_l text="Offset"
-    number   offset   min=0 max=0x1FFFFFF step=0x10 hex width=100  tooltip="Start address of the tiles"
-    edit     search   width=120 max_length=64 placeholder="Find text"  tooltip="Text to find in the font"
-    checkbox   grid     text="Grid"  checked  tooltip="Show the tile grid"
+    button       open     text="Open"   tooltip="Open a ROM file"
+    button       save     text="Save"   disabled  tooltip="Save the ROM file"  disabled_tooltip="Nothing changed yet"
+    button       undo     text="Undo"   hidden  tooltip="Undo"          // hidden still takes its space
+    label        offset_l text="Offset"
+    number_field offset   min=0 max=0x1FFFFFF step=0x10 hex width=100  tooltip="Start address of the tiles"
+    text_field   search   width=120 max_length=64 placeholder="Find text"  tooltip="Text to find in the font"
+    checkbox     grid     text="Grid"  checked  tooltip="Show the tile grid"
 }
 
 // Left: tile list, right: one tile larger, bottom: status line

@@ -23,19 +23,19 @@ column pages  left=0 top=40 bottom=0 width=140 padding=6 spacing=4 {
 // Right side: rows of label + control
 column page  left=140 right=0 top=40 bottom=40 padding=10 spacing=8 align=left {
     row r_lang  align=center {
-        label    lang_label  text="Language"  width=90
-        dropdown lang        text="한국어"  menu=lang_menu  width=120  tooltip="Language of the program"
+        label       lang_label  text="Language"  width=90
+        menu_button lang        text="한국어"  menu=lang_menu  width=120  tooltip="Language of the program"
     }
     row r_size  align=center {
-        label    size_label  text="Tile size"  width=90
-        number   tile_w      min=1 max=64 step=1 width=60  tooltip="Tile width"
-        label    times       text="×"
-        number   tile_h      min=1 max=64 step=1 width=60  tooltip="Tile height"
+        label        size_label  text="Tile size"  width=90
+        number_field tile_w      min=1 max=64 step=1 width=60  tooltip="Tile width"
+        label        times       text="×"
+        number_field tile_h      min=1 max=64 step=1 width=60  tooltip="Tile height"
     }
     row r_path  align=center {
-        label    path_label  text="Folder"  width=90
-        edit     path        width=240  placeholder="D:\\Projects"  tooltip="Folder to open first"
-        button   browse      text="..."  width=30  tooltip="Choose a folder"
+        label      path_label  text="Folder"  width=90
+        text_field path        width=240  placeholder="D:\\Projects"  tooltip="Folder to open first"
+        button     browse      text="..."  width=30  tooltip="Choose a folder"
     }
     checkbox start_last  text="Open the last file on start"  checked  tooltip="Reopen the file from last time"
     checkbox dark        text="Dark theme"  tooltip="Use dark colors"

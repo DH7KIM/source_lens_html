@@ -1,7 +1,8 @@
 #ui 1
-// Old names (UI document 0.7 and before): still read, but each one gives warning W104
+// Old names (changed in UI document 0.8 and 0.9): still read, but each one gives warning W104
 // with the new name in help. Automatic fix: old name -> new name.
-//   check -> checkbox, item -> menu_item (element kinds)
+//   check -> checkbox, item -> menu_item, edit -> text_field, number -> number_field,
+//   dropdown -> menu_button (element kinds)
 //   tip -> tooltip, disabled_tip -> disabled_tooltip, hint -> placeholder, gap -> spacing,
 //   check -> checkable (menu item attribute)
 defaults row  gap=6
@@ -10,6 +11,7 @@ row bar  left=0 right=0 top=0 height=40 padding=6 {
     button   open   text="Open"  tip="Open a file"
     button   save   text="Save"  disabled  tip="Save the file"  disabled_tip="Nothing changed yet"
     edit     find   width=140  hint="Find text"  tip="Text to find"
+    number   addr   width=80  min=0 max=255  tip="Address"
     check    wrap   text="Wrap"  tip="Wrap long lines"
     dropdown view   text="View"  menu=view_menu  tip="What to show"
 }

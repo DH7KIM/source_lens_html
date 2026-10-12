@@ -1,0 +1,9 @@
+#ui 1
+// test: old and new name together (E006), old name with an error (no W104), old kind as a name (E013)
+group box  left=0 top=0 width=300 height=200 {
+    button   a      text="A"  tip="old"  tooltip="new"  left=0 top=0
+    button   b      text="B"  tip=5  left=0 top=30
+    button   edit   text="C"  tooltip="c"  left=0 top=60
+    button   d      text="D"  tooltip="d"  check  left=0 top=90
+    button   e      text="E"  toolip="typo"  left=0 top=120
+}

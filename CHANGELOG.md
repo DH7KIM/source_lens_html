@@ -2,6 +2,24 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.10.0 (2026-10-13)
+
+### source-viewer.html
+
+- `.ui` element names with clear behavior and meaning (follows ui-guideline document 0.9):
+  - `edit` → `text_field`, `number` → `number_field`, `dropdown` → `menu_button`
+- The old names are still read and give warning W104 (`'edit' is an old name` / `help: use 'text_field' instead`), the same as the 0.8 names. They cannot be element names (E013), and suggestions (`did you mean`) only give new names.
+- Messages use the new names: `'menu_button' needs menu=<menu name>`, `a menu_button opens it`, `defaults work for: label, button, text_field, number_field, menu_button, ...`, and kind names in E004, E010 and other messages.
+- Everything else gives the same results as v0.9.0 (compared with the 33 files in `tests/ui`: only W104, the new names and `UI 0.9` differ; layout results are the same).
+- Preview: element boxes and view mode use the new names (`menu_button` opens its menu).
+- Version comment at the top v0.10.0, `UI_DOC_VERSION` 0.9.
+- Note: the C++ `ui-check` (uilayout.cppm) is still at document 0.7.
+
+### tests
+
+- Sample `.ui` files use the new names. `old_names.ui` also has `edit`, `number` and `dropdown` (18 W104 warnings).
+- Added `tests\samples\ui\w104_old_names.ui` (every old name, 11 W104, no errors) and `w104_mixed.ui` (old and new name together → E006, old name with an error → no W104, old kind as a name → E013).
+
 ## v0.9.0 (2026-10-12)
 
 ### source-viewer.html

@@ -2,10 +2,10 @@
 // Find and replace dialog: positions inside a group (left/right/top/bottom, right_of/below, spacing)
 // Try "Fit to pane" and change the window size: elements with left+right or top+bottom stretch.
 
-label   find_label     text="Find"      left=12 top=14 width=60
-edit    find_text      right_of=find_label  right=110  top=10  placeholder="Text to find"  tooltip="Text to find"
-label   replace_label  text="Replace"   left=12 below=find_label spacing=14 width=60
-edit    replace_text   right_of=replace_label  right=110  below=find_text  placeholder="New text"  tooltip="Text to put in its place"
+label      find_label     text="Find"      left=12 top=14 width=60
+text_field find_text      right_of=find_label  right=110  top=10  placeholder="Text to find"  tooltip="Text to find"
+label      replace_label  text="Replace"   left=12 below=find_label spacing=14 width=60
+text_field replace_text   right_of=replace_label  right=110  below=find_text  placeholder="New text"  tooltip="Text to put in its place"
 
 // Buttons stick to the right edge
 button  find_next      text="Find next"    right=12 top=10 width=90  tooltip="Find the next match"

@@ -2,6 +2,24 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.10.0 (2026-10-13)
+
+### source-viewer.html
+
+- `.ui` 요소 이름을 동작·의미가 확실한 것으로 (ui-guideline 문서 0.9를 따름):
+  - `edit` → `text_field`, `number` → `number_field`, `dropdown` → `menu_button`
+- 옛 이름도 계속 읽고 경고 W104 (`'edit' is an old name` / `help: use 'text_field' instead`), 0.8의 옛 이름과 같음. 요소 이름으로 쓸 수 없음(E013), 추천(`did you mean`)은 새 이름만.
+- 메시지도 새 이름으로: `'menu_button' needs menu=<menu name>`, `a menu_button opens it`, `defaults work for: label, button, text_field, number_field, menu_button, ...`, E004·E010 등의 종류 이름.
+- 그 밖의 결과는 v0.9.0과 같음 (`tests/ui` 33개로 비교: W104, 새 이름, `UI 0.9`만 다르고 배치 결과는 같음).
+- 미리보기: 상자와 보기 모드도 새 이름으로 (`menu_button`을 클릭하면 메뉴가 펼쳐짐).
+- 맨 위 주석 버전 v0.10.0, `UI_DOC_VERSION` 0.9.
+- 참고: C++ `ui-check`(uilayout.cppm)는 아직 문서 0.7.
+
+### tests
+
+- 샘플 `.ui`를 새 이름으로 바꿈. `old_names.ui`에 `edit`·`number`·`dropdown`도 넣음 (W104 18개).
+- `tests\samples\ui\w104_old_names.ui`(옛 이름 전부, W104 11개, 오류 없음), `w104_mixed.ui`(옛·새 이름 함께 → E006, 오류 있는 옛 이름 → W104 없음, 옛 종류 이름을 요소 이름으로 → E013) 추가.
+
 ## v0.9.0 (2026-10-12)
 
 ### source-viewer.html

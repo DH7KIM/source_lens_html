@@ -1,7 +1,7 @@
 #ui 1  section=menu_test
 row bar  left=0 right=0 top=0 height=40  padding=8 {
-    dropdown view  text="View"  menu=view_menu  tooltip="View options"
-    dropdown none  text="Empty"  menu=empty_menu  tooltip=""
+    menu_button view  text="View"  menu=view_menu  tooltip="View options"
+    menu_button none  text="Empty"  menu=empty_menu  tooltip=""
 }
 menu view_menu {
     menu_item small  text="Small"  radio

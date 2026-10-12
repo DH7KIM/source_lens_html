@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.9.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.10.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
   - 목록은 트리 구조(가지 연결선 ├ └): 폴더를 눌러 접기·펼치기 (브라우저에 기억). 접힌 폴더 안에 지금 파일이 있으면 강조색.
   - 문법 색칠 + 줄 번호 (C++, Rust, TOML, JSON, BAT, 셸/YAML/Makefile). 줄 번호는 복사할 때 딸려 오지 않는다.
-  - .ui (UI 레이아웃 형식 1, ui-guideline 문서 0.8): 색칠 + 전체 검사(E001~E016, W101·W103·W104).
+  - .ui (UI 레이아웃 형식 1, ui-guideline 문서 0.9): 색칠 + 전체 검사(E001~E016, W101·W103·W104).
     옛 이름(tip, check, item 등)도 읽고 경고 W104로 새 이름을 알려 준다.
     오류는 빨간 밑줄, 경고는 주황 밑줄. 줄 아래에 코드·설명·추천(help)을 표시 (끄고 켤 수 있음). .ui.log도 색칠.
   - .md는 문서로 보기 / 원문 보기 전환. 한국어(이름.ko.md) / 영어(이름.md) 전환.
@@ -157,12 +157,12 @@
   .pv-win { position: relative; background: var(--bg); border: 1px solid var(--muted); box-sizing: content-box; overflow: hidden; color: var(--fg); }
   .pv-win > div { position: absolute; box-sizing: border-box; overflow: hidden; white-space: pre; display: flex; align-items: center; }
   .pv-win .pv-label { justify-content: flex-start; }
-  .pv-win .pv-button, .pv-win .pv-dropdown { border: 1px solid var(--muted); border-radius: 4px; background: var(--panel); justify-content: center; }
-  .pv-win .pv-dropdown { justify-content: space-between; padding: 0 6px; }
-  .pv-win .pv-edit, .pv-win .pv-number { border: 1px solid var(--muted); border-radius: 2px; padding: 0 5px; background: var(--bg); }
+  .pv-win .pv-button, .pv-win .pv-menu_button { border: 1px solid var(--muted); border-radius: 4px; background: var(--panel); justify-content: center; }
+  .pv-win .pv-menu_button { justify-content: space-between; padding: 0 6px; }
+  .pv-win .pv-text_field, .pv-win .pv-number_field { border: 1px solid var(--muted); border-radius: 2px; padding: 0 5px; background: var(--bg); }
   .pv-win .pv-checkbox { background: var(--bg); }
-  .pv-win .pv-number { justify-content: space-between; }
-  .pv-win .pv-edit .h { color: var(--muted); }
+  .pv-win .pv-number_field { justify-content: space-between; }
+  .pv-win .pv-text_field .h { color: var(--muted); }
   .pv-win .pv-canvas { border: 1px solid var(--line); background: repeating-linear-gradient(45deg, var(--line) 0 1px, transparent 1px 8px); }
   .pv-win .pv-group, .pv-win .pv-row, .pv-win .pv-column { border: 1px dashed var(--muted); align-items: flex-start; }
   /* 묶음 이름표는 오른쪽 위 구석에 (자식이 왼쪽 위부터 놓이므로 덜 가림). 자식이 뒤에 그려져 위를 덮음 */
@@ -176,11 +176,11 @@
   .pv-mode { display: inline-flex; } .pv-mode button { border-radius: 0; margin: 0; }
   .pv-mode button:first-child { border-radius: 4px 0 0 4px; } .pv-mode button:last-child { border-radius: 0 4px 4px 0; border-left: 0; }
   .pv-mode button[aria-pressed="true"] { background: var(--accent); color: var(--bg); font-weight: 700; }
-  /* 보기 모드: dropdown만 누를 수 있음, 펼친 메뉴는 창 밖으로 나갈 수 있게 .pv-wrap에 둠 */
+  /* 보기 모드: menu_button만 누를 수 있음, 펼친 메뉴는 창 밖으로 나갈 수 있게 .pv-wrap에 둠 */
   .pv-wrap { position: relative; display: inline-block; }
   .pv-view .pv-win > div { cursor: default; } .pv-view .pv-win > div:hover { outline: none; }
   .pv-view .pv-win > div.pv-cur { outline: none; background-color: transparent; }
-  .pv-view .pv-win > div.pv-dropdown { cursor: pointer; } .pv-view .pv-win > div.pv-dropdown:hover { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .pv-view .pv-win > div.pv-menu_button { cursor: pointer; } .pv-view .pv-win > div.pv-menu_button:hover { outline: 2px solid var(--accent); outline-offset: -1px; }
   .pv-view .pv-win > div.pv-open { outline: 2px solid var(--accent); outline-offset: -1px; }
   .pv-pop { position: absolute; z-index: 10; min-width: 120px; padding: 3px 0; background: var(--panel); color: var(--fg); border: 1px solid var(--muted);
     box-shadow: 0 4px 12px rgba(0,0,0,.3); white-space: pre; cursor: default; }
@@ -308,7 +308,7 @@ const UI = {
     pvCannot: "이 오류는 배치를 그릴 수 없습니다 (머리 줄 '#ui 1', 파일 크기 등). 위의 오류를 먼저 고쳐 주세요.",
     pvBox: "{0}  {5}번 줄  위치 {1}, {2}  크기 {3}×{4}", pvBoxGo: "클릭하면 소스의 이 줄로 갑니다.", pvHidden: "(hidden)", pvDisabled: "(disabled)",
     pvModeL: "배치", pvModeV: "보기", pvModeLTip: "배치 모드: 상자를 클릭하면 소스의 그 줄로 갑니다.",
-    pvModeVTip: "보기 모드: 프로그램처럼 보입니다. 상자에 마우스를 올리면 풍선 도움말(tooltip, disabled면 disabled_tooltip), dropdown을 클릭하면 연결된 menu가 펼쳐집니다 (보기만, 바깥 클릭·Esc로 닫기).",
+    pvModeVTip: "보기 모드: 프로그램처럼 보입니다. 상자에 마우스를 올리면 풍선 도움말(tooltip, disabled면 disabled_tooltip), menu_button을 클릭하면 연결된 menu가 펼쳐집니다 (보기만, 바깥 클릭·Esc로 닫기).",
     pvDropGo: "클릭하면 메뉴를 펼칩니다.", pvNoMenu: "연결된 menu가 없습니다", pvEmpty: "(빈 메뉴)", pvItem: "{0}  {1}번 줄",
     uiErrs: "오류 {0}개", uiWarns: "경고 {0}개", uiOk: "검사 통과",
     uiErrsTip: "ui-check와 같은 전체 검사입니다 (E001~E016, W101·W103·W104, UI 문서 {0}. W104(옛 이름)는 ui-check에 아직 없음). 설명은 ui-check와 같은 영어 원문입니다. 밑줄에 마우스를 올리면 설명이 보입니다.",
@@ -340,7 +340,7 @@ const UI = {
     pvCannot: "The layout cannot be drawn with this error (header line '#ui 1', file size, …). Fix the errors above first.",
     pvBox: "{0}  line {5}  position {1}, {2}  size {3}×{4}", pvBoxGo: "Click to go to this line in the source.", pvHidden: "(hidden)", pvDisabled: "(disabled)",
     pvModeL: "Layout", pvModeV: "View", pvModeLTip: "Layout mode: click a box to go to its line in the source.",
-    pvModeVTip: "View mode: looks like the program. Hover a box to see its tooltip (tooltip, or disabled_tooltip when disabled); click a dropdown to open its menu (view only; click outside or press Esc to close).",
+    pvModeVTip: "View mode: looks like the program. Hover a box to see its tooltip (tooltip, or disabled_tooltip when disabled); click a menu_button to open its menu (view only; click outside or press Esc to close).",
     pvDropGo: "Click to open the menu.", pvNoMenu: "No menu is linked", pvEmpty: "(empty menu)", pvItem: "{0}  line {1}",
     uiErrs: "{0} error(s)", uiWarns: "{0} warning(s)", uiOk: "check passed",
     uiErrsTip: "The same full check as ui-check (E001-E016, W101, W103 and W104, UI document {0}; W104 for old names is not in ui-check yet). Hover an underline to see the message.",
@@ -558,23 +558,23 @@ function highlight(src, lang) {
   return out;
 }
 
-// ---------- .ui 전체 검사기 (UI 형식 1, ui-guideline 문서 0.8) ----------
+// ---------- .ui 전체 검사기 (UI 형식 1, ui-guideline 문서 0.9) ----------
 // tile_font_editor_cpp의 src/uilayout.cppm(Parser)를 그대로 옮긴 것. 문서 0.7까지는 ui-check와 글자 하나까지 같은 결과를 낸다.
-// 문서 0.8(새 이름, 옛 이름 경고 W104)은 뷰어가 먼저 따름 — uilayout.cppm·tests/ui는 아직 0.7.
+// 문서 0.8·0.9(새 이름, 옛 이름 경고 W104)는 뷰어가 먼저 따름 — uilayout.cppm·tests/ui는 아직 0.7.
 // 바이트 단위로 검사한다: 글자 하나 = 바이트 하나인 "바이트 글"(0~255)로 바꿔서 C++와 같은 위치·길이를 쓰고,
 // 메시지를 만들 때만 UTF-8로 되돌린다. 메시지는 영어 원문 (ui-check와 같음).
-const UI_DOC_VERSION = "0.8";
+const UI_DOC_VERSION = "0.9";
 const uiCheck = (() => {
   const MAX_FILE = 1 << 20, MAX_LINE = 4096, MAX_STRING = 1024, MAX_DEPTH = 16, MAX_NODES = 4096, MAX_STORED = 1000;
   const INT_MIN = -2147483648, INT_MAX = 2147483647, POS_MIN = -32768, POS_MAX = 32767;
-  const KIND_NAMES = ["", "label", "button", "edit", "number", "dropdown", "checkbox", "canvas", "spacer",
+  const KIND_NAMES = ["", "label", "button", "text_field", "number_field", "menu_button", "checkbox", "canvas", "spacer",
     "group", "row", "column", "menu", "menu_item", "separator", "?"];
   const [ROOT, LABEL, BUTTON, EDIT, NUMBER, DROPDOWN, CHECK, CANVAS, SPACER, GROUP, ROW, COLUMN, MENU, ITEM, SEPARATOR, UNKNOWN] =
     KIND_NAMES.map((_, i) => i);
-  const KIND_WORDS = ["label", "button", "edit", "number", "dropdown", "checkbox", "canvas", "spacer",
+  const KIND_WORDS = ["label", "button", "text_field", "number_field", "menu_button", "checkbox", "canvas", "spacer",
     "group", "row", "column", "menu", "menu_item", "separator", "defaults"];
-  // 옛 이름 (문서 0.8에서 바뀜, 레거시): 계속 읽고 경고 W104 + 자동 수정. 추천 후보에는 넣지 않음
-  const OLD_KINDS = { check: "checkbox", item: "menu_item" };
+  // 옛 이름 (문서 0.8·0.9에서 바뀜, 레거시): 계속 읽고 경고 W104 + 자동 수정. 추천 후보에는 넣지 않음
+  const OLD_KINDS = { check: "checkbox", item: "menu_item", edit: "text_field", number: "number_field", dropdown: "menu_button" };
   const OLD_ATTRS = { tip: "tooltip", disabled_tip: "disabled_tooltip", hint: "placeholder", gap: "spacing", check: "checkable" };
   const RESERVED_WORDS = ["include", "style", "true", "false", "if", "else", "use", "ref", ...Object.keys(OLD_KINDS)];
   const RESERVED_CHARS = ".$@%:;[](),+*/\\!?&|<>~^'#";
@@ -1023,7 +1023,7 @@ const uiCheck = (() => {
       if (kind === null) { unknownKind(kt, ln); return; }
       oldName(kt, ln, OLD_KINDS);
       if (!(DEFAULT_KINDS & bit(kind))) {
-        diag("E012", ln, kt.col, kt.klen, "'{}' cannot have defaults", [kt.key], "defaults work for: label, button, edit, number, dropdown, checkbox, canvas, group, row, column, menu_item");
+        diag("E012", ln, kt.col, kt.klen, "'{}' cannot have defaults", [kt.key], "defaults work for: label, button, text_field, number_field, menu_button, checkbox, canvas, group, row, column, menu_item");
         return;
       }
       const scratch = initNode(kind);
@@ -1067,7 +1067,7 @@ const uiCheck = (() => {
       if (kind !== UNKNOWN && parentOk) {
         let err = null;
         if ((kind === ITEM || kind === SEPARATOR) && pk !== MENU) err = ["'{}' must be inside a 'menu'", "move it into a menu block"];
-        else if (kind === MENU && pk !== ROOT && pk !== MENU) err = ["'{}' must be at the top level or inside another 'menu'", "move the menu out of this block; a dropdown opens it"];
+        else if (kind === MENU && pk !== ROOT && pk !== MENU) err = ["'{}' must be at the top level or inside another 'menu'", "move the menu out of this block; a menu_button opens it"];
         else if ((isScreen(kind) || kind === SPACER) && pk === MENU) err = ["'{}' cannot be inside a 'menu'", "a menu holds menu_item, separator and menu"];
         else if (kind === SPACER && pk !== ROW && pk !== COLUMN) err = ["'{}' must be inside a 'row' or 'column'", "use left/right/top/bottom to leave space in a group"];
         if (err) elemDiag("E012", n.col, n.kindLen, err[0], [kn], err[1]);
@@ -1242,7 +1242,7 @@ const uiCheck = (() => {
       }
       if (n.kind === NUMBER && n.minValue > n.maxValue)
         elem("E004", "min ({}) is greater than max ({})", [String(n.minValue), String(n.maxValue)], "make min less than or equal to max");
-      if (n.kind === DROPDOWN && !hasMenu) elem("E008", "'dropdown' needs menu=<menu name>", [], "add menu= with the name of a menu");
+      if (n.kind === DROPDOWN && !hasMenu) elem("E008", "'menu_button' needs menu=<menu name>", [], "add menu= with the name of a menu");
       if (!isScreen(n.kind)) return;
       if (pk === ROW || pk === COLUMN) {
         const row = pk === ROW, pa = nodes[n.parent].align;
@@ -1539,8 +1539,8 @@ const uiCheck = (() => {
 })();
 
 // ---------- .ui 색칠 (검사는 위의 uiCheck가 한다) ----------
-// 옛 이름(check item / tip disabled_tip hint gap check)도 색칠 (경고 W104 밑줄은 검사 결과로)
-const UI_KINDS = words("label button edit number dropdown checkbox canvas spacer group row column menu menu_item separator defaults check item");
+// 옛 이름(check item edit number dropdown / tip disabled_tip hint gap check)도 색칠 (경고 W104 밑줄은 검사 결과로)
+const UI_KINDS = words("label button text_field number_field menu_button checkbox canvas spacer group row column menu menu_item separator defaults check item edit number dropdown");
 const UI_ATTRS = words(`left top right bottom width height right_of below spacing hidden disabled text align placeholder max_length
   min max step hex menu checked padding checkable radio tooltip disabled_tooltip section tip disabled_tip hint gap check`);
 const UI_RESERVED = new Set([...UI_KINDS, ...words("include style true false if else use ref")]);
@@ -1795,7 +1795,7 @@ try { showDiag = localStorage.getItem("sv-diag:" + KEY) !== "0"; } catch (e) {}
 // .ui 배치 미리보기 설정: 켜짐, 창 크기("fit" | "custom" | "640x480"…), 너비·높이, 배율, 아래 칸 높이
 const pvSet = { on: true, mode: "layout", win: "640x480", w: 640, h: 480, scale: 100, paneH: 300 };
 try { Object.assign(pvSet, JSON.parse(localStorage.getItem("sv-preview:" + KEY) || "{}")); } catch (e) {}
-let pvDoc = null, pvOpen = 0;   // 미리보기: 그린 문서, 보기 모드에서 펼친 dropdown 노드 번호(0 = 없음)
+let pvDoc = null, pvOpen = 0;   // 미리보기: 그린 문서, 보기 모드에서 펼친 menu_button 노드 번호(0 = 없음)
 const savePv = () => { try { localStorage.setItem("sv-preview:" + KEY, JSON.stringify(pvSet)); } catch (e) {} };
 let pvCheck = null;      // 지금 .ui 파일의 검사 결과 (배치 미리보기용)
 
@@ -2476,16 +2476,16 @@ function drawPreview() {
   let html = `<div class="pv-wrap"><div class="pv-win" style="width:${w}px;height:${h}px;font:${fontPx}px/${lineH}px ${esc(PV_FONT)}">`;
   for (let i = 1; i < rects.length; i++) {
     const n = doc.nodes[i], kind = K[n.kind];
-    if (n.dropped || !["label", "button", "edit", "number", "dropdown", "checkbox", "canvas", "group", "row", "column"].includes(kind)) continue;
+    if (n.dropped || !["label", "button", "text_field", "number_field", "menu_button", "checkbox", "canvas", "group", "row", "column"].includes(kind)) continue;
     const r = rects[i], name = uiCheck.text(n.name), txt = esc(uiCheck.text(n.text));
-    const tip = t("pvBox", `${kind} ${name}`.trim(), r.x, r.y, r.w, r.h, n.line) + (n.hidden ? " " + t("pvHidden") : "") + (n.disabled ? " " + t("pvDisabled") : "") + "\n" + (!view ? t("pvBoxGo") : kind === "dropdown" ? t("pvDropGo") : "");
+    const tip = t("pvBox", `${kind} ${name}`.trim(), r.x, r.y, r.w, r.h, n.line) + (n.hidden ? " " + t("pvHidden") : "") + (n.disabled ? " " + t("pvDisabled") : "") + "\n" + (!view ? t("pvBoxGo") : kind === "menu_button" ? t("pvDropGo") : "");
     let body = "";
     switch (kind) {
       case "label": body = txt; break;
       case "button": body = txt; break;
-      case "dropdown": body = `<span>${txt}</span><span>▾</span>`; break;
-      case "edit": body = `<span class="h">${esc(uiCheck.text(n.placeholder))}</span>`; break;
-      case "number": body = `<span>${n.hex ? "0x" + n.minValue.toString(16).toUpperCase() : n.minValue}</span><span>⇕</span>`; break;
+      case "menu_button": body = `<span>${txt}</span><span>▾</span>`; break;
+      case "text_field": body = `<span class="h">${esc(uiCheck.text(n.placeholder))}</span>`; break;
+      case "number_field": body = `<span>${n.hex ? "0x" + n.minValue.toString(16).toUpperCase() : n.minValue}</span><span>⇕</span>`; break;
       case "checkbox": body = `${n.checked ? "☑" : "☐"} ${txt}`; break;
       case "group": case "row": case "column": body = `<span class="tag">${esc(`${kind} ${name}`.trim())}</span>`; break;
     }
@@ -2498,7 +2498,7 @@ function drawPreview() {
   stage.innerHTML = html + "</div></div>";
   if (view && pvOpen > 0) openMenu(pvOpen); else pvOpen = 0;
 }
-// ---------- 보기 모드: dropdown → menu 펼치기 (보기만, 클릭으로 radio·checkbox를 바꾸지 않음) ----------
+// ---------- 보기 모드: menu_button → menu 펼치기 (보기만, 클릭으로 radio·checkbox를 바꾸지 않음) ----------
 // menu 노드 → 풀다운 HTML. 안쪽 menu는 하위 메뉴(마우스를 올리면 오른쪽에 펼침)
 function menuHtml(doc, mi, depth) {
   const m = doc.nodes[mi];
@@ -2589,7 +2589,7 @@ $("pvStage").addEventListener("click", e => {
       if (it && !it.classList.contains("dis") && !it.querySelector(".pv-pop")) closeMenu();
       return;
     }
-    const d = e.target.closest(".pv-win > div.pv-dropdown");
+    const d = e.target.closest(".pv-win > div.pv-menu_button");
     if (d) { if (pvOpen === +d.dataset.i) closeMenu(); else openMenu(+d.dataset.i); }
     return;
   }

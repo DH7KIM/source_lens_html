@@ -2,11 +2,11 @@
 // 타일 뷰어 화면
 defaults button  height=26
 row toolbar  left=0 right=0 top=0 height=44  padding=8 {
-    buton    open    text="Open // not comment"  tooltip="Open a ROM file"
-    label    offset  text="Offset"  letf=4
-    number   Addr    min=0 max=0x1FFFFFF hex width=90  tooltip="Start"  // GBA ROM 32 MiB
+    buton        open    text="Open // not comment"  tooltip="Open a ROM file"
+    label        offset  text="Offset"  letf=4
+    number_field Addr    min=0 max=0x1FFFFFF hex width=90  tooltip="Start"  // GBA ROM 32 MiB
     spacer
-    dropdown format  text="Format ▼"  menu=format_menu  tooltip="Tile; format"  align=Center
+    menu_button  format  text="Format ▼"  menu=format_menu  tooltip="Tile; format"  align=Center
 }
 canvas tiles  left=0 right=0 below=toolbar spacing=0 bottom=0 ; x
 button style  text="x" tooltip=""
