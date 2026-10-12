@@ -2,6 +2,22 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.14.0 (2026-10-13)
+
+### source-viewer.html
+
+- Language pack for `.ui` messages: if the opened folder has `language/<screen language>/ui-check.json5` (Korean screen: `language/ko/ui-check.json5`), its `"ui-check"` section is used for the messages under the source and the underline tooltips, before the built-in `UI_MSG` table.
+  - A message that is not in the file (or is `""`) uses the built-in translation, then the English original.
+  - A translation with a different number of `{}` than the original is ignored. The status line says in red how many were ignored.
+  - If the file cannot be read (syntax error), the built-in translation is used and the status line says in red where (`line N: ...`).
+  - The file is read again when it changes (the next time a `.ui` file is drawn). Switching the language button uses that language's pack.
+- A small JSON5 reader (`json5Parse`) for it: comments, keys without quotes, single-quoted strings, trailing commas, escapes (`\n`, `\uXXXX`, `\xXX`, line continuation), hex numbers, `Infinity`, `NaN`. Compared with `JSON.parse` on JSON input, and the three files in tile_font_editor_cpp `language\ko` are read (159 + 44 + 3 entries).
+- Version comment at the top v0.14.0.
+
+### tests
+
+- `tests/samples/project/language/ko/ui-check.json5`: a pack with three messages (used, empty, different `{}` count) to see each case.
+
 ## v0.13.0 (2026-10-13)
 
 ### source-viewer.html, docs-viewer.html

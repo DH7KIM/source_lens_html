@@ -2,6 +2,22 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.14.0 (2026-10-13)
+
+### source-viewer.html
+
+- `.ui` 메시지 언어팩: 연 폴더에 `language/<화면 언어>/ui-check.json5`(한국어 화면이면 `language/ko/ui-check.json5`)가 있으면 그 `"ui-check"` 섹션을 소스 아래 설명과 밑줄 풍선에 내장 `UI_MSG` 표보다 먼저 씀.
+  - 파일에 없거나 `""`인 메시지는 내장 번역, 그것도 없으면 영어 원문.
+  - `{}` 개수가 원문과 다른 번역은 무시하고, 상태 줄에 빨간 글자로 몇 개를 무시했는지 알림.
+  - 파일을 읽을 수 없으면(문법 오류) 내장 번역을 쓰고, 상태 줄에 빨간 글자로 위치(`N번 줄: ...`)를 알림.
+  - 파일이 바뀌면 다시 읽음(다음에 `.ui`를 그릴 때). 언어 버튼을 바꾸면 그 언어의 언어팩을 씀.
+- 이를 위한 작은 JSON5 읽기 함수(`json5Parse`): 주석, 따옴표 없는 키, 작은따옴표, 끝 쉼표, 이스케이프(`\n`, `\uXXXX`, `\xXX`, 줄 잇기), 16진수, `Infinity`, `NaN`. JSON 입력은 `JSON.parse`와 같은 결과이고, tile_font_editor_cpp `language\ko`의 파일 3개를 읽음 (159 + 44 + 3개).
+- 맨 위 버전 주석 v0.14.0.
+
+### tests
+
+- `tests/samples/project/language/ko/ui-check.json5`: 번역 3개(쓰임, 빈 글, `{}` 개수 다름)로 경우마다 확인하는 언어팩 예제.
+
 ## v0.13.0 (2026-10-13)
 
 ### source-viewer.html, docs-viewer.html

@@ -18,10 +18,10 @@
 - [x] .ui 오류 설명 한국어로 보기: 번역 원본 tile_font_editor_cpp `language\ko\ui-check.json5`(섹션 `ui-check`, 159개), 뷰어에 `UI_MSG`로 내장. 화면 언어가 한국어면 진단 줄·풍선이 한국어, 풍선에 영어 원문도. 코드·ui-check 출력은 영어 그대로 — 2026.10.13 (v0.11.0)
 - [x] json5 색칠: 주석, 따옴표 없는 키, 작은따옴표 문자열, 16진수, `+2.`·`.5`, Infinity·NaN, 끝 쉼표. `json5`는 따로 둔 언어, 예제 `tests/samples/project/language/ko/main.json5` — 2026.10.13 (v0.12.0)
 - [x] 경로에 프로젝트 버전 표시: `source_lens_html v0.13.0 / source/...`. 버전은 연 폴더 CHANGELOG.md(없으면 CHANGELOG.ko.md) 첫 `## vX.Y.Z`, 없으면 이름만. 두 뷰어 모두 — 2026.10.13 (v0.13.0)
+- [x] json5 언어팩 읽기: 연 폴더 `language/<화면 언어>/ui-check.json5`의 `"ui-check"` 섹션이 내장 `UI_MSG`보다 우선. 없거나 빈 글인 메시지는 내장 번역, `{}` 개수가 다르면 무시(상태 줄 빨강), 문법 오류면 내장 번역(상태 줄 빨강, 줄 번호). 작은 JSON5 읽기 함수 `json5Parse` — 2026.10.13 (v0.14.0)
 
 ## 다음 버전 (순서대로)
 
-- [ ] json5 언어팩 읽기 (v0.14.0): 연 폴더에 `language\ko\ui-check.json5`가 있으면 내장 표(`UI_MSG`)보다 우선. 읽는 형식은 tile_font_editor_cpp `src\i18n.cppm`(`<import files>`, 섹션) 참고 — 2026.10.12 요청 (색칠은 v0.12.0에서 끝)
 - [ ] 컴파일러 결과 보기 (GCC 먼저): 빌드 출력을 파일로 저장(예: `build.bat`에서 `2> build.log`)하면, 그 로그의 `파일:줄:칸: error/warning: ...`를 읽어 해당 소스 줄에 밑줄 + 진단 줄 표시 (.ui 진단 표시 재사용, 자동 새로 고침과 함께). Rust는 `cargo build --message-format=json` 다음 단계 — 2026.10.12 요청
 - [ ] toml 검사 (`Cargo.toml` 등): 문법이 작아 .ui처럼 정확히 검사 가능 — 2026.10.12 요청
 - [ ] `.rc`(리소스 스크립트) 검사기: GCC `windres`를 기준으로, `tests/rc`에 windres 결과를 `.expected`로 모아 맞춤 (DIALOG·MENU·STRINGTABLE·BEGIN/END·#include 등) — 2026.10.12 요청
@@ -37,6 +37,7 @@
 
 ## 나중에 (후보)
 
+- [ ] 언어팩 파일(`ui-check.json5`)을 고치면 열려 있는 `.ui`도 자동으로 다시 그리기 (지금은 다음에 `.ui`를 그릴 때 다시 읽음) — 2026.10.13 (v0.14.0 작업 중 나옴)
 - [ ] 보기 모드에서 메뉴 항목 `tooltip`을 상태 줄처럼 보여 주기 (ui-guideline: 메뉴 항목 설명은 상태 줄에 표시) — 2026.10.12 (v0.8.0 작업 중 나옴)
 - [ ] C++ ui-check가 `ui-check.json5` 번역을 쓰게 되면 `main.json5`의 `<import files>`에 넣기 (지금 넣으면 i18n-check가 unused로 알림). 검사기 메시지가 바뀌면 번역 파일과 뷰어 `UI_MSG`를 같이 고치기 — 2026.10.13 (v0.11.0 작업 중 나옴)
 - [ ] uilayout.cppm이 바뀌면 뷰어 검사기도 맞추기 (문서 버전이 오를 때) — 뷰어는 문서 0.9, uilayout.cppm·`tests/ui`는 아직 0.7. 고칠 곳은 tile_font_editor_cpp `docs/ui-changes.ko.md` (C++이 0.9를 따르면 새 이름·W104·메시지가 글자 하나까지 같은지 다시 비교)
