@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Docs Viewer</title>
+<!--
+  Docs Viewer v0.1.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Docs Viewer: 이 폴더의 마크다운(.md) 문서를 브라우저에서 바로 보는 단일 HTML 파일.
+  - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
+  - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 문서를 본다.
+  - 목록은 트리 구조(가지 연결선 ├ └): 폴더를 눌러 접기·펼치기 (브라우저에 기억). 접힌 폴더 안에 지금 문서가 있으면 강조색.
+  - 문서를 고쳐서 저장하면 1초 안에 화면이 바뀐다. 문서 안의 .md 링크도 이 뷰어에서 열린다.
+  - 한국어(이름.ko.md) / 영어(이름.md) 전환, 테마 선택.
+-->
+<style>
+  :root {
+    --bg: #faf9f5; --fg: #1f1e1d; --muted: #6b6a66; --line: #e3e0d6; --panel: #f0eee6;
+    --code-fg: #b4386b; --link: #2f6fc0; --th: #f3f1ea; --accent: #c96442; --side: #f5f3ec; --sel: #e8e4d8;
+    --font: "Segoe UI", "Malgun Gothic", "맑은 고딕", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme]) {
+      --bg: #262624; --fg: #ecebe6; --muted: #a3a29c; --line: #3d3c38; --panel: #1f1e1c;
+      --code-fg: #f08ab4; --link: #7fb0f0; --th: #2f2e2b; --side: #2b2a27; --sel: #3a3935;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #262624; --fg: #ecebe6; --muted: #a3a29c; --line: #3d3c38; --panel: #1f1e1c;
+    --code-fg: #f08ab4; --link: #7fb0f0; --th: #2f2e2b; --side: #2b2a27; --sel: #3a3935;
+  }
+  /* 그 밖의 테마는 아래 스크립트의 THEMES 표에서 CSS 변수로 넣는다 */
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--fg); }
+  body { font: 16px/1.7 var(--font); }
+  header {
+    position: sticky; top: 0; z-index: 2; background: var(--bg); border-bottom: 1px solid var(--line);
+    display: flex; gap: 8px; align-items: center; padding: 8px 16px; flex-wrap: wrap;
+  }
+  header .name { font-weight: 600; margin-right: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  header .state { color: var(--muted); font-size: 13px; }
+  button, select {
+    font: inherit; font-size: 14px; color: var(--fg); background: var(--panel);
+    border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; cursor: pointer;
+  }
+  button:hover, select:hover { border-color: var(--muted); }
+  button.on { border-color: var(--accent); color: var(--accent); }
+  .wrap { display: flex; align-items: flex-start; }
+  nav {
+    position: sticky; top: 49px; width: var(--nav-w, 230px); flex: none; max-height: calc(100vh - 49px); overflow: auto;
+    padding: 16px 8px; border-right: 1px solid var(--line); background: var(--side); min-height: calc(100vh - 49px);
+  }
+  /* 목록 폭 조절: 오른쪽 경계를 끌거나, 두 번 클릭하면 가장 긴 이름에 맞춤 */
+  #navSize {
+    position: sticky; top: 49px; width: 6px; margin-left: -3px; flex: none; z-index: 1;
+    height: calc(100vh - 49px); cursor: col-resize; background: transparent;
+  }
+  #navSize:hover, body.resizing #navSize { background: var(--accent); opacity: 0.5; }
+  body.resizing { cursor: col-resize; user-select: none; }
+  /* 트리: 깊이(--d)마다 14px 들여쓰기. 폴더 줄은 ▸ 화살표 + 폴더 아이콘 */
+  nav .dir, nav a { padding: 4px 10px 4px calc(10px + var(--d, 0) * 14px); }
+  nav .dir {
+    display: flex; align-items: center; gap: 4px; border-radius: 6px; color: var(--muted); font-size: 14px;
+    cursor: pointer; white-space: nowrap; user-select: none;
+  }
+  nav .dir:hover { background: var(--sel); color: var(--fg); }
+  nav .dir .tw { width: 12px; height: 12px; flex: none; transition: transform 0.12s; }
+  nav .dir.open .tw { transform: rotate(90deg); }
+  nav .dir .fi { width: 15px; height: 15px; flex: none; margin-right: 2px; }
+  /* 가지 연결선: ├ └ │ (각 칸 14px, 부모 폴더 화살표 가운데에 세로선) */
+  nav .dir, nav a { position: relative; }
+  nav .g { position: absolute; top: 0; bottom: 0; left: calc(10px + var(--k) * 14px); width: 14px; pointer-events: none; color: var(--muted); }
+  nav .g::before, nav .g.t::after, nav .g.l::after { content: ""; position: absolute; opacity: 0.5; }
+  nav .g::before { left: 6px; top: 0; bottom: 0; border-left: 1px solid; }
+  nav .g.l::before { bottom: 50%; }
+  nav .g.t::after, nav .g.l::after { left: 6px; top: 50%; width: 7px; border-top: 1px solid; }
+  nav .g.f::after { width: 16px; }
+  nav .dir.has-cur { color: var(--accent); font-weight: 600; } /* 접힌 폴더 안에 지금 문서가 있음 */
+  nav a {
+    display: block; padding-left: calc(26px + var(--d, 0) * 14px); border-radius: 6px; color: var(--fg); text-decoration: none;
+    font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer;
+  }
+  nav a:hover { background: var(--sel); }
+  nav a.cur { background: var(--sel); font-weight: 600; }
+  nav a .alt { color: var(--muted); font-size: 12px; margin-left: 4px; }
+  main { flex: 1; min-width: 0; }
+  article, .start { max-width: 820px; margin: 0 auto; padding: 24px 24px 80px; }
+  .start { margin-top: 8vh; text-align: center; color: var(--muted); }
+  .start .box { border: 2px dashed var(--line); border-radius: 16px; padding: 40px 16px; }
+  .start button { margin: 8px 4px; font-size: 15px; padding: 6px 16px; }
+  .start .note { font-size: 13px; margin-top: 16px; }
+  body.dragging .start .box { border-color: var(--accent); }
+  @media (max-width: 760px) {
+    .wrap { display: block; }
+    nav { position: static; width: auto; max-height: 40vh; min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); padding: 8px; }
+    #navSize { display: none; }
+    article, .start { padding: 16px 16px 60px; }
+  }
+
+  /* 마크다운 본문 */
+  .md h1, .md h2, .md h3, .md h4, .md h5, .md h6 { line-height: 1.35; margin: 1.6em 0 0.6em; font-weight: 650; scroll-margin-top: 60px; }
+  .md h1 { font-size: 1.75em; } .md h2 { font-size: 1.4em; } .md h3 { font-size: 1.15em; } .md h4 { font-size: 1em; }
+  :root[data-hrule] .md h1, :root[data-hrule] .md h2 { border-bottom: 1px solid var(--line); padding-bottom: 0.3em; }
+  .md > :first-child { margin-top: 0; }
+  .md p { margin: 0.7em 0; }
+  .md ul, .md ol { margin: 0.5em 0; padding-left: 1.6em; }
+  .md li { margin: 0.25em 0; }
+  .md li > ul, .md li > ol { margin: 0.2em 0; }
+  .md a { color: var(--link); text-decoration: none; cursor: pointer; }
+  .md a:hover { text-decoration: underline; }
+  .md img { max-width: 100%; }
+  .md code {
+    font: 0.88em/1.5 "Cascadia Code", "Cascadia Mono", Consolas, "D2Coding", monospace;
+    color: var(--code-fg); background: var(--panel); border: 1px solid var(--line);
+    border-radius: 5px; padding: 0.1em 0.35em;
+  }
+  .md td code, .md th code { white-space: nowrap; }
+  .md pre { line-height: 1.45; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; overflow-x: auto; margin: 1em 0; }
+  .md pre code { color: var(--fg); background: none; border: 0; padding: 0; font-size: 0.86em; white-space: pre; }
+  .md table { border-collapse: collapse; margin: 1em 0; display: block; overflow-x: auto; max-width: 100%; }
+  .md th, .md td { border: 1px solid var(--line); padding: 6px 12px; text-align: left; vertical-align: top; }
+  .md th { background: var(--th); font-weight: 600; }
+  .md blockquote { margin: 1em 0; padding: 0 1em; border-left: 3px solid var(--line); color: var(--muted); }
+  .md hr { border: 0; border-top: 1px solid var(--line); margin: 2em 0; }
+</style>
+</head>
+<body>
+<header>
+  <span class="name" id="name">Docs Viewer</span>
+  <span class="state" id="state"></span>
+  <span id="langs"></span>
+  <select id="theme" title="Theme"></select>
+  <button id="folder" hidden></button>
+</header>
+<div class="wrap">
+  <nav id="nav" hidden></nav>
+  <div id="navSize" hidden title="Drag to resize / double-click to fit"></div>
+  <main>
+    <div class="start" id="start">
+      <div class="box">
+        <p id="startMsg"></p>
+        <p>
+          <button id="pick" hidden></button>
+          <button id="regrant" hidden></button>
+          <button id="pickFiles" hidden></button>
+        </p>
+        <p class="note" id="startNote"></p>
+      </div>
+    </div>
+    <article class="md" id="out" hidden></article>
+  </main>
+</div>
+<input type="file" id="dirInput" webkitdirectory multiple hidden>
+<script>
+"use strict";
+// ======================= 화면 문자열 (문서 언어를 따라감) =======================
+const UI = {
+  ko: {
+    pick: "문서 폴더 선택", regrant: "폴더 열기", pickFiles: "폴더 선택",
+    startNew: "이 파일(docs-viewer.html)이 있는 폴더를 한 번만 골라 주세요.<br>다음부터는 목록에서 클릭만으로 문서를 봅니다.",
+    startRegrant: "\"{0}\" 폴더를 읽으려면 한 번 허용해 주세요.",
+    noteFsa: "Chrome에서 \"방문할 때마다 허용\"을 고르면 다음부터 이 단계 없이 바로 열립니다.",
+    noteFallback: "이 브라우저는 폴더 자동 새로 고침을 지원하지 않습니다. (Chrome·Edge 권장)",
+    noMd: "고른 폴더에 .md 파일이 없습니다.", auto: "자동 새로 고침", noAuto: "자동 새로 고침 없음",
+    readFail: "읽을 수 없음: {0}", notFound: "없는 문서: {0}", notDoc: "\"{0}\"는 문서(.md)가 아니라 열 수 없습니다",
+    folder: "폴더 바꾸기", top: "(맨 위)",
+    theme: "테마", light: "밝은 테마", dark: "어두운 테마",
+    dirTip: "클릭: 폴더 접기 / 펼치기",
+  },
+  en: {
+    pick: "Choose docs folder", regrant: "Open folder", pickFiles: "Choose folder",
+    startNew: "Choose the folder that contains this file (docs-viewer.html) once.<br>After that, just click a document in the list.",
+    startRegrant: "Allow access to the \"{0}\" folder once.",
+    noteFsa: "In Chrome, choose \"Allow on every visit\" to skip this step next time.",
+    noteFallback: "This browser cannot auto-refresh a folder. (Chrome or Edge recommended)",
+    noMd: "No .md files in the chosen folder.", auto: "Auto refresh", noAuto: "No auto refresh",
+    readFail: "Cannot read: {0}", notFound: "Not found: {0}", notDoc: "\"{0}\" is not a document (.md)",
+    folder: "Change folder", top: "(top)",
+    theme: "Theme", light: "Light themes", dark: "Dark themes",
+    dirTip: "Click: collapse / expand the folder",
+  },
+};
+const LANG_NAMES = { ko: "한국어", en: "English", ja: "日本語", zh: "中文" };
+let uiLang = (navigator.language || "en").toLowerCase().startsWith("ko") ? "ko" : "en";
+const t = (key, ...a) => String((UI[uiLang] || UI.en)[key] ?? UI.en[key]).replace(/\{(\d)\}/g, (_, i) => a[+i] ?? "");
+
+// ======================= 마크다운 → HTML (간단 변환기) =======================
+// 지원: 제목(앵커 id), 문단, 목록(중첩), 표, 코드 블록, 인용, 가로줄, 인라인 코드, 굵게, 기울임, 링크, 이미지
+const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+function inline(text) {
+  const keep = [];
+  const stash = html => "\u0000" + (keep.push(html) - 1) + "\u0000";
+  // 인라인 코드는 먼저 떼어 둔다 (안의 기호를 꾸밈으로 처리하지 않게)
+  text = text.replace(/(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/g, (_, q, c) => stash("<code>" + esc(c.replace(/^ (.*) $/, "$1")) + "</code>"));
+  text = esc(text);
+  text = text.replace(/!\[([^\]]*)\]\(([^)\s]+)\)/g, (_, a, u) => stash(`<img alt="${a}" data-src="${u}">`));
+  text = text.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_, s, u) => stash(`<a data-href="${u}">${s}</a>`));
+  text = text.replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g, (_, p, u) => p + stash(`<a data-href="${u}">${u}</a>`));
+  text = text.replace(/\*\*([^*]+?)\*\*/g, "<strong>$1</strong>");
+  text = text.replace(/(^|[^\w*])\*([^*\s][^*]*?)\*(?!\w)/g, "$1<em>$2</em>");
+  text = text.replace(/ {2,}$/gm, "<br>");
+  // 꺼내기 (stash 안에 stash가 있을 수 있어 바뀌지 않을 때까지)
+  for (let n = 0; n < 3 && text.includes("\u0000"); n++) text = text.replace(/\u0000(\d+)\u0000/g, (_, i) => keep[+i]);
+  return text;
+}
+
+const reHead = /^(#{1,6})\s+(.*?)\s*#*\s*$/;
+const reFence = /^\s*(```|~~~)(.*)$/;
+const reHr = /^\s*([-*_])(\s*\1){2,}\s*$/;
+const reItem = /^(\s*)([-*+]|\d+[.)])\s+(.*)$/;
+const reTableSep = /^\s*\|?\s*:?-{1,}:?\s*(\|\s*:?-{1,}:?\s*)*\|?\s*$/;
+const indentOf = s => s.match(/^\s*/)[0].replace(/\t/g, "    ").length;
+
+/// 제목 → 앵커 id (GitHub 방식: 소문자, 기호 제거, 공백 → -)
+function slug(text, used) {
+  let s = text.replace(/<[^>]+>/g, "").replace(/&[a-z]+;/g, "").toLowerCase().trim()
+    .replace(/[^\p{L}\p{N}\s_-]/gu, "").replace(/\s/g, "-");
+  let id = s, n = 1;
+  while (used.has(id)) id = s + "-" + n++;
+  used.add(id);
+  return id;
+}
+
+function splitRow(line) {
+  let s = line.trim();
+  if (s.startsWith("|")) s = s.slice(1);
+  if (s.endsWith("|") && !s.endsWith("\\|")) s = s.slice(0, -1);
+  const cells = []; let cur = "", inCode = false;
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (ch === "`") inCode = !inCode;
+    if (ch === "\\" && s[i + 1] === "|") { cur += "|"; i++; continue; }
+    if (ch === "|" && !inCode) { cells.push(cur.trim()); cur = ""; continue; }
+    cur += ch;
+  }
+  cells.push(cur.trim());
+  return cells;
+}
+
+function dedent(lines) {
+  const ind = Math.min(...lines.filter(l => l.trim()).map(indentOf));
+  return lines.map(l => l.replace(/\t/g, "    ").slice(Number.isFinite(ind) ? ind : 0));
+}
+
+function renderBlocks(lines, used) {
+  let html = "", i = 0;
+  const startsBlock = l => reHead.test(l) || reFence.test(l) || reHr.test(l) || reItem.test(l) || /^\s*>/.test(l);
+  while (i < lines.length) {
+    const line = lines[i];
+    if (!line.trim()) { i++; continue; }
+    let m;
+    if ((m = line.match(reFence))) {            // 코드 블록
+      const fence = m[1], lang = m[2].trim(), body = [];
+      i++;
+      while (i < lines.length && !lines[i].trim().startsWith(fence)) body.push(lines[i++]);
+      i++;
+      html += `<pre><code${lang ? ` class="lang-${esc(lang)}"` : ""}>${esc(dedent(body).join("\n"))}</code></pre>`;
+      continue;
+    }
+    if ((m = line.match(reHead))) {             // 제목
+      const n = m[1].length, h = inline(m[2]);
+      html += `<h${n} id="${slug(h, used)}">${h}</h${n}>`; i++; continue;
+    }
+    if (reHr.test(line) && !reItem.test(line)) { html += "<hr>"; i++; continue; }
+    if (line.includes("|") && i + 1 < lines.length && reTableSep.test(lines[i + 1])) { // 표
+      const head = splitRow(line);
+      const aligns = splitRow(lines[i + 1]).map(c => c.startsWith(":") && c.endsWith(":") ? "center" : c.endsWith(":") ? "right" : "");
+      const al = k => aligns[k] ? ` style="text-align:${aligns[k]}"` : "";
+      i += 2;
+      let tb = "<table><thead><tr>" + head.map((c, k) => `<th${al(k)}>${inline(c)}</th>`).join("") + "</tr></thead><tbody>";
+      while (i < lines.length && lines[i].includes("|") && lines[i].trim()) {
+        const row = splitRow(lines[i++]);
+        tb += "<tr>" + head.map((_, k) => `<td${al(k)}>${inline(row[k] ?? "")}</td>`).join("") + "</tr>";
+      }
+      html += tb + "</tbody></table>"; continue;
+    }
+    if (/^\s*>/.test(line)) {                   // 인용
+      const body = [];
+      while (i < lines.length && /^\s*>/.test(lines[i])) body.push(lines[i++].replace(/^\s*> ?/, ""));
+      html += `<blockquote>${renderBlocks(body, used)}</blockquote>`; continue;
+    }
+    if (reItem.test(line)) {                    // 목록
+      const r = renderList(lines, i, used); html += r.html; i = r.next; continue;
+    }
+    const para = [];                            // 문단
+    while (i < lines.length && lines[i].trim() && !(para.length && startsBlock(lines[i]))
+           && !(lines[i].includes("|") && i + 1 < lines.length && reTableSep.test(lines[i + 1]))) {
+      para.push(lines[i++].trim() + (/ {2,}$/.test(lines[i - 1]) ? "  " : ""));
+    }
+    html += `<p>${inline(para.join("\n"))}</p>`;
+  }
+  return html;
+}
+
+function renderList(lines, i, used) {
+  const first = lines[i].match(reItem);
+  const base = indentOf(first[1]);
+  const ordered = /\d/.test(first[2]);
+  const start = ordered ? parseInt(first[2], 10) : 1;
+  let html = ordered ? `<ol${start !== 1 ? ` start="${start}"` : ""}>` : "<ul>";
+  while (i < lines.length) {
+    const m = lines[i].match(reItem);
+    if (!m || indentOf(m[1]) !== base || /\d/.test(m[2]) !== ordered) break;
+    const text = [m[3]], child = [];
+    i++;
+    while (i < lines.length) {
+      const l = lines[i];
+      if (!l.trim()) {                           // 빈 줄: 다음 줄이 더 들여쓰여 있으면 항목이 이어짐
+        let j = i + 1; while (j < lines.length && !lines[j].trim()) j++;
+        if (j < lines.length && indentOf(lines[j]) > base) { child.push(""); i++; continue; }
+        break;
+      }
+      if (indentOf(l) <= base) break;
+      if (!child.length && !reItem.test(l) && !reFence.test(l) && !reTableSep.test(lines[i + 1] || "")) {
+        text.push(l.trim()); i++; continue;     // 항목 글의 다음 줄
+      }
+      child.push(l); i++;
+    }
+    html += `<li>${inline(text.join("\n"))}${child.length ? renderBlocks(dedent(child), used) : ""}</li>`;
+  }
+  return { html: html + (ordered ? "</ol>" : "</ul>"), next: i };
+}
+
+const renderMarkdown = text => renderBlocks(text.replace(/^﻿/, "").replace(/\r\n?/g, "\n").split("\n"), new Set());
+
+// ======================= 문서 폴더 (두 가지 방식) =======================
+// 1) FSA: 폴더 핸들 (Chrome·Edge) → 자동 새로 고침, 다음 실행 때 다시 씀
+// 2) files: <input webkitdirectory>로 고른 파일 목록 (다른 브라우저) → 그 순간의 내용만
+const SKIP_DIRS = new Set(["obj", "gcm.cache", ".git", "target", "node_modules", "bin", "Claude outputs"]);
+const MAX_DEPTH = 3;
+let src = null;          // { kind, name, paths: [...], get(path) → File }
+let docs = new Map();    // 기본 이름 → { lang: path }  (예: "docs/source-files" → { ko: "docs/source-files.ko.md", en: "docs/source-files.md" })
+let cur = null;          // 지금 보는 문서 경로
+let curMod = 0;          // 지금 문서의 수정 시각 (자동 새로 고침)
+let docLang = uiLang;    // 고른 문서 언어
+const $ = id => document.getElementById(id);
+const KEY = location.pathname; // file:// 페이지는 저장소를 함께 쓰므로 이 파일 경로로 구분
+
+async function scanHandle(dir, prefix = "", depth = 0, out = []) {
+  for await (const [name, h] of dir.entries()) {
+    if (h.kind === "directory") {
+      if (depth < MAX_DEPTH && !SKIP_DIRS.has(name) && !name.startsWith(".")) await scanHandle(h, prefix + name + "/", depth + 1, out);
+    } else if (/\.md$/i.test(name)) out.push(prefix + name);
+  }
+  return out;
+}
+
+async function getHandleFile(dir, path) {
+  const parts = path.split("/");
+  for (let k = 0; k < parts.length - 1; k++) dir = await dir.getDirectoryHandle(parts[k]);
+  return (await dir.getFileHandle(parts[parts.length - 1])).getFile();
+}
+
+function useHandle(dir) {
+  src = { kind: "fsa", name: dir.name, dir,
+          list: () => scanHandle(dir),
+          get: p => getHandleFile(dir, p) };
+}
+
+function useFiles(fileList) {
+  const map = new Map();
+  let root = "";
+  for (const f of fileList) {
+    const rel = f.webkitRelativePath || f.name;
+    const parts = rel.split("/");
+    if (parts.length > 1) { root = parts[0]; parts.shift(); }
+    if (parts.slice(0, -1).some(d => SKIP_DIRS.has(d)) || parts.length - 1 > MAX_DEPTH) continue;
+    if (/\.md$/i.test(rel)) map.set(parts.join("/"), f);
+  }
+  src = { kind: "files", name: root || "files",
+          list: async () => [...map.keys()],
+          get: async p => { const f = map.get(p); if (!f) throw new Error("not found"); return f; } };
+}
+
+// 경로 → { base, lang }  (이름.ko.md → ko, 이름.md → en)
+function splitLang(path) {
+  const m = path.match(/^(.*?)(?:\.([a-z]{2}(?:-[a-z]{2})?))?\.md$/i);
+  return { base: m[1], lang: (m[2] || "en").toLowerCase() };
+}
+
+async function refreshList() {
+  const paths = (await src.list()).sort();
+  docs = new Map();
+  for (const p of paths) {
+    const { base, lang } = splitLang(p);
+    if (!docs.has(base)) docs.set(base, {});
+    docs.get(base)[lang] = p;
+  }
+  drawNav(); drawLangs();
+  return paths.length;
+}
+
+// README, CHANGELOG를 먼저, 그다음 폴더 없는 문서, 폴더별 문서
+function orderedBases() {
+  const rank = b => /^readme$/i.test(b) ? 0 : /^changelog$/i.test(b) ? 1 : b.includes("/") ? 3 : 2;
+  return [...docs.keys()].sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
+}
+
+function pathFor(base, lang) {
+  const d = docs.get(base);
+  if (!d) return null;
+  return d[lang] || d.en || Object.values(d)[0];
+}
+
+// ---------- 트리 목록 (폴더 접기·펼치기, 접은 폴더는 브라우저에 기억) ----------
+// 각 폴더 안의 순서: README·CHANGELOG → 하위 폴더 → 그 밖의 문서 (이름순)
+let closed = new Set();  // 접은 폴더 경로 ("docs/", "docs/dev/")
+try { closed = new Set(JSON.parse(localStorage.getItem("dv-closed:" + KEY) || "[]")); } catch (e) {}
+function saveClosed() { try { localStorage.setItem("dv-closed:" + KEY, JSON.stringify([...closed])); } catch (e) {} }
+/// 이 문서가 들어 있는 폴더를 모두 펼침
+function expandTo(path) {
+  const parts = path.split("/");
+  let changed = false;
+  for (let k = 1; k < parts.length; k++) if (closed.delete(parts.slice(0, k).join("/") + "/")) changed = true;
+  if (changed) saveClosed();
+}
+
+function buildTree() {
+  const root = { dirs: new Map(), files: [] };
+  for (const base of docs.keys()) {
+    const parts = base.split("/");
+    let n = root;
+    for (let k = 0; k < parts.length - 1; k++) {
+      if (!n.dirs.has(parts[k])) n.dirs.set(parts[k], { dirs: new Map(), files: [] });
+      n = n.dirs.get(parts[k]);
+    }
+    n.files.push(base);
+  }
+  return root;
+}
+
+const ICON_CHEVRON = '<svg class="tw" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ICON_FOLDER = '<svg class="fi" viewBox="0 0 16 16" aria-hidden="true"><path d="M1.75 3.25h4.1l1.5 1.6h6.9v8.4H1.75z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>';
+
+/// 줄 앞에 연결선 칸을 붙임 (칸: "" 빈칸, v │, t ├, l └)
+function guides(el, list, isFile) {
+  list.forEach((c, k) => {
+    if (!c) return;
+    const s = document.createElement("span");
+    s.className = "g " + c + (isFile ? " f" : "");
+    s.style.setProperty("--k", k);
+    el.prepend(s);
+  });
+}
+
+function drawNav() {
+  const nav = $("nav");
+  const top = nav.scrollTop;
+  nav.innerHTML = "";
+  const rank = b => { const n = b.slice(b.lastIndexOf("/") + 1); return /^readme$/i.test(n) ? 0 : /^changelog$/i.test(n) ? 1 : 2; };
+  const docRow = (base, depth) => {
+    const p = pathFor(base, docLang);
+    const a = document.createElement("a");
+    a.style.setProperty("--d", depth);
+    a.textContent = base.slice(base.lastIndexOf("/") + 1);
+    const lang = splitLang(p).lang;
+    if (lang !== docLang) { const s = document.createElement("span"); s.className = "alt"; s.textContent = lang; a.append(s); }
+    a.title = p;
+    a.dataset.path = p;
+    if (p === cur) a.className = "cur";
+    a.onclick = () => openDoc(p);
+    nav.append(a);
+  };
+  const walk = (node, prefix, depth, trail) => {
+    const files = node.files.sort((a, b) => rank(a) - rank(b) || a.localeCompare(b));
+    const kids = [...files.filter(f => rank(f) < 2).map(f => ({ f })),
+                  ...[...node.dirs].sort((a, b) => a[0].localeCompare(b[0])).map(([name, sub]) => ({ name, sub })),
+                  ...files.filter(f => rank(f) === 2).map(f => ({ f }))];
+    kids.forEach((kid, i) => {
+      const last = i === kids.length - 1;
+      // 연결선: 위 칸들은 그 조상 폴더 뒤에 형제가 있으면 │, 마지막 칸은 ├ (마지막 항목이면 └)
+      const g = depth ? [...trail.map(l => l ? "" : "v"), last ? "l" : "t"] : [];
+      if (kid.f) { docRow(kid.f, depth); guides(nav.lastChild, g, true); return; }
+      const path = prefix + kid.name + "/";
+      const open = !closed.has(path);
+      const d = document.createElement("div");
+      d.className = "dir" + (open ? " open" : "") + (!open && cur && cur.startsWith(path) ? " has-cur" : "");
+      d.style.setProperty("--d", depth);
+      d.innerHTML = ICON_CHEVRON + ICON_FOLDER;
+      d.append(kid.name);
+      d.title = path + "\n" + t("dirTip");
+      d.onclick = () => { if (open) closed.add(path); else closed.delete(path); saveClosed(); drawNav(); };
+      nav.append(d);
+      guides(d, g, false);
+      if (open) walk(kid.sub, path, depth + 1, depth ? [...trail, last] : []);
+    });
+  };
+  walk(buildTree(), "", 0, []);
+  nav.hidden = false;
+  $("navSize").hidden = false;
+  nav.scrollTop = top;
+  if (!navWidthSaved) fitNav();
+}
+
+// ---------- 목록 폭 (끌어서 조절, 두 번 클릭 = 이름에 맞춤, 브라우저에 기억) ----------
+let navWidthSaved = false;
+function setNavWidth(px, save) {
+  const w = Math.round(Math.min(Math.max(px, 140), innerWidth * 0.6));
+  document.body.style.setProperty("--nav-w", w + "px"); // <html>의 style은 테마가 바꾸므로 body에
+  if (save) { navWidthSaved = true; try { localStorage.setItem("dv-nav-w:" + KEY, String(w)); } catch (e) {} }
+}
+/// 가장 긴 문서 이름이 잘리지 않는 폭
+function fitNav() {
+  let max = 0;
+  for (const a of $("nav").querySelectorAll("a, .dir")) {
+    a.style.width = "max-content";             // 잘리지 않았을 때의 폭을 잰다
+    max = Math.max(max, a.getBoundingClientRect().width);
+    a.style.width = "";
+  }
+  const nav = $("nav"), cs = getComputedStyle(nav);
+  const extra = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) + parseFloat(cs.borderRightWidth)
+              + (nav.offsetWidth - nav.clientWidth - parseFloat(cs.borderRightWidth)); // + 스크롤 막대
+  if (max) setNavWidth(Math.ceil(max + extra + 2), false);
+}
+try { const w = +localStorage.getItem("dv-nav-w:" + KEY); if (w > 0) { navWidthSaved = true; setNavWidth(w, false); } } catch (e) {}
+$("navSize").addEventListener("pointerdown", e => {
+  e.preventDefault();
+  const h = $("navSize"); h.setPointerCapture(e.pointerId);
+  const left = $("nav").getBoundingClientRect().left;
+  document.body.classList.add("resizing");
+  const move = ev => setNavWidth(ev.clientX - left, false);
+  const up = ev => {
+    setNavWidth(ev.clientX - left, true);
+    document.body.classList.remove("resizing");
+    h.removeEventListener("pointermove", move); h.removeEventListener("pointerup", up);
+  };
+  h.addEventListener("pointermove", move); h.addEventListener("pointerup", up);
+});
+$("navSize").addEventListener("dblclick", () => {
+  navWidthSaved = false;
+  try { localStorage.removeItem("dv-nav-w:" + KEY); } catch (e) {}
+  fitNav();
+});
+
+function drawLangs() {
+  const all = new Set();
+  for (const d of docs.values()) for (const l of Object.keys(d)) all.add(l);
+  const box = $("langs");
+  box.innerHTML = "";
+  if (all.size < 2) return;
+  for (const l of [...all].sort((a, b) => (a === "ko" ? -1 : b === "ko" ? 1 : a.localeCompare(b)))) {
+    const b = document.createElement("button");
+    b.textContent = LANG_NAMES[l] || l;
+    b.className = l === docLang ? "on" : "";
+    b.onclick = () => {
+      docLang = l;
+      const base = cur ? splitLang(cur).base : null;
+      if (base && docs.has(base)) openDoc(pathFor(base, l), { keepScroll: false });
+      else { drawNav(); drawLangs(); }
+    };
+    box.append(b);
+  }
+}
+
+// a/b/c.md 기준으로 상대 경로 풀기
+function resolve(fromPath, href) {
+  const parts = fromPath.split("/"); parts.pop();
+  for (const seg of href.split("/")) {
+    if (seg === "" || seg === ".") continue;
+    if (seg === "..") parts.pop(); else parts.push(seg);
+  }
+  return parts.join("/");
+}
+
+async function openDoc(path, { hash = "", keepScroll = false } = {}) {
+  let f;
+  try { f = await src.get(path); }
+  catch (e) { $("state").textContent = t("notFound", path); return; }
+  const y = scrollY;
+  const text = await f.text();
+  const changed = path !== cur;
+  if (changed) expandTo(path);
+  cur = path; curMod = f.lastModified;
+  docLang = splitLang(path).lang;
+  if (UI[docLang]) uiLang = docLang;
+  document.documentElement.lang = docLang;
+  $("out").innerHTML = renderMarkdown(text);
+  await loadImages();
+  $("start").hidden = true; $("out").hidden = false;
+  $("name").textContent = (src.name ? src.name + " / " : "") + path;
+  document.title = path + " - Docs Viewer";
+  $("state").textContent = src.kind === "fsa" ? t("auto") : t("noAuto");
+  drawNav(); drawLangs(); drawStatic();
+  try { localStorage.setItem("dv-last:" + KEY, path); } catch (e) {}
+  if (changed) history.replaceState(null, "", "#" + encodeURI(path) + (hash ? "#" + hash : ""));
+  if (hash) { const el = document.getElementById(decodeURIComponent(hash)); if (el) { el.scrollIntoView(); return; } }
+  scrollTo(0, keepScroll ? y : 0);
+}
+
+// 상대 경로 이미지는 폴더에서 읽어 blob URL로
+async function loadImages() {
+  for (const img of $("out").querySelectorAll("img[data-src]")) {
+    const u = img.dataset.src;
+    if (/^(https?:|data:)/.test(u)) { img.src = u; continue; }
+    try { img.src = URL.createObjectURL(await src.get(resolve(cur, u))); } catch (e) {}
+  }
+}
+
+// 문서 안 링크: .md는 이 뷰어에서, #은 제목으로, http는 새 탭
+$("out").addEventListener("click", e => {
+  const a = e.target.closest("a[data-href]");
+  if (!a) return;
+  e.preventDefault();
+  const href = a.dataset.href;
+  if (/^(https?:|mailto:)/i.test(href)) { open(href, "_blank", "noopener"); return; }
+  if (href.startsWith("#")) { const el = document.getElementById(decodeURIComponent(href.slice(1))); if (el) el.scrollIntoView(); return; }
+  const [p, h = ""] = href.split("#");
+  const target = resolve(cur, decodeURI(p));
+  if (!/\.md$/i.test(target)) { $("state").textContent = t("notDoc", href); return; }
+  openDoc(target, { hash: h });
+});
+
+// 자동 새로 고침 (FSA만): 1초마다 지금 문서의 수정 시각 확인, 창으로 돌아올 때 목록 다시 읽기
+setInterval(async () => {
+  if (!src || src.kind !== "fsa" || !cur || document.hidden) return;
+  try { const f = await src.get(cur); if (f.lastModified !== curMod) openDoc(cur, { keepScroll: true }); } catch (e) {}
+}, 1000);
+addEventListener("focus", async () => { if (src && src.kind === "fsa") { try { await refreshList(); } catch (e) {} } });
+
+// ======================= 시작 =======================
+async function startWith(firstPath) {
+  const n = await refreshList();
+  if (!n) { showStart("noMd"); return; }
+  $("folder").hidden = false;
+  const want = firstPath && [...docs.values()].some(d => Object.values(d).includes(firstPath)) ? firstPath : null;
+  openDoc(want || pathFor(orderedBases()[0], docLang));
+}
+
+function savedPath() {
+  const h = decodeURI(location.hash.slice(1)).split("#")[0];
+  if (h) return h;
+  try { return localStorage.getItem("dv-last:" + KEY); } catch (e) { return null; }
+}
+
+function db() {
+  return new Promise((ok, no) => {
+    const r = indexedDB.open("docs-viewer", 1);
+    r.onupgradeneeded = () => r.result.createObjectStore("kv");
+    r.onsuccess = () => ok(r.result); r.onerror = () => no(r.error);
+  });
+}
+async function saveDir(h) {
+  try { const d = await db(); d.transaction("kv", "readwrite").objectStore("kv").put(h, "dir:" + KEY); } catch (e) {}
+}
+async function loadDir() {
+  try {
+    const d = await db();
+    return await new Promise(ok => { const r = d.transaction("kv").objectStore("kv").get("dir:" + KEY); r.onsuccess = () => ok(r.result || null); r.onerror = () => ok(null); });
+  } catch (e) { return null; }
+}
+
+const hasFsa = !!window.showDirectoryPicker;
+let savedDir = null;
+
+function showStart(kind) {
+  $("start").hidden = false; $("out").hidden = true;
+  $("pick").hidden = !hasFsa; $("pickFiles").hidden = hasFsa;
+  $("regrant").hidden = kind !== "regrant";
+  $("startMsg").innerHTML = kind === "regrant" ? esc(t("startRegrant", savedDir.name)) : kind === "noMd" ? esc(t("noMd")) : t("startNew");
+  $("startNote").textContent = hasFsa ? t("noteFsa") : t("noteFallback");
+  drawStatic();
+}
+
+// 언어에 따라 바뀌는 고정 글자
+function drawStatic() {
+  $("pick").textContent = t("pick"); $("regrant").textContent = t("regrant"); $("pickFiles").textContent = t("pickFiles");
+  $("folder").textContent = t("folder");
+  drawThemes();
+}
+
+async function pickFolder() {
+  if (hasFsa) {
+    try {
+      const h = await showDirectoryPicker({ id: "docs-viewer", mode: "read" });
+      savedDir = h; useHandle(h); await saveDir(h); await startWith(savedPath());
+    } catch (e) {}
+  } else {
+    $("dirInput").click();
+  }
+}
+$("pick").onclick = pickFolder;
+$("pickFiles").onclick = pickFolder;
+$("folder").onclick = pickFolder;
+$("dirInput").onchange = async () => { if ($("dirInput").files.length) { useFiles($("dirInput").files); await startWith(savedPath()); } };
+$("regrant").onclick = async () => {
+  try {
+    if ((await savedDir.requestPermission({ mode: "read" })) === "granted") { useHandle(savedDir); await startWith(savedPath()); }
+  } catch (e) { showStart("new"); }
+};
+
+// 폴더를 끌어다 놓기
+addEventListener("dragover", e => { e.preventDefault(); document.body.classList.add("dragging"); });
+addEventListener("dragleave", e => { if (!e.relatedTarget) document.body.classList.remove("dragging"); });
+addEventListener("drop", async e => {
+  e.preventDefault(); document.body.classList.remove("dragging");
+  const item = e.dataTransfer.items && e.dataTransfer.items[0];
+  if (item && item.getAsFileSystemHandle) {
+    try {
+      const h = await item.getAsFileSystemHandle();
+      if (h && h.kind === "directory") { savedDir = h; useHandle(h); await saveDir(h); await startWith(savedPath()); }
+    } catch (er) {}
+  }
+});
+
+// ======================= 테마 =======================
+// v: 변수 bg 배경, fg 글자, muted 흐린 글자, line 선, panel 코드·버튼 배경, code 인라인 코드 글자,
+//    link 링크, th 표 머리, accent 강조, side 목록 배경, sel 목록 선택
+// "", light, dark는 위 CSS에 있음 (""는 시스템 설정을 따라 밝게/어둡게)
+const SERIF = 'Georgia, "Batang", "바탕", "Malgun Gothic", serif';
+const GH_FONT = '-apple-system, "Segoe UI", "Noto Sans", "Malgun Gothic", Helvetica, Arial, sans-serif';
+const THEMES = [
+  { id: "", ko: "시스템 (밝게/어둡게)", en: "System (light/dark)" },
+  { id: "light", ko: "Claude 밝게", en: "Claude Light" },
+  { id: "github", ko: "GitHub", en: "GitHub", hrule: 1, font: GH_FONT,
+    v: "#ffffff #1f2328 #59636e #d1d9e0 #f6f8fa #1f2328 #0969da #f6f8fa #0969da #f6f8fa #e7ecf0" },
+  { id: "solarized-light", ko: "Solarized 밝게", en: "Solarized Light",
+    v: "#fdf6e3 #586e75 #93a1a1 #e4ddc8 #eee8d5 #d33682 #268bd2 #eee8d5 #cb4b16 #f5efdc #e6dfc8" },
+  { id: "gruvbox-light", ko: "Gruvbox 밝게", en: "Gruvbox Light",
+    v: "#fbf1c7 #3c3836 #7c6f64 #d5c4a1 #f2e5bc #9d0006 #076678 #ebdbb2 #af3a03 #f2e5bc #ebdbb2" },
+  { id: "catppuccin-latte", ko: "Catppuccin Latte", en: "Catppuccin Latte",
+    v: "#eff1f5 #4c4f69 #6c6f85 #ccd0da #e6e9ef #d20f39 #1e66f5 #e6e9ef #8839ef #e6e9ef #dce0e8" },
+  { id: "sakura", ko: "벚꽃", en: "Sakura",
+    v: "#fffafb #4a4a4a #8a7f82 #f2d7de #fbeef1 #c2185b #d6336c #fbeef1 #d6336c #fdf2f5 #f8e1e7" },
+  { id: "academic", ko: "논문 (LaTeX 느낌)", en: "Academic (LaTeX style)", hrule: 1,
+    font: '"Latin Modern Roman", "CMU Serif", Cambria, "Times New Roman", "Batang", "바탕", serif',
+    v: "#ffffff #111111 #555555 #cccccc #f7f7f7 #111111 #1a3e8c #f2f2f2 #1a3e8c #fafafa #ececec" },
+  { id: "sepia", ko: "종이", en: "Paper", font: SERIF,
+    v: "#f4ecd8 #3b2f1e #7a6a52 #dccfb0 #ebe0c4 #8a3b12 #8a4b0f #ebe0c4 #8a4b0f #ede3c9 #e0d2ae" },
+  { id: "dark", ko: "Claude 어둡게", en: "Claude Dark", dark: 1 },
+  { id: "github-dark", ko: "GitHub 어둡게", en: "GitHub Dark", dark: 1, hrule: 1, font: GH_FONT,
+    v: "#0d1117 #e6edf3 #9198a1 #3d444d #151b23 #e6edf3 #4493f8 #151b23 #4493f8 #010409 #1f2630" },
+  { id: "solarized-dark", ko: "Solarized 어둡게", en: "Solarized Dark", dark: 1,
+    v: "#002b36 #93a1a1 #6c868d #0d4250 #073642 #d33682 #268bd2 #073642 #cb4b16 #00252e #0a4352" },
+  { id: "gruvbox-dark", ko: "Gruvbox 어둡게", en: "Gruvbox Dark", dark: 1,
+    v: "#282828 #ebdbb2 #a89984 #504945 #32302f #fb4934 #83a598 #3c3836 #fe8019 #1d2021 #3c3836" },
+  { id: "nord", ko: "Nord", en: "Nord", dark: 1,
+    v: "#2e3440 #e5e9f0 #a0a8b7 #434c5e #3b4252 #b48ead #88c0d0 #3b4252 #88c0d0 #292e39 #434c5e" },
+  { id: "dracula", ko: "Dracula", en: "Dracula", dark: 1,
+    v: "#282a36 #f8f8f2 #a4a8c2 #44475a #21222c #ff79c6 #8be9fd #343746 #bd93f9 #21222c #44475a" },
+  { id: "one-dark", ko: "One Dark", en: "One Dark", dark: 1,
+    v: "#282c34 #abb2bf #7f848e #3e4451 #21252b #e06c75 #61afef #2c313a #c678dd #21252b #2c313a" },
+  { id: "tokyo-night", ko: "Tokyo Night", en: "Tokyo Night", dark: 1,
+    v: "#1a1b26 #c0caf5 #8089b3 #2f334d #16161e #f7768e #7aa2f7 #24283b #bb9af7 #16161e #292e42" },
+  { id: "catppuccin-mocha", ko: "Catppuccin Mocha", en: "Catppuccin Mocha", dark: 1,
+    v: "#1e1e2e #cdd6f4 #a6adc8 #45475a #181825 #f38ba8 #89b4fa #313244 #cba6f7 #181825 #313244" },
+  { id: "high-contrast", ko: "고대비", en: "High Contrast", dark: 1,
+    v: "#000000 #ffffff #d0d0d0 #9a9a9a #111111 #ffd700 #00e5ff #1a1a1a #ffd700 #0a0a0a #333333" },
+];
+const VAR_NAMES = ["bg", "fg", "muted", "line", "panel", "code-fg", "link", "th", "accent", "side", "sel"];
+let themeId = "";
+
+// 테마 목록 (밝은 / 어두운 묶음, 이름은 화면 언어로)
+function drawThemes() {
+  const sel = $("theme");
+  sel.innerHTML = "";
+  sel.title = t("theme");
+  for (const dark of [0, 1]) {
+    const g = document.createElement("optgroup");
+    g.label = t(dark ? "dark" : "light");
+    for (const th of THEMES) {
+      if (!!th.dark !== !!dark) continue;
+      const o = document.createElement("option");
+      o.value = th.id; o.textContent = th[uiLang] || th.en;
+      g.append(o);
+    }
+    sel.append(g);
+  }
+  sel.value = themeId;
+}
+
+function applyTheme(id) {
+  const th = THEMES.find(x => x.id === id) || THEMES[0];
+  const root = document.documentElement;
+  root.removeAttribute("style");
+  if (th.id) root.dataset.theme = th.id; else delete root.dataset.theme;
+  if (th.hrule) root.dataset.hrule = ""; else delete root.dataset.hrule;
+  if (th.v) th.v.split(" ").forEach((c, k) => root.style.setProperty("--" + VAR_NAMES[k], c));
+  if (th.font) root.style.setProperty("--font", th.font);
+  if (th.id) root.style.colorScheme = th.dark ? "dark" : "light"; // 스크롤 막대, 선택 상자 색
+  themeId = th.id;
+  $("theme").value = th.id;
+}
+try { applyTheme(localStorage.getItem("dv-theme") || ""); } catch (e) { applyTheme(""); }
+$("theme").onchange = () => { applyTheme($("theme").value); try { localStorage.setItem("dv-theme", themeId); } catch (e) {} };
+
+(async () => {
+  drawStatic();
+  if (hasFsa) {
+    savedDir = await loadDir();
+    if (savedDir) {
+      try {
+        if ((await savedDir.queryPermission({ mode: "read" })) === "granted") { useHandle(savedDir); await startWith(savedPath()); return; }
+      } catch (e) {}
+      showStart("regrant"); return;
+    }
+  }
+  showStart("new");
+})();
+</script>
+</body>
+</html>

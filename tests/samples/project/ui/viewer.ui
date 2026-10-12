@@ -1,0 +1,17 @@
+#ui 1  section=viewer
+// 타일 뷰어 화면
+defaults button  height=26
+row toolbar  left=0 right=0 top=0 height=44  padding=8 {
+    buton    open    text="Open // not comment"  tip="Open a ROM file"
+    label    offset  text="Offset"  letf=4
+    number   Addr    min=0 max=0x1FFFFFF hex width=90  tip="Start"  // GBA ROM 32 MiB
+    spacer
+    dropdown format  text="Format ▼"  menu=format_menu  tip="Tile; format"  align=Center
+}
+canvas tiles  left=0 right=0 below=toolbar gap=0 bottom=0 ; x
+button style  text="x" tip=""
+menu format_menu {
+    item bpp1  text="1bpp"  radio checked
+    separator
+}
+	label title	text="한글 글자"  letf=1  tip=""

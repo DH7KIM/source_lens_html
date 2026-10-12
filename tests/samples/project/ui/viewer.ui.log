@@ -1,0 +1,4 @@
+2026-10-12 21:30:15  ui\main.ui  (Tile Font Editor v1.0.20)
+  12:3   E003  unknown attribute 'letf'   fixed      letf -> left
+  35:1   E009  braces   cannot fix
+  4:1    W103  no tip   warning
