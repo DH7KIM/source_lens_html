@@ -2,6 +2,26 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.9.0 (2026-10-12)
+
+### source-viewer.html
+
+- `.ui` 이름을 가장 많이 쓰는 것으로 (ui-guideline 문서 0.8을 따름):
+  - 요소: `check` → `checkbox`, `item` → `menu_item`
+  - 속성: `tip` → `tooltip`, `disabled_tip` → `disabled_tooltip`, `hint` → `placeholder`, `gap` → `spacing`, 메뉴 항목 `check` → `checkable`
+  - `edit`, `number`, `dropdown`과 나머지 이름은 그대로.
+- 옛 이름도 계속 읽음 (레거시): 쓰면 주황 밑줄 경고 W104 `'tip' is an old name` / `help: use 'tooltip' instead` (자동 수정 분류).
+  - 옛 이름과 새 이름은 같은 속성: 한 줄에 둘 다 쓰면 뒤의 것이 E006.
+  - 속성의 W104는 그 속성에 다른 오류가 없을 때만. 옛 종류 이름(`check`, `item`)은 요소 이름으로 쓸 수 없음(E013). 추천(`did you mean`)은 새 이름만.
+- 오류 설명의 종류 이름·속성 목록도 새 이름으로 (W103 `has no tooltip`, E016 `'checkable' and 'radio'` 등). 그 밖의 결과는 v0.8.0과 같음 (`tests/ui` 33개로 비교).
+- 미리보기: `checkbox`·`menu_item` 그리기, 풍선 도움말은 `tooltip`·`disabled_tooltip`.
+- 맨 위 주석 버전 v0.9.0, `UI_DOC_VERSION` 0.8.
+- 참고: C++ `ui-check`(uilayout.cppm)는 아직 문서 0.7이라, W104와 바뀐 메시지는 뷰어에만 있음.
+
+### tests
+
+- 샘플 `.ui`를 새 이름으로 바꿈. `tests\samples\ui\old_names.ui` 추가 (옛 이름만 써서 W104 14개).
+
 ## v0.8.0 (2026-10-12)
 
 ### source-viewer.html

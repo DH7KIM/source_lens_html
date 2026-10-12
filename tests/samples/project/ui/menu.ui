@@ -1,17 +1,17 @@
 #ui 1  section=menu_test
 row bar  left=0 right=0 top=0 height=40  padding=8 {
-    dropdown view  text="View"  menu=view_menu  tip="View options"
-    dropdown none  text="Empty"  menu=empty_menu  tip=""
+    dropdown view  text="View"  menu=view_menu  tooltip="View options"
+    dropdown none  text="Empty"  menu=empty_menu  tooltip=""
 }
 menu view_menu {
-    item small  text="Small"  radio
-    item large  text="Large"  radio checked
+    menu_item small  text="Small"  radio
+    menu_item large  text="Large"  radio checked
     separator
-    item grid   text="Grid"  check checked
-    item rulers text="Rulers"  check
+    menu_item grid   text="Grid"  checkable checked
+    menu_item rulers text="Rulers"  checkable
     menu zoom   text="Zoom" {
-        item z1  text="100%"  radio checked
-        item z2  text="200%"  radio
+        menu_item z1  text="100%"  radio checked
+        menu_item z2  text="200%"  radio
     }
 }
 menu empty_menu {

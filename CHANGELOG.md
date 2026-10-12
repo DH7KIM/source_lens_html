@@ -2,6 +2,26 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.9.0 (2026-10-12)
+
+### source-viewer.html
+
+- `.ui` names changed to the most common ones (follows ui-guideline document 0.8):
+  - Elements: `check` → `checkbox`, `item` → `menu_item`
+  - Attributes: `tip` → `tooltip`, `disabled_tip` → `disabled_tooltip`, `hint` → `placeholder`, `gap` → `spacing`, menu item `check` → `checkable`
+  - `edit`, `number`, `dropdown` and the other names stay the same.
+- Old names are still read (legacy) and give an orange warning W104 `'tip' is an old name` / `help: use 'tooltip' instead` (automatic fix class).
+  - An old name and its new name are the same attribute: writing both on one line makes the later one E006.
+  - W104 for an attribute only when that attribute has no other error. Old kind names (`check`, `item`) cannot be element names (E013). Suggestions (`did you mean`) only give new names.
+- Kind names and attribute lists in messages use the new names too (W103 `has no tooltip`, E016 `'checkable' and 'radio'`, etc.). Everything else gives the same results as v0.8.0 (compared with the 33 files in `tests/ui`).
+- Preview: draws `checkbox` and `menu_item`; tooltips come from `tooltip` and `disabled_tooltip`.
+- Version comment at the top v0.9.0, `UI_DOC_VERSION` 0.8.
+- Note: the C++ `ui-check` (uilayout.cppm) is still at document 0.7, so W104 and the changed messages are only in the viewer for now.
+
+### tests
+
+- Sample `.ui` files use the new names. Added `tests\samples\ui\old_names.ui` (only old names, 14 W104 warnings).
+
 ## v0.8.0 (2026-10-12)
 
 ### source-viewer.html

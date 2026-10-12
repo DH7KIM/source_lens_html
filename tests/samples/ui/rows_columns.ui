@@ -1,56 +1,56 @@
 #ui 1  section=settings
-// Settings window: row and column (gap, padding, align, spacer, nesting)
+// Settings window: row and column (spacing, padding, align, spacer, nesting)
 defaults button  height=28 width=80
-defaults row     gap=6
+defaults row     spacing=6
 
 // Top bar: title on the left, buttons pushed to the right by a spacer
 row header  left=0 right=0 top=0 height=40 padding=6 align=center {
     label  title  text="Settings"
     spacer
-    button reset  text="Reset"  tip="Back to the default values"
-    button apply  text="Apply"  tip="Save the changes"
+    button reset  text="Reset"  tooltip="Back to the default values"
+    button apply  text="Apply"  tooltip="Save the changes"
 }
 
 // Left side: a list of pages, one under another (align=fill: full width)
-column pages  left=0 top=40 bottom=0 width=140 padding=6 gap=4 {
-    button general  text="General"   tip="General settings"
-    button display  text="Display"   tip="Colors and font"
-    button keys     text="Keys"      tip="Keyboard shortcuts"
+column pages  left=0 top=40 bottom=0 width=140 padding=6 spacing=4 {
+    button general  text="General"   tooltip="General settings"
+    button display  text="Display"   tooltip="Colors and font"
+    button keys     text="Keys"      tooltip="Keyboard shortcuts"
     spacer
     label  ver      text="v0.1.0"  align=center
 }
 
 // Right side: rows of label + control
-column page  left=140 right=0 top=40 bottom=40 padding=10 gap=8 align=left {
+column page  left=140 right=0 top=40 bottom=40 padding=10 spacing=8 align=left {
     row r_lang  align=center {
         label    lang_label  text="Language"  width=90
-        dropdown lang        text="한국어"  menu=lang_menu  width=120  tip="Language of the program"
+        dropdown lang        text="한국어"  menu=lang_menu  width=120  tooltip="Language of the program"
     }
     row r_size  align=center {
         label    size_label  text="Tile size"  width=90
-        number   tile_w      min=1 max=64 step=1 width=60  tip="Tile width"
+        number   tile_w      min=1 max=64 step=1 width=60  tooltip="Tile width"
         label    times       text="×"
-        number   tile_h      min=1 max=64 step=1 width=60  tip="Tile height"
+        number   tile_h      min=1 max=64 step=1 width=60  tooltip="Tile height"
     }
     row r_path  align=center {
         label    path_label  text="Folder"  width=90
-        edit     path        width=240  hint="D:\\Projects"  tip="Folder to open first"
-        button   browse      text="..."  width=30  tip="Choose a folder"
+        edit     path        width=240  placeholder="D:\\Projects"  tooltip="Folder to open first"
+        button   browse      text="..."  width=30  tooltip="Choose a folder"
     }
-    check  start_last  text="Open the last file on start"  checked  tip="Reopen the file from last time"
-    check  dark        text="Dark theme"  tip="Use dark colors"
+    checkbox start_last  text="Open the last file on start"  checked  tooltip="Reopen the file from last time"
+    checkbox dark        text="Dark theme"  tooltip="Use dark colors"
 }
 
 // Bottom bar: buttons in the middle
 row footer  left=140 right=0 bottom=0 height=40 padding=6 {
     spacer
-    button ok      text="OK"      tip="Save and close"
-    button cancel  text="Cancel"  tip="Close without saving"
+    button ok      text="OK"      tooltip="Save and close"
+    button cancel  text="Cancel"  tooltip="Close without saving"
     spacer
 }
 
 menu lang_menu {
-    item ko  text="한국어"   radio checked
-    item en  text="English"  radio
-    item ja  text="日本語"    radio
+    menu_item ko  text="한국어"   radio checked
+    menu_item en  text="English"  radio
+    menu_item ja  text="日本語"    radio
 }

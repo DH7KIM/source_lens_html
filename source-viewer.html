@@ -5,13 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.8.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.9.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
   - 목록은 트리 구조(가지 연결선 ├ └): 폴더를 눌러 접기·펼치기 (브라우저에 기억). 접힌 폴더 안에 지금 파일이 있으면 강조색.
   - 문법 색칠 + 줄 번호 (C++, Rust, TOML, JSON, BAT, 셸/YAML/Makefile). 줄 번호는 복사할 때 딸려 오지 않는다.
-  - .ui (UI 레이아웃 형식 1, ui-guideline 문서 0.7): 색칠 + 전체 검사(E001~E016, W101·W103, ui-check와 같은 결과).
+  - .ui (UI 레이아웃 형식 1, ui-guideline 문서 0.8): 색칠 + 전체 검사(E001~E016, W101·W103·W104).
+    옛 이름(tip, check, item 등)도 읽고 경고 W104로 새 이름을 알려 준다.
     오류는 빨간 밑줄, 경고는 주황 밑줄. 줄 아래에 코드·설명·추천(help)을 표시 (끄고 켤 수 있음). .ui.log도 색칠.
   - .md는 문서로 보기 / 원문 보기 전환. 한국어(이름.ko.md) / 영어(이름.md) 전환.
   - 파일을 고쳐서 저장하면 1초 안에 화면이 바뀐다. UTF-8이 아니면 EUC-KR(CP949)·UTF-16으로 읽는다.
@@ -159,7 +160,7 @@
   .pv-win .pv-button, .pv-win .pv-dropdown { border: 1px solid var(--muted); border-radius: 4px; background: var(--panel); justify-content: center; }
   .pv-win .pv-dropdown { justify-content: space-between; padding: 0 6px; }
   .pv-win .pv-edit, .pv-win .pv-number { border: 1px solid var(--muted); border-radius: 2px; padding: 0 5px; background: var(--bg); }
-  .pv-win .pv-check { background: var(--bg); }
+  .pv-win .pv-checkbox { background: var(--bg); }
   .pv-win .pv-number { justify-content: space-between; }
   .pv-win .pv-edit .h { color: var(--muted); }
   .pv-win .pv-canvas { border: 1px solid var(--line); background: repeating-linear-gradient(45deg, var(--line) 0 1px, transparent 1px 8px); }
@@ -307,10 +308,10 @@ const UI = {
     pvCannot: "이 오류는 배치를 그릴 수 없습니다 (머리 줄 '#ui 1', 파일 크기 등). 위의 오류를 먼저 고쳐 주세요.",
     pvBox: "{0}  {5}번 줄  위치 {1}, {2}  크기 {3}×{4}", pvBoxGo: "클릭하면 소스의 이 줄로 갑니다.", pvHidden: "(hidden)", pvDisabled: "(disabled)",
     pvModeL: "배치", pvModeV: "보기", pvModeLTip: "배치 모드: 상자를 클릭하면 소스의 그 줄로 갑니다.",
-    pvModeVTip: "보기 모드: 프로그램처럼 보입니다. 상자에 마우스를 올리면 풍선 도움말(tip, disabled면 disabled_tip), dropdown을 클릭하면 연결된 menu가 펼쳐집니다 (보기만, 바깥 클릭·Esc로 닫기).",
+    pvModeVTip: "보기 모드: 프로그램처럼 보입니다. 상자에 마우스를 올리면 풍선 도움말(tooltip, disabled면 disabled_tooltip), dropdown을 클릭하면 연결된 menu가 펼쳐집니다 (보기만, 바깥 클릭·Esc로 닫기).",
     pvDropGo: "클릭하면 메뉴를 펼칩니다.", pvNoMenu: "연결된 menu가 없습니다", pvEmpty: "(빈 메뉴)", pvItem: "{0}  {1}번 줄",
     uiErrs: "오류 {0}개", uiWarns: "경고 {0}개", uiOk: "검사 통과",
-    uiErrsTip: "ui-check와 같은 전체 검사입니다 (E001~E016, W101·W103, UI 문서 {0}). 설명은 ui-check와 같은 영어 원문입니다. 밑줄에 마우스를 올리면 설명이 보입니다.",
+    uiErrsTip: "ui-check와 같은 전체 검사입니다 (E001~E016, W101·W103·W104, UI 문서 {0}. W104(옛 이름)는 ui-check에 아직 없음). 설명은 ui-check와 같은 영어 원문입니다. 밑줄에 마우스를 올리면 설명이 보입니다.",
   },
   en: {
     pick: "Choose source folder", regrant: "Open folder", pickFiles: "Choose folder",
@@ -339,10 +340,10 @@ const UI = {
     pvCannot: "The layout cannot be drawn with this error (header line '#ui 1', file size, …). Fix the errors above first.",
     pvBox: "{0}  line {5}  position {1}, {2}  size {3}×{4}", pvBoxGo: "Click to go to this line in the source.", pvHidden: "(hidden)", pvDisabled: "(disabled)",
     pvModeL: "Layout", pvModeV: "View", pvModeLTip: "Layout mode: click a box to go to its line in the source.",
-    pvModeVTip: "View mode: looks like the program. Hover a box to see its tooltip (tip, or disabled_tip when disabled); click a dropdown to open its menu (view only; click outside or press Esc to close).",
+    pvModeVTip: "View mode: looks like the program. Hover a box to see its tooltip (tooltip, or disabled_tooltip when disabled); click a dropdown to open its menu (view only; click outside or press Esc to close).",
     pvDropGo: "Click to open the menu.", pvNoMenu: "No menu is linked", pvEmpty: "(empty menu)", pvItem: "{0}  line {1}",
     uiErrs: "{0} error(s)", uiWarns: "{0} warning(s)", uiOk: "check passed",
-    uiErrsTip: "The same full check as ui-check (E001-E016, W101 and W103, UI document {0}). Hover an underline to see the message.",
+    uiErrsTip: "The same full check as ui-check (E001-E016, W101, W103 and W104, UI document {0}; W104 for old names is not in ui-check yet). Hover an underline to see the message.",
   },
 };
 const LANG_NAMES = { ko: "한국어", en: "English", ja: "日本語", zh: "中文" };
@@ -557,21 +558,25 @@ function highlight(src, lang) {
   return out;
 }
 
-// ---------- .ui 전체 검사기 (UI 형식 1, ui-guideline 문서 0.7) ----------
-// tile_font_editor_cpp의 src/uilayout.cppm(Parser)를 그대로 옮긴 것. ui-check와 글자 하나까지 같은 결과를 낸다.
+// ---------- .ui 전체 검사기 (UI 형식 1, ui-guideline 문서 0.8) ----------
+// tile_font_editor_cpp의 src/uilayout.cppm(Parser)를 그대로 옮긴 것. 문서 0.7까지는 ui-check와 글자 하나까지 같은 결과를 낸다.
+// 문서 0.8(새 이름, 옛 이름 경고 W104)은 뷰어가 먼저 따름 — uilayout.cppm·tests/ui는 아직 0.7.
 // 바이트 단위로 검사한다: 글자 하나 = 바이트 하나인 "바이트 글"(0~255)로 바꿔서 C++와 같은 위치·길이를 쓰고,
 // 메시지를 만들 때만 UTF-8로 되돌린다. 메시지는 영어 원문 (ui-check와 같음).
-const UI_DOC_VERSION = "0.7";
+const UI_DOC_VERSION = "0.8";
 const uiCheck = (() => {
   const MAX_FILE = 1 << 20, MAX_LINE = 4096, MAX_STRING = 1024, MAX_DEPTH = 16, MAX_NODES = 4096, MAX_STORED = 1000;
   const INT_MIN = -2147483648, INT_MAX = 2147483647, POS_MIN = -32768, POS_MAX = 32767;
-  const KIND_NAMES = ["", "label", "button", "edit", "number", "dropdown", "check", "canvas", "spacer",
-    "group", "row", "column", "menu", "item", "separator", "?"];
+  const KIND_NAMES = ["", "label", "button", "edit", "number", "dropdown", "checkbox", "canvas", "spacer",
+    "group", "row", "column", "menu", "menu_item", "separator", "?"];
   const [ROOT, LABEL, BUTTON, EDIT, NUMBER, DROPDOWN, CHECK, CANVAS, SPACER, GROUP, ROW, COLUMN, MENU, ITEM, SEPARATOR, UNKNOWN] =
     KIND_NAMES.map((_, i) => i);
-  const KIND_WORDS = ["label", "button", "edit", "number", "dropdown", "check", "canvas", "spacer",
-    "group", "row", "column", "menu", "item", "separator", "defaults"];
-  const RESERVED_WORDS = ["include", "style", "true", "false", "if", "else", "use", "ref"];
+  const KIND_WORDS = ["label", "button", "edit", "number", "dropdown", "checkbox", "canvas", "spacer",
+    "group", "row", "column", "menu", "menu_item", "separator", "defaults"];
+  // 옛 이름 (문서 0.8에서 바뀜, 레거시): 계속 읽고 경고 W104 + 자동 수정. 추천 후보에는 넣지 않음
+  const OLD_KINDS = { check: "checkbox", item: "menu_item" };
+  const OLD_ATTRS = { tip: "tooltip", disabled_tip: "disabled_tooltip", hint: "placeholder", gap: "spacing", check: "checkable" };
+  const RESERVED_WORDS = ["include", "style", "true", "false", "if", "else", "use", "ref", ...Object.keys(OLD_KINDS)];
   const RESERVED_CHARS = ".$@%:;[](),+*/\\!?&|<>~^'#";
   const bit = k => 1 << k;
   const SCREEN = bit(LABEL) | bit(BUTTON) | bit(EDIT) | bit(NUMBER) | bit(DROPDOWN) | bit(CHECK) | bit(CANVAS) | bit(GROUP) | bit(ROW) | bit(COLUMN);
@@ -582,18 +587,19 @@ const uiCheck = (() => {
   const SPECS = [
     ["left", "Pos", SCREEN], ["top", "Pos", SCREEN], ["right", "Pos", SCREEN], ["bottom", "Pos", SCREEN],
     ["width", "Size", SCREEN], ["height", "Size", SCREEN], ["right_of", "Ref", SCREEN], ["below", "Ref", SCREEN],
-    ["gap", "Pos", SCREEN], ["hidden", "Flag", SCREEN], ["disabled", "Flag", SCREEN],
+    ["spacing", "Pos", SCREEN], ["hidden", "Flag", SCREEN], ["disabled", "Flag", SCREEN],
     ["text", "Str", bit(LABEL) | bit(BUTTON) | bit(EDIT) | bit(DROPDOWN) | bit(CHECK) | bit(MENU) | bit(ITEM)],
-    ["align", "Enum", bit(LABEL) | bit(ROW) | bit(COLUMN)], ["hint", "Str", bit(EDIT)], ["max_length", "PosInt", bit(EDIT)],
+    ["align", "Enum", bit(LABEL) | bit(ROW) | bit(COLUMN)], ["placeholder", "Str", bit(EDIT)], ["max_length", "PosInt", bit(EDIT)],
     ["min", "Int", bit(NUMBER)], ["max", "Int", bit(NUMBER)], ["step", "PosInt", bit(NUMBER)], ["hex", "Flag", bit(NUMBER)],
     ["menu", "Ref", bit(DROPDOWN)], ["checked", "Flag", bit(CHECK) | bit(ITEM)],
-    ["padding", "Pos", bit(GROUP) | bit(ROW) | bit(COLUMN)], ["check", "Flag", bit(ITEM)], ["radio", "Flag", bit(ITEM)],
-    ["tip", "Str", TIP_KINDS], ["disabled_tip", "Str", TIP_KINDS], ["section", "Word", 0],
+    ["padding", "Pos", bit(GROUP) | bit(ROW) | bit(COLUMN)], ["checkable", "Flag", bit(ITEM)], ["radio", "Flag", bit(ITEM)],
+    ["tooltip", "Str", TIP_KINDS], ["disabled_tooltip", "Str", TIP_KINDS], ["section", "Word", 0],
   ].map(([key, type, kinds]) => ({ key, type, kinds }));
-  const NO_DEFAULT_KEYS = ["left", "top", "right", "bottom", "right_of", "below", "text", "hint", "tip", "disabled_tip", "menu"];
+  const NO_DEFAULT_KEYS = ["left", "top", "right", "bottom", "right_of", "below", "text", "placeholder", "tooltip", "disabled_tooltip", "menu"];
   const POSITION_KEYS = ["left", "top", "right", "bottom", "right_of", "below"];
-  const findSpec = key => SPECS.find(s => s.key === key) || null;
-  const kindFrom = w => { const i = KIND_NAMES.indexOf(w); return i >= 1 && i < UNKNOWN ? i : null; };
+  /// 속성 찾기: 옛 이름도 새 이름의 속성으로 (메시지에는 파일에 쓴 이름을 그대로 씀)
+  const findSpec = key => SPECS.find(s => s.key === (OLD_ATTRS[key] ?? key)) || null;
+  const kindFrom = w => { const i = KIND_NAMES.indexOf(OLD_KINDS[w] ?? w); return i >= 1 && i < UNKNOWN ? i : null; };
   const isContainer = k => k === GROUP || k === ROW || k === COLUMN || k === MENU;
   const isScreen = k => (SCREEN & bit(k)) !== 0;
   const autoOk = (k, axis) => [LABEL, BUTTON, DROPDOWN, CHECK, ROW, COLUMN].includes(k) || ((k === EDIT || k === NUMBER) && axis === 1);
@@ -602,9 +608,9 @@ const uiCheck = (() => {
   function initNode(k) {
     const n = { kind: k, name: "", line: 0, col: 0, kindLen: 0, nameCol: 0, nameLen: 0, parent: -1, children: [],
       left: null, top: null, right: null, bottom: null, w: { mode: "none", value: 0 }, h: { mode: "none", value: 0 },
-      wLine: false, hLine: false, rightOf: -1, below: -1, hasRightOf: false, hasBelow: false, gap: 6, padding: 0,
-      hidden: false, disabled: false, text: "", hint: "", tip: null, disabledTip: null, maxLength: 256,
-      minValue: 0, maxValue: INT_MAX, step: 1, hex: false, menu: -1, check: false, radio: false, checked: false,
+      wLine: false, hLine: false, rightOf: -1, below: -1, hasRightOf: false, hasBelow: false, spacing: 6, padding: 0,
+      hidden: false, disabled: false, text: "", placeholder: "", tooltip: null, disabledTooltip: null, maxLength: 256,
+      minValue: 0, maxValue: INT_MAX, step: 1, hex: false, menu: -1, checkable: false, radio: false, checked: false,
       checkedCol: 0, checkedLen: 0, align: "left", bad: false };
     const fixed = v => ({ mode: "fixed", value: v }), a = () => ({ mode: "auto", value: 0 });
     switch (k) {
@@ -681,7 +687,7 @@ const uiCheck = (() => {
   function parse(bytes) {
     const nodes = [], diags = [];
     let errorCount = 0, warningCount = 0;
-    const root = initNode(ROOT); root.gap = 0; nodes.push(root);
+    const root = initNode(ROOT); root.spacing = 0; nodes.push(root);
     const stack = [], refs = [], names = new Map(), defaults = new Map(), defaultLines = new Map();
     let colmap = [1], seenElement = false, tooMany = false, lineFirst = 0, lineErrors = 0;
     const dummy = {};
@@ -770,6 +776,12 @@ const uiCheck = (() => {
       const s = suggest(t.key, KIND_WORDS);
       if (s) fix(diag("E002", ln, t.col, t.klen, "unknown element kind '{}'", [t.key], "did you mean '{}'?", [s]), "auto", s);
       else diag("E002", ln, t.col, t.klen, "unknown element kind '{}'", [t.key], "this program supports UI {}; '{}' may need a newer version", [UI_DOC_VERSION, t.key]);
+    }
+
+    /// 옛 이름 경고 (W104, 자동 수정: 새 이름으로)
+    function oldName(t, ln, table) {
+      const nw = table[t.key];
+      if (nw) fix(diag("W104", ln, t.col, t.klen, "'{}' is an old name", [t.key], "use '{}' instead", [nw]), "auto", nw);
     }
 
     function wordOk(w, off, ln) {
@@ -993,7 +1005,7 @@ const uiCheck = (() => {
       if (first.type === "word" && first.key === "defaults") { defaultsLine(toks, ln, opens, openCol); return; }
       let kind = null;
       if (first.type === "attr") diag("E002", ln, first.col, first.klen, "expected an element kind, got '{}='", [first.key], "start the line with a kind such as button, label or row");
-      else if (first.type === "word") { kind = kindFrom(first.key); if (kind === null) unknownKind(first, ln); }
+      else if (first.type === "word") { kind = kindFrom(first.key); if (kind === null) unknownKind(first, ln); else oldName(first, ln, OLD_KINDS); }
       element(kind ?? UNKNOWN, toks, ln, bad || kind === null, opens, openCol);
     }
 
@@ -1009,22 +1021,24 @@ const uiCheck = (() => {
       }
       const kt = toks[1], kind = kindFrom(kt.key);
       if (kind === null) { unknownKind(kt, ln); return; }
+      oldName(kt, ln, OLD_KINDS);
       if (!(DEFAULT_KINDS & bit(kind))) {
-        diag("E012", ln, kt.col, kt.klen, "'{}' cannot have defaults", [kt.key], "defaults work for: label, button, edit, number, dropdown, check, canvas, group, row, column, item");
+        diag("E012", ln, kt.col, kt.klen, "'{}' cannot have defaults", [kt.key], "defaults work for: label, button, edit, number, dropdown, checkbox, canvas, group, row, column, menu_item");
         return;
       }
       const scratch = initNode(kind);
       for (let k = 2; k < toks.length; k++) {
         const t = toks[k];
         if (t.type === "bad") continue;
-        const sp = findSpec(t.key);
-        if (NO_DEFAULT_KEYS.includes(t.key) && sp && (sp.kinds & bit(kind))) { remove(diag("E010", ln, t.col, t.len, "'{}' cannot be a default", [t.key], "set it on each element")); continue; }
-        const key = kind + "\u0000" + t.key;
+        const sp = findSpec(t.key), ck = sp ? sp.key : t.key;   // ck: 새 이름 (옛 이름과 같은 속성)
+        if (NO_DEFAULT_KEYS.includes(ck) && sp && (sp.kinds & bit(kind))) { remove(diag("E010", ln, t.col, t.len, "'{}' cannot be a default", [t.key], "set it on each element")); continue; }
+        const key = kind + "\u0000" + ck;
         if (defaultLines.has(key)) {
           remove(diag("E006", ln, t.col, t.len, "'{}' already has a default for '{}'", [t.key, kt.key], "first set at line {}", [String(defaultLines.get(key))]));
           continue;
         }
         if (apply(scratch, ROOT, t, ln, true, false)) {
+          oldName(t, ln, OLD_ATTRS);
           defaultLines.set(key, ln);
           if (!defaults.has(kind)) defaults.set(kind, []);
           defaults.get(kind).push(t);
@@ -1054,7 +1068,7 @@ const uiCheck = (() => {
         let err = null;
         if ((kind === ITEM || kind === SEPARATOR) && pk !== MENU) err = ["'{}' must be inside a 'menu'", "move it into a menu block"];
         else if (kind === MENU && pk !== ROOT && pk !== MENU) err = ["'{}' must be at the top level or inside another 'menu'", "move the menu out of this block; a dropdown opens it"];
-        else if ((isScreen(kind) || kind === SPACER) && pk === MENU) err = ["'{}' cannot be inside a 'menu'", "a menu holds item, separator and menu"];
+        else if ((isScreen(kind) || kind === SPACER) && pk === MENU) err = ["'{}' cannot be inside a 'menu'", "a menu holds menu_item, separator and menu"];
         else if (kind === SPACER && pk !== ROW && pk !== COLUMN) err = ["'{}' must be inside a 'row' or 'column'", "use left/right/top/bottom to leave space in a group"];
         if (err) elemDiag("E012", n.col, n.kindLen, err[0], [kn], err[1]);
       }
@@ -1091,13 +1105,15 @@ const uiCheck = (() => {
       for (; k < toks.length; k++) {
         const t = toks[k];
         if (t.type === "bad") continue;
-        if (seen.has(t.key)) {
-          remove(diag("E006", ln, t.col, t.len, "'{}' is set twice", [t.key], "first set at column {}", [String(seen.get(t.key))]));
+        const ck = findSpec(t.key)?.key ?? t.key;   // 옛 이름과 새 이름은 같은 속성
+        if (seen.has(ck)) {
+          remove(diag("E006", ln, t.col, t.len, "'{}' is set twice", [t.key], "first set at column {}", [String(seen.get(ck))]));
           n.bad = true;
           continue;
         }
-        seen.set(t.key, t.col);
+        seen.set(ck, t.col);
         if (!apply(n, pk, t, ln, true, true)) { n.bad = true; continue; }
+        oldName(t, ln, OLD_ATTRS);
         if (t.key === "checked") { n.checkedCol = t.col; n.checkedLen = t.len; }
         if (t.key === "right_of" || t.key === "below" || t.key === "menu") {
           refs.push({ node: idx, key: t.key, name: t.str, line: ln, col: t.vcol, len: t.vlen });
@@ -1107,7 +1123,7 @@ const uiCheck = (() => {
         }
       }
       if (!n.bad) checkElement(n, idx, pk, hasMenu);
-      const noTip = kind !== UNKNOWN && (INPUT_KINDS & bit(kind)) && n.tip === null;
+      const noTip = kind !== UNKNOWN && (INPUT_KINDS & bit(kind)) && n.tooltip === null;
       const who = n.name || kn;
       nodes[parent].children.push(idx);
       nodes.push(n);
@@ -1117,7 +1133,7 @@ const uiCheck = (() => {
         pushBlock(idx, ln, openCol, front.col, front.klen);
       }
       if (noTip && errorCount === lineErrors)
-        diag("W103", ln, n.col, n.kindLen, "'{}' has no tip", [who], "add tip=\"...\" to say what it does, or tip=\"\" if it needs none");
+        diag("W103", ln, n.col, n.kindLen, "'{}' has no tooltip", [who], "add tooltip=\"...\" to say what it does, or tooltip=\"\" if it needs none");
     }
 
     /// 속성 하나 적용. report = 오류를 알림, fromLine = 요소 줄에 쓴 것 (기본값 줄이 아님)
@@ -1135,7 +1151,8 @@ const uiCheck = (() => {
         if (d) remove(d);
         return false;
       }
-      if ((pk === ROW || pk === COLUMN) && POSITION_KEYS.includes(t.key)) {
+      const key = sp.key;   // 새 이름 (t.key는 파일에 쓴 이름: 메시지용)
+      if ((pk === ROW || pk === COLUMN) && POSITION_KEYS.includes(key)) {
         const d = err("E011", t.col, t.len, "'{}' cannot be used inside a '{}'", [t.key, KIND_NAMES[pk]], "inside a row or column, only width and height set the size");
         if (d) remove(d);
         return false;
@@ -1157,7 +1174,7 @@ const uiCheck = (() => {
       switch (sp.type) {
         case "Pos": case "Size": {
           if (sp.type === "Size" && t.vk === "word" && t.str === "auto") {
-            const axis = t.key === "width" ? 0 : 1;
+            const axis = key === "width" ? 0 : 1;
             if (!autoOk(n.kind, axis)) { err("E004", t.vcol, t.vlen, "'{}' cannot be auto on '{}'", [t.key, kn], "write a number"); return false; }
             if (axis === 0) { n.w = { mode: "auto", value: 0 }; n.wLine = fromLine; } else { n.h = { mode: "auto", value: 0 }; n.hLine = fromLine; }
             return true;
@@ -1170,13 +1187,13 @@ const uiCheck = (() => {
           }
           const iv = t.num;
           if (report) {
-            const sizeish = ["width", "height", "gap", "padding"].includes(t.key);
+            const sizeish = ["width", "height", "spacing", "padding"].includes(key);
             if (sizeish && iv < 0) diag("W101", ln, t.vcol, t.vlen, "'{}' is negative ({})", [t.key, String(iv)], "use 0 or more");
             else if (iv > 10000 || iv < -10000) diag("W101", ln, t.vcol, t.vlen, "'{}' is very large ({})", [t.key, String(iv)], "the usual range is -10000 to 10000");
           }
-          if (t.key === "width") { n.w = { mode: "fixed", value: iv }; n.wLine = fromLine; }
-          else if (t.key === "height") { n.h = { mode: "fixed", value: iv }; n.hLine = fromLine; }
-          else n[t.key] = iv;   // left top right bottom gap padding
+          if (key === "width") { n.w = { mode: "fixed", value: iv }; n.wLine = fromLine; }
+          else if (key === "height") { n.h = { mode: "fixed", value: iv }; n.hLine = fromLine; }
+          else n[key] = iv;   // left top right bottom spacing padding
           return true;
         }
         case "Int": case "PosInt": {
@@ -1186,14 +1203,14 @@ const uiCheck = (() => {
             if (d) fix(d, "confirm", "1");
             return false;
           }
-          ({ max_length: () => n.maxLength = t.num, min: () => n.minValue = t.num, max: () => n.maxValue = t.num, step: () => n.step = t.num })[t.key]();
+          ({ max_length: () => n.maxLength = t.num, min: () => n.minValue = t.num, max: () => n.maxValue = t.num, step: () => n.step = t.num })[key]();
           return true;
         }
         case "Str":
           if (t.vk !== "str") return expect("a string", "\"...\"");
-          if (t.key === "hint") n.hint = t.str;
-          else if (t.key === "tip") n.tip = t.str;
-          else if (t.key === "disabled_tip") n.disabledTip = t.str;
+          if (key === "placeholder") n.placeholder = t.str;
+          else if (key === "tooltip") n.tooltip = t.str;
+          else if (key === "disabled_tooltip") n.disabledTooltip = t.str;
           else n.text = t.str;
           return true;
         case "Enum": {
@@ -1209,7 +1226,7 @@ const uiCheck = (() => {
           if (t.vk !== "word") return expect("a name", "name");
           return true;
         case "Flag":
-          n[t.key] = true;   // hidden disabled hex checked check radio
+          n[key] = true;   // hidden disabled hex checked checkable radio
           return true;
       }
       return false;
@@ -1219,9 +1236,9 @@ const uiCheck = (() => {
       const kn = KIND_NAMES[n.kind], who = n.name || kn;
       const elem = (code, msg, args, help, hargs = []) => { diag(code, n.line, n.col, n.kindLen, msg, args, help, hargs).node = idx; };
       if (n.kind === ITEM) {
-        if (n.check && n.radio) elem("E016", "'check' and 'radio' cannot be used together", [], "use one of them");
-        else if (n.checked && !n.check && !n.radio)
-          remove(diag("E016", n.line, n.checkedCol, n.checkedLen, "'checked' needs 'check' or 'radio'", [], "add check or radio to the item, or remove checked"));
+        if (n.checkable && n.radio) elem("E016", "'checkable' and 'radio' cannot be used together", [], "use one of them");
+        else if (n.checked && !n.checkable && !n.radio)
+          remove(diag("E016", n.line, n.checkedCol, n.checkedLen, "'checked' needs 'checkable' or 'radio'", [], "add checkable or radio to the item, or remove checked"));
       }
       if (n.kind === NUMBER && n.minValue > n.maxValue)
         elem("E004", "min ({}) is greater than max ({})", [String(n.minValue), String(n.maxValue)], "make min less than or equal to max");
@@ -1259,7 +1276,7 @@ const uiCheck = (() => {
         let first = 0;
         for (const c of n.children) {
           const it = nodes[c];
-          if (it.kind === ITEM && it.radio && !it.check) {
+          if (it.kind === ITEM && it.radio && !it.checkable) {
             if (it.checked) {
               if (first) remove(diag("E016", it.line, it.checkedCol, it.checkedLen, "only one item in a radio group can be checked", [], "the first checked item is at line {}", [String(first)]));
               else first = it.line;
@@ -1417,7 +1434,7 @@ const uiCheck = (() => {
           let sum = 0, big = 0;
           for (const c of n.children) { const v = node(c).kind === SPACER ? 0 : natural(c, axis); sum += v; big = Math.max(big, v); }
           const pad = 2 * Math.max(0, s(n.padding)), cnt = n.children.length;
-          return along ? pad + sum + (cnt > 1 ? (cnt - 1) * s(n.gap) : 0) : pad + big;
+          return along ? pad + sum + (cnt > 1 ? (cnt - 1) * s(n.spacing) : 0) : pad + big;
         }
         default: return 0;
       }
@@ -1436,12 +1453,12 @@ const uiCheck = (() => {
         if (!isScreen(n.kind)) continue;
         const r = { x: 0, y: 0, w: 0, h: 0 };
         const w = natural(c, 0);   // 가로
-        if (n.rightOf >= 0) { const o = rects[n.rightOf]; r.x = o.x + o.w + s(n.gap); r.w = n.right !== null ? x1 - s(n.right) - r.x : w; }
+        if (n.rightOf >= 0) { const o = rects[n.rightOf]; r.x = o.x + o.w + s(n.spacing); r.w = n.right !== null ? x1 - s(n.right) - r.x : w; }
         else if (n.left !== null && n.right !== null) { r.x = inr.x + s(n.left); r.w = x1 - s(n.right) - r.x; }
         else if (n.right !== null) { r.w = w; r.x = x1 - s(n.right) - r.w; }
         else { r.x = inr.x + s(n.left ?? 0); r.w = w; }
         const h = natural(c, 1);   // 세로
-        if (n.below >= 0) { const o = rects[n.below]; r.y = o.y + o.h + s(n.gap); r.h = n.bottom !== null ? y1 - s(n.bottom) - r.y : h; }
+        if (n.below >= 0) { const o = rects[n.below]; r.y = o.y + o.h + s(n.spacing); r.h = n.bottom !== null ? y1 - s(n.bottom) - r.y : h; }
         else if (n.top !== null && n.bottom !== null) { r.y = inr.y + s(n.top); r.h = y1 - s(n.bottom) - r.y; }
         else if (n.bottom !== null) { r.h = h; r.y = y1 - s(n.bottom) - r.h; }
         else { r.y = inr.y + s(n.top ?? 0); r.h = h; }
@@ -1452,7 +1469,7 @@ const uiCheck = (() => {
     }
     function placeLine(li) {
       const ln = node(li), row = ln.kind === ROW, lr = rects[li];
-      const p = s(ln.padding), gap = s(ln.gap);
+      const p = s(ln.padding), gap = s(ln.spacing);
       const ix = lr.x + p, iy = lr.y + p, iw = Math.max(0, lr.w - 2 * p), ih = Math.max(0, lr.h - 2 * p);
       const mainLen = row ? iw : ih, crossLen = row ? ih : iw, ma = row ? 0 : 1, ca = row ? 1 : 0;
       let used = 0, spacers = 0;
@@ -1522,9 +1539,10 @@ const uiCheck = (() => {
 })();
 
 // ---------- .ui 색칠 (검사는 위의 uiCheck가 한다) ----------
-const UI_KINDS = words("label button edit number dropdown check canvas spacer group row column menu item separator defaults");
-const UI_ATTRS = words(`left top right bottom width height right_of below gap hidden disabled text align hint max_length
-  min max step hex menu checked padding check radio tip disabled_tip section`);
+// 옛 이름(check item / tip disabled_tip hint gap check)도 색칠 (경고 W104 밑줄은 검사 결과로)
+const UI_KINDS = words("label button edit number dropdown checkbox canvas spacer group row column menu menu_item separator defaults check item");
+const UI_ATTRS = words(`left top right bottom width height right_of below spacing hidden disabled text align placeholder max_length
+  min max step hex menu checked padding checkable radio tooltip disabled_tooltip section tip disabled_tip hint gap check`);
 const UI_RESERVED = new Set([...UI_KINDS, ...words("include style true false if else use ref")]);
 const UI_NO_NAME = words("spacer separator");
 
@@ -2458,7 +2476,7 @@ function drawPreview() {
   let html = `<div class="pv-wrap"><div class="pv-win" style="width:${w}px;height:${h}px;font:${fontPx}px/${lineH}px ${esc(PV_FONT)}">`;
   for (let i = 1; i < rects.length; i++) {
     const n = doc.nodes[i], kind = K[n.kind];
-    if (n.dropped || !["label", "button", "edit", "number", "dropdown", "check", "canvas", "group", "row", "column"].includes(kind)) continue;
+    if (n.dropped || !["label", "button", "edit", "number", "dropdown", "checkbox", "canvas", "group", "row", "column"].includes(kind)) continue;
     const r = rects[i], name = uiCheck.text(n.name), txt = esc(uiCheck.text(n.text));
     const tip = t("pvBox", `${kind} ${name}`.trim(), r.x, r.y, r.w, r.h, n.line) + (n.hidden ? " " + t("pvHidden") : "") + (n.disabled ? " " + t("pvDisabled") : "") + "\n" + (!view ? t("pvBoxGo") : kind === "dropdown" ? t("pvDropGo") : "");
     let body = "";
@@ -2466,13 +2484,13 @@ function drawPreview() {
       case "label": body = txt; break;
       case "button": body = txt; break;
       case "dropdown": body = `<span>${txt}</span><span>▾</span>`; break;
-      case "edit": body = `<span class="h">${esc(uiCheck.text(n.hint))}</span>`; break;
+      case "edit": body = `<span class="h">${esc(uiCheck.text(n.placeholder))}</span>`; break;
       case "number": body = `<span>${n.hex ? "0x" + n.minValue.toString(16).toUpperCase() : n.minValue}</span><span>⇕</span>`; break;
-      case "check": body = `${n.checked ? "☑" : "☐"} ${txt}`; break;
+      case "checkbox": body = `${n.checked ? "☑" : "☐"} ${txt}`; break;
       case "group": case "row": case "column": body = `<span class="tag">${esc(`${kind} ${name}`.trim())}</span>`; break;
     }
-    // 보기 모드: 위치 설명 대신 프로그램의 풍선 도움말 (disabled면 disabled_tip, 없으면 tip; 빈 글·숨긴 요소는 안 보임)
-    const tooltip = uiCheck.text(n.disabled && n.disabledTip !== null ? n.disabledTip : n.tip ?? "");
+    // 보기 모드: 위치 설명 대신 프로그램의 풍선 도움말 (disabled면 disabled_tooltip, 없으면 tooltip; 빈 글·숨긴 요소는 안 보임)
+    const tooltip = uiCheck.text(n.disabled && n.disabledTooltip !== null ? n.disabledTooltip : n.tooltip ?? "");
     const attr = !view ? ` title="${esc(tip)}"` : tooltip && !n.hidden ? ` data-tooltip="${esc(tooltip)}"` : "";
     const just = kind === "label" ? ` justify-content:${n.align === "center" ? "center" : n.align === "right" ? "flex-end" : "flex-start"};` : "";
     html += `<div data-i="${i}" data-ln="${n.line}" class="pv-${kind}${n.hidden ? " pv-hidden" : ""}${n.disabled ? " pv-disabled" : ""}${n.line === hlLine ? " pv-cur" : ""}" style="left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px;${just}"${attr}>${body}</div>`;
@@ -2489,7 +2507,7 @@ function menuHtml(doc, mi, depth) {
     const n = doc.nodes[c], kind = uiCheck.KIND_NAMES[n.kind];
     if (n.dropped || n.hidden) continue;
     if (kind === "separator") { h += `<div class="sep" title="${esc(t("pvItem", "separator", n.line))}"></div>`; continue; }
-    if (kind !== "item" && kind !== "menu") continue;
+    if (kind !== "menu_item" && kind !== "menu") continue;
     any = true;
     const sub = kind === "menu" && depth < 8;
     const mark = n.checked ? (n.radio ? "●" : "✓") : "";

@@ -1,3 +1,3 @@
 // Errors on purpose: the first line is not "#ui 1" (E001), so the layout cannot be drawn.
 // The preview only shows a message; fix the header line to see the layout.
-button open  text="Open"  left=0 top=0  tip="Open a file"
+button open  text="Open"  left=0 top=0  tooltip="Open a file"
