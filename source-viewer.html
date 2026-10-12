@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.6.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.8.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -188,6 +188,11 @@
   .pv-pop .mi .mk { width: 1.4em; text-align: center; flex: none; } .pv-pop .mi .tx { flex: 1; } .pv-pop .mi .ar { color: var(--muted); }
   .pv-pop .mi.dis { color: var(--muted); }
   .pv-pop .sep { border-top: 1px solid var(--line); margin: 3px 0; }
+  /* 보기 모드 풍선 도움말: 창·미리보기 영역 밖으로도 나갈 수 있게 fixed */
+  .pv-tooltip { position: fixed; z-index: 100; pointer-events: none; max-width: min(480px, calc(100vw - 16px)); padding: 3px 7px;
+    background: var(--panel); color: var(--fg); border: 1px solid var(--muted); border-radius: 3px; box-shadow: 0 2px 6px rgba(0,0,0,.3);
+    white-space: pre-wrap; overflow-wrap: anywhere; }
+  .pv-tooltip[hidden] { display: none; }
   .pv-pop .mi > .pv-pop { display: none; left: 100%; top: -4px; } .pv-pop .mi:hover > .pv-pop { display: block; }
 
   @media (max-width: 760px) {
@@ -269,6 +274,7 @@
     </div>
   </main>
 </div>
+<div class="pv-tooltip" id="pvTooltip" role="tooltip" hidden></div>
 <input type="file" id="dirInput" webkitdirectory multiple hidden>
 <script>
 "use strict";
@@ -301,7 +307,7 @@ const UI = {
     pvCannot: "이 오류는 배치를 그릴 수 없습니다 (머리 줄 '#ui 1', 파일 크기 등). 위의 오류를 먼저 고쳐 주세요.",
     pvBox: "{0}  {5}번 줄  위치 {1}, {2}  크기 {3}×{4}", pvBoxGo: "클릭하면 소스의 이 줄로 갑니다.", pvHidden: "(hidden)", pvDisabled: "(disabled)",
     pvModeL: "배치", pvModeV: "보기", pvModeLTip: "배치 모드: 상자를 클릭하면 소스의 그 줄로 갑니다.",
-    pvModeVTip: "보기 모드: dropdown을 클릭하면 연결된 menu가 펼쳐집니다 (보기만, 바깥 클릭·Esc로 닫기).",
+    pvModeVTip: "보기 모드: 프로그램처럼 보입니다. 상자에 마우스를 올리면 풍선 도움말(tip, disabled면 disabled_tip), dropdown을 클릭하면 연결된 menu가 펼쳐집니다 (보기만, 바깥 클릭·Esc로 닫기).",
     pvDropGo: "클릭하면 메뉴를 펼칩니다.", pvNoMenu: "연결된 menu가 없습니다", pvEmpty: "(빈 메뉴)", pvItem: "{0}  {1}번 줄",
     uiErrs: "오류 {0}개", uiWarns: "경고 {0}개", uiOk: "검사 통과",
     uiErrsTip: "ui-check와 같은 전체 검사입니다 (E001~E016, W101·W103, UI 문서 {0}). 설명은 ui-check와 같은 영어 원문입니다. 밑줄에 마우스를 올리면 설명이 보입니다.",
@@ -333,7 +339,7 @@ const UI = {
     pvCannot: "The layout cannot be drawn with this error (header line '#ui 1', file size, …). Fix the errors above first.",
     pvBox: "{0}  line {5}  position {1}, {2}  size {3}×{4}", pvBoxGo: "Click to go to this line in the source.", pvHidden: "(hidden)", pvDisabled: "(disabled)",
     pvModeL: "Layout", pvModeV: "View", pvModeLTip: "Layout mode: click a box to go to its line in the source.",
-    pvModeVTip: "View mode: click a dropdown to open its menu (view only; click outside or press Esc to close).",
+    pvModeVTip: "View mode: looks like the program. Hover a box to see its tooltip (tip, or disabled_tip when disabled); click a dropdown to open its menu (view only; click outside or press Esc to close).",
     pvDropGo: "Click to open the menu.", pvNoMenu: "No menu is linked", pvEmpty: "(empty menu)", pvItem: "{0}  line {1}",
     uiErrs: "{0} error(s)", uiWarns: "{0} warning(s)", uiOk: "check passed",
     uiErrsTip: "The same full check as ui-check (E001-E016, W101 and W103, UI document {0}). Hover an underline to see the message.",
@@ -2405,6 +2411,7 @@ function setPaneH(px, save) {
   if (save) savePv();
 }
 function drawPreview() {
+  hideTooltip();
   const on = !!pvCheck && pvSet.on;
   $("pv").hidden = $("pvSize").hidden = !on;
   document.body.classList.toggle("pv-on", on);
@@ -2464,8 +2471,11 @@ function drawPreview() {
       case "check": body = `${n.checked ? "☑" : "☐"} ${txt}`; break;
       case "group": case "row": case "column": body = `<span class="tag">${esc(`${kind} ${name}`.trim())}</span>`; break;
     }
+    // 보기 모드: 위치 설명 대신 프로그램의 풍선 도움말 (disabled면 disabled_tip, 없으면 tip; 빈 글·숨긴 요소는 안 보임)
+    const tooltip = uiCheck.text(n.disabled && n.disabledTip !== null ? n.disabledTip : n.tip ?? "");
+    const attr = !view ? ` title="${esc(tip)}"` : tooltip && !n.hidden ? ` data-tooltip="${esc(tooltip)}"` : "";
     const just = kind === "label" ? ` justify-content:${n.align === "center" ? "center" : n.align === "right" ? "flex-end" : "flex-start"};` : "";
-    html += `<div data-i="${i}" data-ln="${n.line}" class="pv-${kind}${n.hidden ? " pv-hidden" : ""}${n.disabled ? " pv-disabled" : ""}${n.line === hlLine ? " pv-cur" : ""}" style="left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px;${just}" title="${esc(tip)}">${body}</div>`;
+    html += `<div data-i="${i}" data-ln="${n.line}" class="pv-${kind}${n.hidden ? " pv-hidden" : ""}${n.disabled ? " pv-disabled" : ""}${n.line === hlLine ? " pv-cur" : ""}" style="left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px;${just}"${attr}>${body}</div>`;
   }
   stage.innerHTML = html + "</div></div>";
   if (view && pvOpen > 0) openMenu(pvOpen); else pvOpen = 0;
@@ -2513,6 +2523,42 @@ addEventListener("keydown", e => { if (e.key === "Escape" && pvOpen) closeMenu()
 document.addEventListener("pointerdown", e => {
   if (pvOpen && !e.target.closest(".pv-pop") && !e.target.closest(".pv-open")) closeMenu();
 }, true);
+// ---------- 보기 모드: 풍선 도움말 (프로그램처럼 0.5초 뒤 커서 아래에, 상자를 떠나면 닫힘) ----------
+const TOOLTIP_DELAY = 500;
+let tooltipTimer = 0, tooltipBox = null, tooltipX = 0, tooltipY = 0;
+function hideTooltip() {
+  clearTimeout(tooltipTimer); tooltipTimer = 0; tooltipBox = null;
+  $("pvTooltip").hidden = true;
+}
+function showTooltip() {
+  tooltipTimer = 0;
+  if (!tooltipBox || !tooltipBox.isConnected || pvOpen) return;
+  const tt = $("pvTooltip");
+  tt.textContent = tooltipBox.dataset.tooltip;
+  tt.style.font = tooltipBox.parentElement.style.font;
+  tt.hidden = false;
+  const w = tt.offsetWidth, h = tt.offsetHeight;
+  let x = tooltipX, y = tooltipY + 20;                         // 커서 아래 (커서 높이만큼)
+  if (x + w > innerWidth - 4) x = Math.max(4, innerWidth - 4 - w);
+  if (y + h > innerHeight - 4) y = Math.max(4, tooltipY - h - 4); // 아래가 모자라면 커서 위로
+  tt.style.left = x + "px"; tt.style.top = y + "px";
+}
+$("pvStage").addEventListener("mouseover", e => {
+  if (pvSet.mode !== "view") return;
+  const b = e.target.closest(".pv-win > div[data-tooltip]");
+  if (b === tooltipBox) return;
+  hideTooltip();
+  if (!b) return;
+  tooltipBox = b; tooltipX = e.clientX; tooltipY = e.clientY;
+  tooltipTimer = setTimeout(showTooltip, TOOLTIP_DELAY);
+});
+$("pvStage").addEventListener("mousemove", e => { if (tooltipTimer) { tooltipX = e.clientX; tooltipY = e.clientY; } });
+$("pvStage").addEventListener("mouseleave", hideTooltip);
+$("pvStage").addEventListener("scroll", hideTooltip);
+addEventListener("pointerdown", hideTooltip, true);
+addEventListener("wheel", hideTooltip, { capture: true, passive: true });
+addEventListener("keydown", e => { if (e.key === "Escape") hideTooltip(); });
+addEventListener("blur", hideTooltip);
 // 표시한 줄(hlLine)의 상자 강조
 function markPreview() {
   for (const b of $("pvStage").querySelectorAll(".pv-win > div[data-ln]")) b.classList.toggle("pv-cur", +b.dataset.ln === hlLine);

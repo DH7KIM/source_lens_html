@@ -2,6 +2,18 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.8.0 (2026-10-12)
+
+### source-viewer.html
+
+- `.ui` view mode tooltips: hover a box and, after 0.5 s, the program's tooltip appears below the cursor.
+  - Text: `tip` (`disabled_tip` for a disabled element, or `tip` if it has none). `\n` breaks the line.
+  - Elements without `tip`, with `tip=""`, or hidden show nothing (same as the real program).
+  - Drawn in the app theme colors. It can go outside the preview pane and moves inward or above the cursor near the right or bottom edge of the screen.
+  - Closes when the mouse leaves the box, on click (including opening a dropdown menu), wheel, Esc, or redraw.
+  - View mode no longer shows the box position and size (browser title); layout mode is unchanged.
+- Version in the top comment: v0.8.0.
+
 ## v0.7.0 (2026-10-12)
 
 ### tests
