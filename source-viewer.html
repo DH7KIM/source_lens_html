@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.2.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.3.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -1266,7 +1266,169 @@ const uiCheck = (() => {
     if (total > shown) out += `${file}: ${total - shown} more not shown\n`;
     return out;
   }
-  return { check, format };
+
+  // ---- 오류 복구 (uilayout.cppm의 recover(), 대화상자 2의 "무시") ----
+  /// 틀린 속성은 이미 빠져 있고(기본값), 틀린 요소는 묶음째 뺀다. 가리키는 요소가 없는 right_of·below는
+  /// left=0·top=0으로, menu는 없는 것으로 한다. 복구할 수 없으면(E001, 파일 크기, 저장 못 한 오류) null.
+  /// 원래 doc은 바꾸지 않고 새 문서를 돌려준다 (색칠·진단에 쓰는 원래 결과가 그대로 남도록).
+  function recover(doc) {
+    if (doc.errorCount === 0) return doc;
+    if (doc.errorCount + doc.warningCount > doc.diags.length) return null;
+    const nodes = doc.nodes.map(n => ({ ...n, children: n.children.slice() }));
+    const drop = new Uint8Array(nodes.length);
+    for (const d of doc.diags) {
+      if (d.severity !== "error") continue;
+      if (d.node === NODE_FILE) return null;
+      if (d.node > 0 && d.node < drop.length) drop[d.node] = 1;
+    }
+    // 묶음째: 부모는 항상 자식보다 앞에 있음
+    for (let i = 1; i < nodes.length; i++) { const p = nodes[i].parent; if (p > 0 && drop[p]) drop[i] = 1; }
+    const gone = i => i >= 0 && drop[i] === 1;
+    for (let i = 0; i < nodes.length; i++) {
+      const n = nodes[i];
+      n.dropped = drop[i] === 1;
+      n.children = n.children.filter(c => !gone(c));
+      if (gone(n.menu)) n.menu = -1;
+      // 가리키는 요소가 없으면(빠졌거나 처음부터 찾지 못함) 부모 안쪽의 왼쪽·위 가장자리 기준: left=0, top=0
+      if (gone(n.rightOf)) n.rightOf = -1;
+      if (gone(n.below)) n.below = -1;
+      if (n.hasRightOf && n.rightOf < 0 && n.left === null) n.left = 0;
+      if (n.hasBelow && n.below < 0 && n.top === null) n.top = 0;
+    }
+    return { ...doc, nodes, recovered: true };
+  }
+
+  // ---- 위치 계산 (uilayout.cppm의 Layouter, compute()) ----
+  /// 요소마다 {x, y, w, h} (nodes와 같은 번호, 창 왼쪽 위 기준 실제 픽셀). 오류가 있고 복구하지 않은 문서는 빈 배열.
+  /// metrics = { textWidth(바이트 글) → 픽셀, lineHeight(기본 16), scale(%, 기본 100) }
+  function compute(doc, width, height, metrics = {}) {
+    if ((doc.errorCount !== 0 && !doc.recovered) || !doc.nodes.length) return [];
+    const nodes = doc.nodes, node = i => nodes[i];
+    const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+    const scale = clamp(metrics.scale ?? 100, 25, 800);
+    const lineH = clamp(metrics.lineHeight ?? 16, 0, 100000);
+    const textW = n => metrics.textWidth ? clamp(metrics.textWidth(n.text), 0, 1000000) : 0;
+    /// 96 DPI 값 → 실제 픽셀 (반올림, 0.5는 0에서 먼 쪽)
+    const s = v => { const p = v * scale; return Math.trunc((p + (p >= 0 ? 50 : -50)) / 100); };
+    const rects = nodes.map(() => ({ x: 0, y: 0, w: 0, h: 0 }));
+
+    /// 자연 크기 (axis: 0 = 가로, 1 = 세로). 정할 수 없으면 0
+    function natural(i, axis) {
+      const n = node(i), sz = axis === 0 ? n.w : n.h;
+      if (sz.mode === "fixed") return Math.max(0, s(sz.value));
+      if (sz.mode === "none") return 0;
+      switch (n.kind) {
+        case LABEL: return axis === 0 ? textW(n) : lineH;
+        case BUTTON: case DROPDOWN: return axis === 0 ? textW(n) + 2 * s(8) : lineH + 2 * s(6);
+        case EDIT: case NUMBER: return lineH + 2 * s(6);   // auto는 세로만
+        case CHECK: return axis === 0 ? s(13) + s(4) + textW(n) : Math.max(s(13), lineH);
+        case ROW: case COLUMN: {
+          const along = (n.kind === ROW) === (axis === 0);   // 차례로 놓는 방향
+          let sum = 0, big = 0;
+          for (const c of n.children) { const v = node(c).kind === SPACER ? 0 : natural(c, axis); sum += v; big = Math.max(big, v); }
+          const pad = 2 * Math.max(0, s(n.padding)), cnt = n.children.length;
+          return along ? pad + sum + (cnt > 1 ? (cnt - 1) * s(n.gap) : 0) : pad + big;
+        }
+        default: return 0;
+      }
+    }
+    function inside(i) {
+      const n = node(i);
+      if (n.kind === GROUP) {
+        const r = rects[i], p = s(n.padding);
+        placeGroup(i, { x: r.x + p, y: r.y + p, w: Math.max(0, r.w - 2 * p), h: Math.max(0, r.h - 2 * p) });
+      } else if (n.kind === ROW || n.kind === COLUMN) placeLine(i);
+    }
+    function placeGroup(gi, inr) {
+      const x1 = inr.x + inr.w, y1 = inr.y + inr.h;
+      for (const c of node(gi).children) {
+        const n = node(c);
+        if (!isScreen(n.kind)) continue;
+        const r = { x: 0, y: 0, w: 0, h: 0 };
+        const w = natural(c, 0);   // 가로
+        if (n.rightOf >= 0) { const o = rects[n.rightOf]; r.x = o.x + o.w + s(n.gap); r.w = n.right !== null ? x1 - s(n.right) - r.x : w; }
+        else if (n.left !== null && n.right !== null) { r.x = inr.x + s(n.left); r.w = x1 - s(n.right) - r.x; }
+        else if (n.right !== null) { r.w = w; r.x = x1 - s(n.right) - r.w; }
+        else { r.x = inr.x + s(n.left ?? 0); r.w = w; }
+        const h = natural(c, 1);   // 세로
+        if (n.below >= 0) { const o = rects[n.below]; r.y = o.y + o.h + s(n.gap); r.h = n.bottom !== null ? y1 - s(n.bottom) - r.y : h; }
+        else if (n.top !== null && n.bottom !== null) { r.y = inr.y + s(n.top); r.h = y1 - s(n.bottom) - r.y; }
+        else if (n.bottom !== null) { r.h = h; r.y = y1 - s(n.bottom) - r.h; }
+        else { r.y = inr.y + s(n.top ?? 0); r.h = h; }
+        r.w = Math.max(0, r.w); r.h = Math.max(0, r.h);
+        rects[c] = r;
+        inside(c);
+      }
+    }
+    function placeLine(li) {
+      const ln = node(li), row = ln.kind === ROW, lr = rects[li];
+      const p = s(ln.padding), gap = s(ln.gap);
+      const ix = lr.x + p, iy = lr.y + p, iw = Math.max(0, lr.w - 2 * p), ih = Math.max(0, lr.h - 2 * p);
+      const mainLen = row ? iw : ih, crossLen = row ? ih : iw, ma = row ? 0 : 1, ca = row ? 1 : 0;
+      let used = 0, spacers = 0;
+      const cnt = ln.children.length;
+      for (const c of ln.children) { if (node(c).kind === SPACER) spacers++; else used += natural(c, ma); }
+      if (cnt > 1) used += (cnt - 1) * gap;
+      const rest = Math.max(0, mainLen - used);
+      let pos = row ? ix : iy, nth = 0;
+      for (const c of ln.children) {
+        const n = node(c);
+        let len = 0, cl = 0, co = 0;
+        if (n.kind === SPACER) {
+          len = Math.trunc(rest / spacers) + (nth < rest % spacers ? 1 : 0);
+          nth++;
+          cl = crossLen;
+        } else {
+          len = natural(c, ma);
+          const lineSet = row ? n.hLine : n.wLine;
+          if (ln.align === "fill" && !lineSet) cl = crossLen;
+          else {
+            cl = natural(c, ca);
+            if (ln.align === "center") co = Math.trunc((crossLen - cl) / 2);
+            else if (ln.align === "right" || ln.align === "bottom") co = crossLen - cl;
+          }
+        }
+        const r = row ? { x: pos, y: iy + co, w: len, h: cl } : { x: ix + co, y: pos, w: cl, h: len };
+        r.w = Math.max(0, r.w); r.h = Math.max(0, r.h);
+        rects[c] = r;
+        pos += len + gap;
+        inside(c);
+      }
+    }
+
+    rects[0] = { x: 0, y: 0, w: Math.max(0, width), h: Math.max(0, height) };
+    placeGroup(0, rects[0]);
+    const cl = v => clamp(v, -1000000000, 1000000000);
+    return rects.map(r => ({ x: cl(r.x), y: cl(r.y), w: cl(r.w), h: cl(r.h) }));
+  }
+
+  /// 시험용 글자 너비: 코드 포인트 × 7 (ui-check의 test_text_width와 같음. 바이트 글을 받음)
+  const testTextWidth = t => { let n = 0; for (let i = 0; i < t.length; i++) if ((t.charCodeAt(i) & 0xC0) !== 0x80) n++; return n * 7; };
+  /// ui-check의 layout_text()와 같은 출력: "이름 x y w h" (화면 요소와 spacer만, 파일 순서, 뺀 요소 없음).
+  /// 창은 기본 640×480, 배율 100. 글에 "// test: width=… height=… scale=…" 줄이 있으면 그 값을 쓴다.
+  /// 오류가 있으면 recover()한 문서로 계산한다 (tests/ui/recover). 복구할 수 없으면 빈 글자.
+  function layoutText(u8) {
+    let doc = parse(toBytes(u8));
+    if (doc.errorCount) { doc = recover(doc); if (!doc) return ""; }
+    const text = new TextDecoder().decode(u8), win = { width: 640, height: 480, scale: 100 };
+    const p = text.indexOf("// test:");
+    if (p >= 0) {
+      const line = text.slice(p + 8).split("\n")[0];
+      for (const k of Object.keys(win)) { const m = line.match(new RegExp(k + "=(-?\\d+)")); if (m) win[k] = +m[1]; }
+    }
+    const rects = compute(doc, win.width, win.height, { textWidth: testTextWidth, lineHeight: 16, scale: win.scale });
+    let out = "";
+    for (let i = 1; i < rects.length && i < doc.nodes.length; i++) {
+      const n = doc.nodes[i];
+      if (n.kind === MENU || n.kind === ITEM || n.kind === SEPARATOR || n.kind === UNKNOWN || n.dropped) continue;
+      const label = n.name ? fromBytes(n.name) : `${KIND_NAMES[n.kind]}@${n.line}`;
+      const r = rects[i];
+      out += `${label} ${r.x} ${r.y} ${r.w} ${r.h}\n`;
+    }
+    return out;
+  }
+
+  return { check, format, recover, compute, layoutText };
 })();
 
 // ---------- .ui 색칠 (검사는 위의 uiCheck가 한다) ----------

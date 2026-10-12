@@ -2,6 +2,16 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.3.0 (2026-10-12)
+
+### source-viewer.html
+
+- `.ui` 위치 계산 (배치 미리보기 1단계, 화면은 아직 그대로): `tile_font_editor_cpp`의 `src/uilayout.cppm`에서
+  `Layouter`·`compute()`·`recover()`를 JavaScript로 옮김 (`uiCheck.compute`, `uiCheck.recover`).
+  시험 값(창 640×480, 글자 너비 = 코드 포인트 × 7, 줄 높이 16, `// test:` 줄)으로 `tests/ui/ok/*.expected` 5개와
+  `tests/ui/recover/basic.expected`와 글자 하나까지 같은 결과.
+- 오류 복구("무시"): 오류가 있는 요소는 묶음째 빼고, 가리키는 요소가 없는 `right_of`·`below`는 `left=0`·`top=0`으로. 원래 검사 결과는 바꾸지 않음.
+
 ## v0.2.0 (2026-10-12)
 
 ### source-viewer.html

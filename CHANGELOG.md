@@ -2,6 +2,17 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.3.0 (2026-10-12)
+
+### source-viewer.html
+
+- `.ui` layout calculation (step 1 of the layout preview; nothing new on screen yet): `Layouter`, `compute()` and `recover()`
+  from `tile_font_editor_cpp` (`src/uilayout.cppm`) were ported to JavaScript (`uiCheck.compute`, `uiCheck.recover`).
+  With the test metrics (640×480 window, text width = code points × 7, line height 16, `// test:` line) it gives exactly the same
+  output as the 5 `tests/ui/ok/*.expected` files and `tests/ui/recover/basic.expected`.
+- Recovery ("Ignore"): elements with errors are left out together with their blocks; `right_of`/`below` naming a missing element
+  become `left=0`/`top=0`. The original check result is not changed.
+
 ## v0.2.0 (2026-10-12)
 
 ### source-viewer.html
