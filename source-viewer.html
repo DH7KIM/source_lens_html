@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.14.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.15.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -141,6 +141,8 @@
   .code .r.dg.dw { background: color-mix(in srgb, var(--warn) 9%, transparent); }
   .code .r.dg.dw .x, .code .r.dg.dw .dm { color: var(--warn); }
   .code .r.dg .dh { color: var(--muted); }
+  .code .r.dg.dn { background: color-mix(in srgb, var(--muted) 8%, transparent); }
+  .code .r.dg.dn .x, .code .r.dg.dn .dm { color: var(--muted); }
 
   /* .ui 배치 미리보기: 위(소스) / 경계 / 아래(배치). 아래 칸 높이 = --pv-h */
   body.pv-on .code { height: calc(100vh - var(--hdr, 49px) - var(--pv-h, 300px) - 6px); }
@@ -311,6 +313,7 @@ const UI = {
     pvModeL: "배치", pvModeV: "보기", pvModeLTip: "배치 모드: 상자를 클릭하면 소스의 그 줄로 갑니다.",
     pvModeVTip: "보기 모드: 프로그램처럼 보입니다. 상자에 마우스를 올리면 풍선 도움말(tooltip, disabled면 disabled_tooltip), menu_button을 클릭하면 연결된 menu가 펼쳐집니다 (보기만, 바깥 클릭·Esc로 닫기).",
     pvDropGo: "클릭하면 메뉴를 펼칩니다.", pvNoMenu: "연결된 menu가 없습니다", pvEmpty: "(빈 메뉴)", pvItem: "{0}  {1}번 줄",
+    gccTip: "컴파일러 결과입니다. 연 폴더 맨 위의 build.log(GCC)에서 이 파일의 error·warning·note를 읽어 소스 줄에 보여 줍니다. 밑줄에 마우스를 올리면 설명이 보입니다. (build.log는 폴더를 열 때와 파일을 열 때 읽습니다)",
     uiErrs: "오류 {0}개", uiWarns: "경고 {0}개", uiOk: "검사 통과",
     uiErrsTip: "ui-check와 같은 전체 검사입니다 (E001~E016, W101·W103·W104, UI 문서 {0}. W104(옛 이름)는 ui-check에 아직 없음). 설명은 한국어로 보여 줍니다 (오류 코드는 그대로). 밑줄에 마우스를 올리면 설명과 함께 ui-check와 같은 영어 원문이 보입니다.",
   },
@@ -344,6 +347,7 @@ const UI = {
     pvModeL: "Layout", pvModeV: "View", pvModeLTip: "Layout mode: click a box to go to its line in the source.",
     pvModeVTip: "View mode: looks like the program. Hover a box to see its tooltip (tooltip, or disabled_tooltip when disabled); click a menu_button to open its menu (view only; click outside or press Esc to close).",
     pvDropGo: "Click to open the menu.", pvNoMenu: "No menu is linked", pvEmpty: "(empty menu)", pvItem: "{0}  line {1}",
+    gccTip: "Compiler output. Reads build.log (GCC) at the top of the opened folder and shows the errors, warnings and notes for this file on the source lines. Hover an underline to see the message. (build.log is read when the folder is opened and when a file is opened)",
     uiErrs: "{0} error(s)", uiWarns: "{0} warning(s)", uiOk: "check passed",
     uiErrsTip: "The same full check as ui-check (E001-E016, W101, W103 and W104, UI document {0}; W104 for old names is not in ui-check yet). Hover an underline to see the message.",
   },
@@ -362,7 +366,7 @@ const LANG_BY_EXT = {
   json: "json", jsonc: "json", json5: "json5", bat: "bat", cmd: "bat",
   sh: "hash", ps1: "hash", psm1: "hash", yml: "hash", yaml: "hash", cmake: "hash", mk: "hash",
   gitignore: "hash", gitattributes: "hash",
-  md: "md", txt: "plain", ui: "ui", xml: "plain", manifest: "plain", def: "plain", ld: "plain",
+  md: "md", txt: "plain", log: "plain", ui: "ui", xml: "plain", manifest: "plain", def: "plain", ld: "plain",
 };
 const LANG_BY_NAME = {
   makefile: "hash", gnumakefile: "hash", "cmakelists.txt": "hash", dockerfile: "hash",
@@ -1873,7 +1877,7 @@ function markUiDiags(tokens, diags) {
   }
   // 번역해서 보일 때(d.show)는 아래에 ui-check와 같은 영어 원문도
   const tipOf = d => {
-    const s = d.show || d, head = `${d.severity}[${d.code}]: `;
+    const s = d.show || d, head = d.severity + (d.code ? `[${d.code}]` : "") + ": ";
     let tip = head + s.msg + (s.help ? `\nhelp: ${s.help}` : "");
     if (s !== d) tip += "\n───\n" + d.msg + (d.help ? `\nhelp: ${d.help}` : "");
     return tip;
@@ -2384,6 +2388,66 @@ async function uiTable(lang) {
            note: uiPack.skipped ? t("packSkip", path, uiPack.skipped) : "" };
 }
 
+// ---------- 컴파일러 결과: 연 폴더 맨 위 build.log (GCC)의 "파일:줄:칸: error/warning/note: 메시지" ----------
+// 파일 경로는 프로젝트 안 경로의 끝부분과 맞춰 찾는다 (로그에 절대 경로·역슬래시·./ 가 있어도 됨). 색 코드(ESC[..m)는 뗀다.
+const BUILD_LOG = "build.log";
+let buildLog = { mod: -1, n: -1, files: new Map() };   // 소스 경로 → 진단 목록
+function parseGccLog(text, paths) {
+  const lower = paths.map(p => [p, p.toLowerCase()]);
+  const cache = new Map();
+  const find = raw => {
+    const lp = raw.replace(/\\/g, "/").replace(/^(\.\/)+/, "").toLowerCase();
+    if (cache.has(lp)) return cache.get(lp);
+    let best = null, score = 0, tie = false;
+    for (const [p, pl] of lower) {
+      if (lp !== pl && !lp.endsWith("/" + pl) && !pl.endsWith("/" + lp)) continue;
+      const sc = Math.min(lp.length, pl.length);
+      if (sc > score) { best = p; score = sc; tie = false; } else if (sc === score) tie = true;
+    }
+    const r = tie ? null : best;
+    cache.set(lp, r);
+    return r;
+  };
+  const files = new Map(), seen = new Set();
+  for (const raw of text.split("\n")) {
+    const line = raw.replace(/\x1b\[[0-9;]*[A-Za-z]/g, "");
+    const m = line.match(/^(.+?):(\d+):(?:(\d+):)?[ \t]+(fatal error|error|warning|note):[ \t]+(.*?)\s*$/);
+    if (!m) continue;
+    const path = find(m[1]);
+    if (!path) continue;
+    let msg = m[5], code = "";
+    const fm = msg.match(/\s\[(-W[\w+-]+)\]$/);
+    if (fm) { code = fm[1]; msg = msg.slice(0, fm.index); }
+    const severity = m[4] === "fatal error" ? "error" : m[4];
+    const key = [path, m[2], m[3], severity, msg].join("\u0001");
+    if (seen.has(key)) continue;   // 같은 헤더에서 여러 번 나온 것은 한 번만
+    seen.add(key);
+    if (!files.has(path)) files.set(path, []);
+    files.get(path).push({ line: +m[2], col: +m[3] || 1, length: 0, severity, code, msg, help: "" });
+  }
+  return files;
+}
+async function loadBuildLog() {
+  if (!fileSet.has(BUILD_LOG)) { buildLog = { mod: -1, n: -1, files: new Map() }; return buildLog; }
+  try {
+    const f = await src.get(BUILD_LOG);
+    if (buildLog.mod !== f.lastModified || buildLog.n !== fileSet.size) {
+      const { text } = await readText(f);
+      buildLog = { mod: f.lastModified, n: fileSet.size, files: parseGccLog(text, [...fileSet]) };
+    }
+  } catch (e) { buildLog = { mod: -1, n: -1, files: new Map() }; }
+  return buildLog;
+}
+// 밑줄 길이: 칸에서 시작하는 낱말·"문자열"·<헤더> (없으면 한 글자). note는 밑줄 없이 진단 줄만
+function gccFit(diags, text) {
+  const rows = text.split("\n");
+  return diags.map(d => {
+    const ch = [...(rows[d.line - 1] || "")].slice(d.col - 1);
+    const w = (ch.join("").match(/^(?:[\p{L}\p{N}_]+|"[^"]*"?|<[^>]*>?)/u) || [ch[0] || ""])[0];
+    return Object.assign({}, d, { length: d.severity === "note" ? 0 : [...w].length });
+  });
+}
+
 async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) {
   let f;
   try { f = await src.get(path); }
@@ -2424,13 +2488,21 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
         packNote = pn;
         if (table) for (const d of check.diags) d.show = uiCheck.localize(d, table);
         if (!big) toks = markUiDiags(toks, check.diags);
+      } else if (lang !== "plain") {
+        // 컴파일러 결과 (build.log): 이 파일의 진단이 있으면 같은 방식으로 밑줄 + 진단 줄
+        const ds = (await loadBuildLog()).files.get(path);
+        if (ds && ds.length) {
+          const diags = gccFit(ds, text);
+          check = { diags, gcc: true, errorCount: diags.filter(d => d.severity === "error").length, warningCount: diags.filter(d => d.severity === "warning").length };
+          if (!big) toks = markUiDiags(toks, diags);
+        }
       }
       const diags = check ? check.diags : [];
       const lines = tokensToLines(toks);
       if (lines.length > 1 && lines[lines.length - 1] === "") lines.pop();
       lineCount = lines.length;
       const sevOf = new Map();   // 줄(0부터) → "bad"(오류) | "warn"(경고만)
-      for (const d of diags) if (d.severity === "error" || !sevOf.has(d.line - 1)) sevOf.set(d.line - 1, d.severity === "error" ? "bad" : "warn");
+      for (const d of diags) if (d.severity !== "note" && (d.severity === "error" || !sevOf.has(d.line - 1))) sevOf.set(d.line - 1, d.severity === "error" ? "bad" : "warn");
       codeEl.style.setProperty("--no-w", (String(lineCount).length + 3) + "ch");
       let html = '<div class="lines">';
       // 오류 줄 아래에 진단 끼워 넣기 (줄 번호 없음, 복사 안 됨)
@@ -2451,14 +2523,14 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   $("name").textContent = projectLabel() + path;
   document.title = path + " - Source Viewer";
   setState([lineCount ? t("lines", lineCount) : "", fmtSize(size), enc, src.kind === "fsa" ? t("auto") : t("noAuto"), note].filter(Boolean).join(" · "));
-  if (check) {   // .ui 검사 결과: 오류(빨강)·경고(주황)·문제 없음
+  if (check && !(check.gcc && !check.errorCount && !check.warningCount)) {   // .ui 검사 결과(또는 컴파일러 결과): 오류(빨강)·경고(주황)·문제 없음
     const b = document.createElement("span");
     const parts = [];
     if (check.errorCount) parts.push(t("uiErrs", check.errorCount));
     if (check.warningCount) parts.push(t("uiWarns", check.warningCount));
     b.className = check.errorCount ? "bad" : check.warningCount ? "warn" : "okay";
     b.textContent = " · " + (parts.length ? parts.join(" · ") : t("uiOk"));
-    b.title = t("uiErrsTip", UI_DOC_VERSION);
+    b.title = check.gcc ? t("gccTip") : t("uiErrsTip", UI_DOC_VERSION);
     $("state").append(b);
     if (packNote) {   // 언어팩 문제 (빨강)
       const pb = document.createElement("span");
@@ -2487,10 +2559,10 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
 function diagRows(d, line) {
   const span = (cls, text) => `<span class="${cls}" data-t="${esc(text)}"></span>`;
   const pad = span("pad", [...line].slice(0, d.col - 1).join(""));
-  const row = body => `<div class="r dg${d.severity === "warning" ? " dw" : ""}"><span class="no"></span><span class="tx">${body}</span></div>`;
+  const row = body => `<div class="r dg${d.severity === "warning" ? " dw" : d.severity === "note" ? " dn" : ""}"><span class="no"></span><span class="tx">${body}</span></div>`;
   const w = Math.max(d.length, 1);
   const s = d.show || d;
-  let html = row(pad + span("x", "^".repeat(w) + " " + d.severity + "[" + d.code + "]") + span("dm", ": " + s.msg));
+  let html = row(pad + span("x", "^".repeat(w) + " " + d.severity + (d.code ? "[" + d.code + "]" : "")) + span("dm", ": " + s.msg));
   if (s.help) html += row(pad + span("dh", " ".repeat(w + 1) + "help: " + s.help));
   return html;
 }

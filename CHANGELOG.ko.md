@@ -2,6 +2,19 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.15.0 (2026-10-13)
+
+### source-viewer.html
+
+- 컴파일러 결과 보기 (GCC): 연 폴더 맨 위에 `build.log`가 있으면(예: `build.bat`의 `g++ ... 2> build.log`), 그 로그의 `파일:줄:칸: error/warning/note: 메시지`를 해당 파일의 소스 줄에 `.ui` 검사와 같은 방식으로 보여 줌.
+  - `error`(`fatal error` 포함)는 빨간 물결 밑줄, `warning`은 주황 밑줄, `note`는 밑줄 없이 소스 아래 회색 줄만. 메시지 끝의 `[-Wflag]`는 코드로 보임 (`warning[-Wunused-variable]`).
+  - 상태 줄에 그 파일의 오류·경고 개수. 밑줄 길이는 그 칸의 낱말(또는 `"문자열"`·`<헤더>`).
+  - 로그의 경로는 프로젝트 경로의 끝부분과 맞춰 찾음: 로그에 절대 경로, `\`, `./`가 있어도 됨. 색 코드(`-fdiagnostics-color`)는 떼고, 같은 곳의 같은 메시지는 한 번만, 프로젝트에 없는 파일의 줄은 무시.
+  - 로그는 폴더를 열 때와 파일을 열 때 읽음 (`build.log`가 바뀌었으면 다시). 자동 새로 고침은 아직 없음 (다음 버전).
+- `*.log` 파일도 목록에 넣고 일반 글로 보여 줌 (`build.log`가 트리에 보이게).
+- 예제 `tests/samples/project/build.log`, 같은 곳의 `build.bat`가 이제 이 파일을 만듦 (`2> build.log`).
+- 맨 위 버전 주석 v0.15.0.
+
 ## v0.14.0 (2026-10-13)
 
 ### source-viewer.html

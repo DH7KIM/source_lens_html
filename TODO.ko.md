@@ -19,10 +19,13 @@
 - [x] json5 색칠: 주석, 따옴표 없는 키, 작은따옴표 문자열, 16진수, `+2.`·`.5`, Infinity·NaN, 끝 쉼표. `json5`는 따로 둔 언어, 예제 `tests/samples/project/language/ko/main.json5` — 2026.10.13 (v0.12.0)
 - [x] 경로에 프로젝트 버전 표시: `source_lens_html v0.13.0 / source/...`. 버전은 연 폴더 CHANGELOG.md(없으면 CHANGELOG.ko.md) 첫 `## vX.Y.Z`, 없으면 이름만. 두 뷰어 모두 — 2026.10.13 (v0.13.0)
 - [x] json5 언어팩 읽기: 연 폴더 `language/<화면 언어>/ui-check.json5`의 `"ui-check"` 섹션이 내장 `UI_MSG`보다 우선. 없거나 빈 글인 메시지는 내장 번역, `{}` 개수가 다르면 무시(상태 줄 빨강), 문법 오류면 내장 번역(상태 줄 빨강, 줄 번호). 작은 JSON5 읽기 함수 `json5Parse` — 2026.10.13 (v0.14.0)
+- [x] 컴파일러 결과 보기 (GCC): 연 폴더 맨 위 `build.log`의 `파일:줄:칸: error/warning/note`를 소스 줄에 밑줄 + 진단 줄로 표시, 폴더·파일을 열 때 읽음, 예제 `tests/samples/project/build.log` — 2026.10.13 (v0.15.0)
 
 ## 다음 버전 (순서대로)
 
-- [ ] 컴파일러 결과 보기 (GCC 먼저): 빌드 출력을 파일로 저장(예: `build.bat`에서 `2> build.log`)하면, 그 로그의 `파일:줄:칸: error/warning: ...`를 읽어 해당 소스 줄에 밑줄 + 진단 줄 표시 (.ui 진단 표시 재사용, 자동 새로 고침과 함께). Rust는 `cargo build --message-format=json` 다음 단계 — 2026.10.12 요청
+- [ ] 컴파일러 결과 자동 새로 고침: `build.log`가 바뀌면 열려 있는 소스에 다시 그리기 (v0.15.0은 열 때만 읽음) — 2026.10.13
+- [ ] Rust 컴파일러 결과: `cargo build --message-format=json` 로그 읽기 — 2026.10.12 요청
+
 - [ ] toml 검사 (`Cargo.toml` 등): 문법이 작아 .ui처럼 정확히 검사 가능 — 2026.10.12 요청
 - [ ] `.rc`(리소스 스크립트) 검사기: GCC `windres`를 기준으로, `tests/rc`에 windres 결과를 `.expected`로 모아 맞춤 (DIALOG·MENU·STRINGTABLE·BEGIN/END·#include 등) — 2026.10.12 요청
 - [ ] 시험 샘플: Source Lens가 지원하는 확장자를 전부 `tests\samples`에 넣기 (`LANG_BY_EXT`·`LANG_BY_NAME` 기준, 빠진 것 채우기) — 2026.10.12 요청 (v0.6.0 작업 중)
@@ -36,6 +39,9 @@
 - 참고: C++·Rust 컴파일 오류를 브라우저에서 직접 검사하는 것은 컴파일러를 다시 만드는 일이라 하지 않음 (컴파일러 결과 보기로 대신)
 
 ## 나중에 (후보)
+
+- [ ] 컴파일러 결과의 칸 계산: GCC 칸은 탭·한글에서 코드 포인트와 다를 수 있음 (`-fdiagnostics-column-unit` 확인 후 맞추기) — 2026.10.13 (v0.15.0 작업 중 나옴)
+- [ ] 컴파일러 결과에서 `In file included from ...`·`required from here` 줄 묶어 보기 — 2026.10.13
 
 - [ ] 언어팩 파일(`ui-check.json5`)을 고치면 열려 있는 `.ui`도 자동으로 다시 그리기 (지금은 다음에 `.ui`를 그릴 때 다시 읽음) — 2026.10.13 (v0.14.0 작업 중 나옴)
 - [ ] 보기 모드에서 메뉴 항목 `tooltip`을 상태 줄처럼 보여 주기 (ui-guideline: 메뉴 항목 설명은 상태 줄에 표시) — 2026.10.12 (v0.8.0 작업 중 나옴)

@@ -2,6 +2,19 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.15.0 (2026-10-13)
+
+### source-viewer.html
+
+- Compiler output (GCC): if the opened folder has `build.log` at its top (for example `g++ ... 2> build.log` in `build.bat`), the `file:line:col: error/warning/note: message` lines are shown on the source lines of that file, the same way as the `.ui` check.
+  - `error` (and `fatal error`) get a red wavy underline, `warning` an orange one, and `note` only the grey line under the source. A `[-Wflag]` at the end of the message is shown as the code (`warning[-Wunused-variable]`).
+  - The status line shows the error and warning counts for the file. The underline length is the word at the column (or the `"string"` / `<header>`).
+  - The log path is matched with the end of the project path, so absolute paths, `\` and `./` in the log work. Color codes (`-fdiagnostics-color`) are removed, the same message at the same place is shown once, and lines for files that are not in the project are ignored.
+  - The log is read when the folder is opened and when a file is opened (again if `build.log` changed). It is not refreshed automatically yet (next version).
+- `*.log` files are listed and shown as plain text (so `build.log` is in the tree).
+- Example `tests/samples/project/build.log`, and `build.bat` there now writes it (`2> build.log`).
+- Version comment at the top v0.15.0.
+
 ## v0.14.0 (2026-10-13)
 
 ### source-viewer.html

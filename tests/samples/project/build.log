@@ -1,0 +1,12 @@
+In file included from modules/ui.cppm:3:
+D:\Projects\demo\modules\ui.cppm:4:10: fatal error: local.h: No such file or directory
+    4 | #include "local.h"
+      |          ^~~~~~~~~
+compilation terminated.
+./modules/ui.cppm:12:36: error: 'HDC' has not been declared
+   12 |   class Button { public: void draw(HDC dc) const; };
+modules/ui.cppm:10:17: note: 'MAX_W' declared here
+[01m[Kmodules/ui.cppm:13:37: [01;35m[Kwarning: [m[Kconversion to 'int' from 'float' may change the value [-Wfloat-conversion]
+modules/ui.cppm:13:37: warning: conversion to 'int' from 'float' may change the value [-Wfloat-conversion]
+old.cpp:2:5: warning: 'main' is normally a non-static function [-Wmain]
+other/missing.cpp:1:1: error: this file is not in the project
