@@ -2,6 +2,15 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.5.0 (2026-10-12)
+
+### source-viewer.html
+
+- `.ui` layout preview ↔ source line (step 3, part 1):
+  click a box in the preview to scroll the source to its line and highlight that line (address `#path:L12`).
+  Clicking a line number also highlights the box of that line (thick border + selection background).
+- Box tooltip now shows the line number, plus "Click to go to this line in the source."
+
 ## v0.4.0 (2026-10-12)
 
 ### source-viewer.html

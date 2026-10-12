@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.4.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.5.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -167,7 +167,10 @@
   /* 묶음 이름표는 오른쪽 위 구석에 (자식이 왼쪽 위부터 놓이므로 덜 가림). 자식이 뒤에 그려져 위를 덮음 */
   .pv-win .tag { position: absolute; top: 0; right: 0; font-size: 10px; line-height: 1; color: var(--muted); padding: 1px 3px; opacity: 0.8; }
   .pv-win .pv-hidden { opacity: 0.3; } .pv-win .pv-disabled { color: var(--muted); }
+  .pv-win > div { cursor: pointer; }
   .pv-win > div:hover { outline: 2px solid var(--accent); outline-offset: -1px; z-index: 1; }
+  /* 표시한 소스 줄의 상자: 굵은 테두리 + 선택 배경 (색만으로 구분하지 않음) */
+  .pv-win > div.pv-cur { outline: 3px solid var(--accent); outline-offset: -2px; background-color: var(--sel); z-index: 2; }
 
   @media (max-width: 760px) {
     .wrap { display: block; }
@@ -277,7 +280,7 @@ const UI = {
     pvScaleTip: "DPI 배율. 숫자(위치·크기)와 글꼴이 이 배율로 커집니다.",
     pvRecovered: "오류 {0}개: 틀린 요소를 빼고 그렸습니다", pvRecoveredTip: "프로그램의 '무시'와 같습니다: 오류가 있는 요소는 묶음째 빼고, 가리키는 요소가 없는 right_of·below는 left=0·top=0으로 봅니다.",
     pvCannot: "이 오류는 배치를 그릴 수 없습니다 (머리 줄 '#ui 1', 파일 크기 등). 위의 오류를 먼저 고쳐 주세요.",
-    pvBox: "{0}  위치 {1}, {2}  크기 {3}×{4}", pvHidden: "(hidden)", pvDisabled: "(disabled)",
+    pvBox: "{0}  {5}번 줄  위치 {1}, {2}  크기 {3}×{4}", pvBoxGo: "클릭하면 소스의 이 줄로 갑니다.", pvHidden: "(hidden)", pvDisabled: "(disabled)",
     uiErrs: "오류 {0}개", uiWarns: "경고 {0}개", uiOk: "검사 통과",
     uiErrsTip: "ui-check와 같은 전체 검사입니다 (E001~E016, W101·W103, UI 문서 {0}). 설명은 ui-check와 같은 영어 원문입니다. 밑줄에 마우스를 올리면 설명이 보입니다.",
   },
@@ -306,7 +309,7 @@ const UI = {
     pvScaleTip: "DPI scale. Numbers (positions, sizes) and the font grow with this scale.",
     pvRecovered: "{0} error(s): drawn without the wrong elements", pvRecoveredTip: "Same as 'Ignore' in the program: elements with errors are left out with their blocks; right_of/below naming a missing element become left=0/top=0.",
     pvCannot: "The layout cannot be drawn with this error (header line '#ui 1', file size, …). Fix the errors above first.",
-    pvBox: "{0}  position {1}, {2}  size {3}×{4}", pvHidden: "(hidden)", pvDisabled: "(disabled)",
+    pvBox: "{0}  line {5}  position {1}, {2}  size {3}×{4}", pvBoxGo: "Click to go to this line in the source.", pvHidden: "(hidden)", pvDisabled: "(disabled)",
     uiErrs: "{0} error(s)", uiWarns: "{0} warning(s)", uiOk: "check passed",
     uiErrsTip: "The same full check as ui-check (E001-E016, W101 and W103, UI document {0}). Hover an underline to see the message.",
   },
@@ -2112,7 +2115,7 @@ $("code").addEventListener("click", e => {
   for (const r of $("code").querySelectorAll(".r.hl")) r.classList.remove("hl");
   if (hlLine === n) hlLine = 0;
   else { hlLine = n; no.parentElement.classList.add("hl"); }
-  setHash();
+  setHash(); markPreview();
 });
 
 async function loadImages() {
@@ -2418,7 +2421,7 @@ function drawPreview() {
     const n = doc.nodes[i], kind = K[n.kind];
     if (n.dropped || !["label", "button", "edit", "number", "dropdown", "check", "canvas", "group", "row", "column"].includes(kind)) continue;
     const r = rects[i], name = uiCheck.text(n.name), txt = esc(uiCheck.text(n.text));
-    const tip = t("pvBox", `${kind} ${name}`.trim(), r.x, r.y, r.w, r.h) + (n.hidden ? " " + t("pvHidden") : "") + (n.disabled ? " " + t("pvDisabled") : "");
+    const tip = t("pvBox", `${kind} ${name}`.trim(), r.x, r.y, r.w, r.h, n.line) + (n.hidden ? " " + t("pvHidden") : "") + (n.disabled ? " " + t("pvDisabled") : "") + "\n" + t("pvBoxGo");
     let body = "";
     switch (kind) {
       case "label": body = txt; break;
@@ -2430,10 +2433,25 @@ function drawPreview() {
       case "group": case "row": case "column": body = `<span class="tag">${esc(`${kind} ${name}`.trim())}</span>`; break;
     }
     const just = kind === "label" ? ` justify-content:${n.align === "center" ? "center" : n.align === "right" ? "flex-end" : "flex-start"};` : "";
-    html += `<div class="pv-${kind}${n.hidden ? " pv-hidden" : ""}${n.disabled ? " pv-disabled" : ""}" style="left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px;${just}" title="${esc(tip)}">${body}</div>`;
+    html += `<div data-i="${i}" data-ln="${n.line}" class="pv-${kind}${n.hidden ? " pv-hidden" : ""}${n.disabled ? " pv-disabled" : ""}${n.line === hlLine ? " pv-cur" : ""}" style="left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px;${just}" title="${esc(tip)}">${body}</div>`;
   }
   stage.innerHTML = html + "</div>";
 }
+// 표시한 줄(hlLine)의 상자 강조
+function markPreview() {
+  for (const b of $("pvStage").querySelectorAll(".pv-win > div[data-ln]")) b.classList.toggle("pv-cur", +b.dataset.ln === hlLine);
+}
+// 상자 클릭 → 소스의 그 줄로 이동 + 강조
+$("pvStage").addEventListener("click", e => {
+  const b = e.target.closest(".pv-win > div[data-ln]");
+  if (!b) return;
+  const n = +b.dataset.ln, r = $("L" + n);
+  if (!r) return;
+  for (const x of $("code").querySelectorAll(".r.hl")) x.classList.remove("hl");
+  hlLine = n; r.classList.add("hl");
+  r.scrollIntoView({ block: "center" });
+  setHash(); markPreview();
+});
 $("pvBtn").onclick = () => { pvSet.on = !pvSet.on; savePv(); drawStatic(); drawPreview(); };
 $("pvWin").onchange = () => {
   pvSet.win = $("pvWin").value;
