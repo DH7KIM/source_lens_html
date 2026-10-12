@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.5.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.6.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -171,6 +171,24 @@
   .pv-win > div:hover { outline: 2px solid var(--accent); outline-offset: -1px; z-index: 1; }
   /* 표시한 소스 줄의 상자: 굵은 테두리 + 선택 배경 (색만으로 구분하지 않음) */
   .pv-win > div.pv-cur { outline: 3px solid var(--accent); outline-offset: -2px; background-color: var(--sel); z-index: 2; }
+  /* 배치 | 보기 모드 버튼 (눌린 쪽은 강조색 + 굵은 글자, 색만으로 구분하지 않음) */
+  .pv-mode { display: inline-flex; } .pv-mode button { border-radius: 0; margin: 0; }
+  .pv-mode button:first-child { border-radius: 4px 0 0 4px; } .pv-mode button:last-child { border-radius: 0 4px 4px 0; border-left: 0; }
+  .pv-mode button[aria-pressed="true"] { background: var(--accent); color: var(--bg); font-weight: 700; }
+  /* 보기 모드: dropdown만 누를 수 있음, 펼친 메뉴는 창 밖으로 나갈 수 있게 .pv-wrap에 둠 */
+  .pv-wrap { position: relative; display: inline-block; }
+  .pv-view .pv-win > div { cursor: default; } .pv-view .pv-win > div:hover { outline: none; }
+  .pv-view .pv-win > div.pv-cur { outline: none; background-color: transparent; }
+  .pv-view .pv-win > div.pv-dropdown { cursor: pointer; } .pv-view .pv-win > div.pv-dropdown:hover { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .pv-view .pv-win > div.pv-open { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .pv-pop { position: absolute; z-index: 10; min-width: 120px; padding: 3px 0; background: var(--panel); color: var(--fg); border: 1px solid var(--muted);
+    box-shadow: 0 4px 12px rgba(0,0,0,.3); white-space: pre; cursor: default; }
+  .pv-pop .mi { position: relative; display: flex; align-items: center; gap: 6px; padding: 0 10px 0 4px; }
+  .pv-pop .mi:hover { background: var(--sel); }
+  .pv-pop .mi .mk { width: 1.4em; text-align: center; flex: none; } .pv-pop .mi .tx { flex: 1; } .pv-pop .mi .ar { color: var(--muted); }
+  .pv-pop .mi.dis { color: var(--muted); }
+  .pv-pop .sep { border-top: 1px solid var(--line); margin: 3px 0; }
+  .pv-pop .mi > .pv-pop { display: none; left: 100%; top: -4px; } .pv-pop .mi:hover > .pv-pop { display: block; }
 
   @media (max-width: 760px) {
     .wrap { display: block; }
@@ -240,6 +258,7 @@
     <div id="pvSize" hidden></div>
     <div id="pv" hidden>
       <div class="pv-bar">
+        <span class="pv-mode"><button id="pvModeL" data-m="layout"></button><button id="pvModeV" data-m="view"></button></span>
         <select id="pvWin"></select>
         <label id="pvWL"><span id="pvWT"></span><input type="number" id="pvW" min="1" max="10000"></label>
         <label id="pvHL"><span id="pvHT"></span><input type="number" id="pvH" min="1" max="10000"></label>
@@ -281,6 +300,9 @@ const UI = {
     pvRecovered: "오류 {0}개: 틀린 요소를 빼고 그렸습니다", pvRecoveredTip: "프로그램의 '무시'와 같습니다: 오류가 있는 요소는 묶음째 빼고, 가리키는 요소가 없는 right_of·below는 left=0·top=0으로 봅니다.",
     pvCannot: "이 오류는 배치를 그릴 수 없습니다 (머리 줄 '#ui 1', 파일 크기 등). 위의 오류를 먼저 고쳐 주세요.",
     pvBox: "{0}  {5}번 줄  위치 {1}, {2}  크기 {3}×{4}", pvBoxGo: "클릭하면 소스의 이 줄로 갑니다.", pvHidden: "(hidden)", pvDisabled: "(disabled)",
+    pvModeL: "배치", pvModeV: "보기", pvModeLTip: "배치 모드: 상자를 클릭하면 소스의 그 줄로 갑니다.",
+    pvModeVTip: "보기 모드: dropdown을 클릭하면 연결된 menu가 펼쳐집니다 (보기만, 바깥 클릭·Esc로 닫기).",
+    pvDropGo: "클릭하면 메뉴를 펼칩니다.", pvNoMenu: "연결된 menu가 없습니다", pvEmpty: "(빈 메뉴)", pvItem: "{0}  {1}번 줄",
     uiErrs: "오류 {0}개", uiWarns: "경고 {0}개", uiOk: "검사 통과",
     uiErrsTip: "ui-check와 같은 전체 검사입니다 (E001~E016, W101·W103, UI 문서 {0}). 설명은 ui-check와 같은 영어 원문입니다. 밑줄에 마우스를 올리면 설명이 보입니다.",
   },
@@ -310,6 +332,9 @@ const UI = {
     pvRecovered: "{0} error(s): drawn without the wrong elements", pvRecoveredTip: "Same as 'Ignore' in the program: elements with errors are left out with their blocks; right_of/below naming a missing element become left=0/top=0.",
     pvCannot: "The layout cannot be drawn with this error (header line '#ui 1', file size, …). Fix the errors above first.",
     pvBox: "{0}  line {5}  position {1}, {2}  size {3}×{4}", pvBoxGo: "Click to go to this line in the source.", pvHidden: "(hidden)", pvDisabled: "(disabled)",
+    pvModeL: "Layout", pvModeV: "View", pvModeLTip: "Layout mode: click a box to go to its line in the source.",
+    pvModeVTip: "View mode: click a dropdown to open its menu (view only; click outside or press Esc to close).",
+    pvDropGo: "Click to open the menu.", pvNoMenu: "No menu is linked", pvEmpty: "(empty menu)", pvItem: "{0}  line {1}",
     uiErrs: "{0} error(s)", uiWarns: "{0} warning(s)", uiOk: "check passed",
     uiErrsTip: "The same full check as ui-check (E001-E016, W101 and W103, UI document {0}). Hover an underline to see the message.",
   },
@@ -1744,8 +1769,9 @@ try { mdRaw = localStorage.getItem("sv-md-raw:" + KEY) === "1"; } catch (e) {}
 let showDiag = true;     // .ui 오류를 줄 아래에 보일지
 try { showDiag = localStorage.getItem("sv-diag:" + KEY) !== "0"; } catch (e) {}
 // .ui 배치 미리보기 설정: 켜짐, 창 크기("fit" | "custom" | "640x480"…), 너비·높이, 배율, 아래 칸 높이
-const pvSet = { on: true, win: "640x480", w: 640, h: 480, scale: 100, paneH: 300 };
+const pvSet = { on: true, mode: "layout", win: "640x480", w: 640, h: 480, scale: 100, paneH: 300 };
 try { Object.assign(pvSet, JSON.parse(localStorage.getItem("sv-preview:" + KEY) || "{}")); } catch (e) {}
+let pvDoc = null, pvOpen = 0;   // 미리보기: 그린 문서, 보기 모드에서 펼친 dropdown 노드 번호(0 = 없음)
 const savePv = () => { try { localStorage.setItem("sv-preview:" + KEY, JSON.stringify(pvSet)); } catch (e) {} };
 let pvCheck = null;      // 지금 .ui 파일의 검사 결과 (배치 미리보기용)
 
@@ -2384,6 +2410,11 @@ function drawPreview() {
   document.body.classList.toggle("pv-on", on);
   if (!on) { $("pvStage").innerHTML = ""; return; }
   setPaneH(pvSet.paneH, false);
+  const view = pvSet.mode === "view";
+  $("pv").classList.toggle("pv-view", view);
+  for (const [id, m] of [["pvModeL", "layout"], ["pvModeV", "view"]]) {
+    $(id).textContent = t(id); $(id).title = t(id + "Tip"); $(id).setAttribute("aria-pressed", String(pvSet.mode === m));
+  }
   // 머리 줄: 창 크기 목록, 너비·높이, 배율
   const sel = $("pvWin");
   sel.innerHTML = [["fit", t("pvFit")], ...PV_SIZES.map(v => [v, v.replace("x", " × ")]), ["custom", t("pvCustom")]]
@@ -2416,12 +2447,13 @@ function drawPreview() {
   const textWidth = b => Math.ceil(pvCtx.measureText(uiCheck.text(b)).width);
   const rects = uiCheck.compute(doc, w, h, { textWidth, lineHeight: lineH, scale });
   const K = uiCheck.KIND_NAMES;
-  let html = `<div class="pv-win" style="width:${w}px;height:${h}px;font:${fontPx}px/${lineH}px ${esc(PV_FONT)}">`;
+  pvDoc = doc;
+  let html = `<div class="pv-wrap"><div class="pv-win" style="width:${w}px;height:${h}px;font:${fontPx}px/${lineH}px ${esc(PV_FONT)}">`;
   for (let i = 1; i < rects.length; i++) {
     const n = doc.nodes[i], kind = K[n.kind];
     if (n.dropped || !["label", "button", "edit", "number", "dropdown", "check", "canvas", "group", "row", "column"].includes(kind)) continue;
     const r = rects[i], name = uiCheck.text(n.name), txt = esc(uiCheck.text(n.text));
-    const tip = t("pvBox", `${kind} ${name}`.trim(), r.x, r.y, r.w, r.h, n.line) + (n.hidden ? " " + t("pvHidden") : "") + (n.disabled ? " " + t("pvDisabled") : "") + "\n" + t("pvBoxGo");
+    const tip = t("pvBox", `${kind} ${name}`.trim(), r.x, r.y, r.w, r.h, n.line) + (n.hidden ? " " + t("pvHidden") : "") + (n.disabled ? " " + t("pvDisabled") : "") + "\n" + (!view ? t("pvBoxGo") : kind === "dropdown" ? t("pvDropGo") : "");
     let body = "";
     switch (kind) {
       case "label": body = txt; break;
@@ -2435,14 +2467,68 @@ function drawPreview() {
     const just = kind === "label" ? ` justify-content:${n.align === "center" ? "center" : n.align === "right" ? "flex-end" : "flex-start"};` : "";
     html += `<div data-i="${i}" data-ln="${n.line}" class="pv-${kind}${n.hidden ? " pv-hidden" : ""}${n.disabled ? " pv-disabled" : ""}${n.line === hlLine ? " pv-cur" : ""}" style="left:${r.x}px;top:${r.y}px;width:${r.w}px;height:${r.h}px;${just}" title="${esc(tip)}">${body}</div>`;
   }
-  stage.innerHTML = html + "</div>";
+  stage.innerHTML = html + "</div></div>";
+  if (view && pvOpen > 0) openMenu(pvOpen); else pvOpen = 0;
 }
+// ---------- 보기 모드: dropdown → menu 펼치기 (보기만, 클릭으로 radio·checkbox를 바꾸지 않음) ----------
+// menu 노드 → 풀다운 HTML. 안쪽 menu는 하위 메뉴(마우스를 올리면 오른쪽에 펼침)
+function menuHtml(doc, mi, depth) {
+  const m = doc.nodes[mi];
+  let h = `<div class="pv-pop">`, any = false;
+  for (const c of m.children) {
+    const n = doc.nodes[c], kind = uiCheck.KIND_NAMES[n.kind];
+    if (n.dropped || n.hidden) continue;
+    if (kind === "separator") { h += `<div class="sep" title="${esc(t("pvItem", "separator", n.line))}"></div>`; continue; }
+    if (kind !== "item" && kind !== "menu") continue;
+    any = true;
+    const sub = kind === "menu" && depth < 8;
+    const mark = n.checked ? (n.radio ? "●" : "✓") : "";
+    const tip = t("pvItem", `${kind} ${uiCheck.text(n.name)}`.trim(), n.line) + (n.disabled ? " " + t("pvDisabled") : "");
+    h += `<div class="mi${n.disabled ? " dis" : ""}" title="${esc(tip)}"><span class="mk">${mark}</span><span class="tx">${esc(uiCheck.text(n.text) || uiCheck.text(n.name))}</span>`
+      + (sub ? `<span class="ar">▸</span>${menuHtml(doc, c, depth + 1)}` : "") + `</div>`;
+  }
+  if (!any) h += `<div class="mi dis"><span class="mk"></span><span class="tx">${esc(t("pvEmpty"))}</span></div>`;
+  return h + `</div>`;
+}
+function closeMenu() {
+  pvOpen = 0;
+  for (const x of $("pvStage").querySelectorAll(".pv-wrap > .pv-pop")) x.remove();
+  for (const x of $("pvStage").querySelectorAll(".pv-open")) x.classList.remove("pv-open");
+}
+function openMenu(i) {
+  closeMenu();
+  const b = $("pvStage").querySelector(`.pv-win > div[data-i="${i}"]`), n = pvDoc && pvDoc.nodes[i];
+  if (!b || !n) return;
+  pvOpen = i; b.classList.add("pv-open");
+  const win = b.parentElement, x = b.offsetLeft + win.clientLeft, y = b.offsetTop + b.offsetHeight + win.clientTop;
+  const wrap = win.parentElement, tmp = document.createElement("div");
+  tmp.innerHTML = n.menu > 0 && pvDoc.nodes[n.menu] ? menuHtml(pvDoc, n.menu, 0) : `<div class="pv-pop"><div class="mi dis"><span class="mk"></span><span class="tx">${esc(t("pvNoMenu"))}</span></div></div>`;
+  const pop = tmp.firstElementChild;
+  pop.style.left = x + "px"; pop.style.top = y + "px"; pop.style.font = win.style.font;
+  pop.style.minWidth = b.offsetWidth + "px";
+  wrap.appendChild(pop);
+}
+for (const id of ["pvModeL", "pvModeV"]) $(id).onclick = () => { pvSet.mode = $(id).dataset.m; savePv(); closeMenu(); drawPreview(); };
+addEventListener("keydown", e => { if (e.key === "Escape" && pvOpen) closeMenu(); });
+document.addEventListener("pointerdown", e => {
+  if (pvOpen && !e.target.closest(".pv-pop") && !e.target.closest(".pv-open")) closeMenu();
+}, true);
 // 표시한 줄(hlLine)의 상자 강조
 function markPreview() {
   for (const b of $("pvStage").querySelectorAll(".pv-win > div[data-ln]")) b.classList.toggle("pv-cur", +b.dataset.ln === hlLine);
 }
 // 상자 클릭 → 소스의 그 줄로 이동 + 강조
 $("pvStage").addEventListener("click", e => {
+  if (pvSet.mode === "view") {
+    if (e.target.closest(".pv-pop")) {   // 항목 클릭 = 메뉴 닫기 (하위 메뉴·흐린 항목은 그대로)
+      const it = e.target.closest(".mi");
+      if (it && !it.classList.contains("dis") && !it.querySelector(".pv-pop")) closeMenu();
+      return;
+    }
+    const d = e.target.closest(".pv-win > div.pv-dropdown");
+    if (d) { if (pvOpen === +d.dataset.i) closeMenu(); else openMenu(+d.dataset.i); }
+    return;
+  }
   const b = e.target.closest(".pv-win > div[data-ln]");
   if (!b) return;
   const n = +b.dataset.ln, r = $("L" + n);

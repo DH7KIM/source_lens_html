@@ -2,6 +2,21 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.6.0 (2026-10-12)
+
+### source-viewer.html
+
+- `.ui` 메뉴 미리보기: 미리보기 머리에 `배치 | 보기` 모드 버튼 (브라우저에 기억).
+  - 배치 모드: 지금처럼 상자 클릭 → 소스 줄 이동.
+  - 보기 모드: dropdown을 클릭하면 `menu=`로 연결된 menu가 풀다운으로 펼쳐짐.
+    item, separator, radio(●)·check(✓)의 checked 상태, 안쪽 menu는 하위 메뉴(▸, 마우스를 올리면 펼침).
+    바깥 클릭·Esc·항목 클릭으로 닫힘. radio·체크박스는 보기만 함 (클릭으로 바꾸지 않음).
+  - 메뉴 항목 풍선 도움말에 종류·이름·줄 번호. 빈 메뉴는 "(빈 메뉴)".
+
+### tests
+
+- `tests/samples/project/ui/menu.ui`: 메뉴 미리보기 시험용 (radio, check, separator, 하위 메뉴, 빈 메뉴).
+
 ## v0.5.0 (2026-10-12)
 
 ### source-viewer.html

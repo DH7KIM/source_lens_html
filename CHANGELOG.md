@@ -2,6 +2,21 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.6.0 (2026-10-12)
+
+### source-viewer.html
+
+- `.ui` menu preview: `Layout | View` mode buttons in the preview bar (remembered in the browser).
+  - Layout mode: as before, click a box to go to its source line.
+  - View mode: click a dropdown to open the menu linked by `menu=` as a pull-down.
+    Shows item, separator, the checked state of radio (●) and check (✓) items, and inner menus as submenus (▸, open on hover).
+    Closes on outside click, Esc or an item click. Radio items and checkboxes are view only (clicking does not change them).
+  - Menu entry tooltips show kind, name and line. An empty menu shows "(empty menu)".
+
+### tests
+
+- `tests/samples/project/ui/menu.ui`: sample for the menu preview (radio, check, separator, submenu, empty menu).
+
 ## v0.5.0 (2026-10-12)
 
 ### source-viewer.html
