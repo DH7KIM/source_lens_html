@@ -20,7 +20,7 @@ No install, no external libraries. Chrome or Edge recommended.
 ## Features
 
 - **Tree list**: folders collapse and expand (remembered), branch lines `├ └ │`, resizable width (double-click the edge to fit).
-- **Syntax colors + line numbers** (`source-viewer`): C++ (`.cpp .cppm .ixx .h .hpp` …), Rust, TOML, JSON, BAT/CMD, shell / YAML / Makefile / `.gitignore`.
+- **Syntax colors + line numbers** (`source-viewer`): C++ (`.cpp .cppm .ixx .h .hpp` …), Rust, TOML, JSON / JSON5, BAT/CMD, shell / YAML / Makefile / `.gitignore`.
   Line numbers are not copied. Click a line number to mark it (`#path:L12` in the address).
 - **Markdown**: document view or raw view, English `name.md` / Korean `name.ko.md` switch, links to other files (`file.rs#L12` opens line 12).
 - **`.ui` layout files** (UI layout format 1, guideline 0.9): colors and the same full check as `ui-check` (E001-E016, W101 and W103), plus warning W104 for old names (`tip` → `tooltip`, `check` → `checkbox`, `edit` → `text_field`, …), which are still read.

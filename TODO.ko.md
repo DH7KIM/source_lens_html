@@ -16,16 +16,23 @@
 - [x] `.ui` 이름을 통상적인 것으로 (ui-guideline 0.8): `check`→`checkbox`, `item`→`menu_item`, `tip`→`tooltip`, `disabled_tip`→`disabled_tooltip`, `hint`→`placeholder`, `gap`→`spacing`, 메뉴 항목 `check`→`checkable`. 옛 이름도 읽고 경고 W104(자동 수정). 옛·새 이름을 함께 쓰면 E006. `edit`·`number`·`dropdown`은 그대로. 샘플 `.ui`를 새 이름으로 + `old_names.ui` — 2026.10.12 (v0.9.0)
 - [x] 뷰어가 ui-guideline 0.9 따르기: `edit`→`text_field`, `number`→`number_field`, `dropdown`→`menu_button` (옛 이름은 W104), 메시지·미리보기·샘플 `.ui`, `w104_old_names.ui`·`w104_mixed.ui` 추가. 다음은 C++(tile_font_editor_cpp `docs/ui-changes.ko.md`) — 2026.10.13 (v0.10.0)
 - [x] .ui 오류 설명 한국어로 보기: 번역 원본 tile_font_editor_cpp `language\ko\ui-check.json5`(섹션 `ui-check`, 159개), 뷰어에 `UI_MSG`로 내장. 화면 언어가 한국어면 진단 줄·풍선이 한국어, 풍선에 영어 원문도. 코드·ui-check 출력은 영어 그대로 — 2026.10.13 (v0.11.0)
+- [x] json5 색칠: 주석, 따옴표 없는 키, 작은따옴표 문자열, 16진수, `+2.`·`.5`, Infinity·NaN, 끝 쉼표. `json5`는 따로 둔 언어, 예제 `tests/samples/project/language/ko/main.json5` — 2026.10.13 (v0.12.0)
 
 ## 다음 버전 (순서대로)
 
-- [ ] json5 지원: 색칠(따옴표 없는 키, 작은따옴표 문자열, 16진수, Infinity·NaN, 끝 쉼표) + 언어팩 읽기: 연 폴더에 `language\ko\ui-check.json5`가 있으면 내장 표(`UI_MSG`)보다 우선 — 2026.10.12 요청
+- [ ] 경로에 프로젝트 버전 표시 (v0.13.0): `source_lens_html / source/tests/...` → `source_lens_html v0.12.0 / source/tests/...`. 버전은 연 폴더 CHANGELOG.md(없으면 CHANGELOG.ko.md) 맨 위 `## vX.Y.Z`에서 읽고, 없으면 지금처럼 버전 없이 표시 — 2026.10.13 요청
+- [ ] json5 언어팩 읽기 (v0.14.0): 연 폴더에 `language\ko\ui-check.json5`가 있으면 내장 표(`UI_MSG`)보다 우선. 읽는 형식은 tile_font_editor_cpp `src\i18n.cppm`(`<import files>`, 섹션) 참고 — 2026.10.12 요청 (색칠은 v0.12.0에서 끝)
 - [ ] 컴파일러 결과 보기 (GCC 먼저): 빌드 출력을 파일로 저장(예: `build.bat`에서 `2> build.log`)하면, 그 로그의 `파일:줄:칸: error/warning: ...`를 읽어 해당 소스 줄에 밑줄 + 진단 줄 표시 (.ui 진단 표시 재사용, 자동 새로 고침과 함께). Rust는 `cargo build --message-format=json` 다음 단계 — 2026.10.12 요청
 - [ ] toml 검사 (`Cargo.toml` 등): 문법이 작아 .ui처럼 정확히 검사 가능 — 2026.10.12 요청
 - [ ] `.rc`(리소스 스크립트) 검사기: GCC `windres`를 기준으로, `tests/rc`에 windres 결과를 `.expected`로 모아 맞춤 (DIALOG·MENU·STRINGTABLE·BEGIN/END·#include 등) — 2026.10.12 요청
 - [ ] 시험 샘플: Source Lens가 지원하는 확장자를 전부 `tests\samples`에 넣기 (`LANG_BY_EXT`·`LANG_BY_NAME` 기준, 빠진 것 채우기) — 2026.10.12 요청 (v0.6.0 작업 중)
   - 샘플은 조각이 아니라 **하나의 완성된 예제**로 만들기 (예: C++ — `#include`·`import` → `int main(...)` → `printf(...)` → `return 0;` 까지 컴파일되는 모양) — 2026.10.12 요청
 - [ ] 보기 모드를 실제 프로그램처럼 동작하게: 버튼은 누르면 눌린 모양(마우스 올림·누름·뗌), check는 클릭하면 켜짐/꺼짐, edit은 글자 입력(`max_length`까지), number는 ⇕·휠·입력으로 값 바꾸기(`min`·`max`·`step`·`hex`), 메뉴 항목 radio·check도 클릭하면 바뀜, disabled는 반응 없음, Tab으로 포커스 이동. 실제 기능(파일 열기 등)은 없으니 대신 "button open 클릭" 같은 이벤트 이름을 상태 줄에 보여 주기. 값은 화면에서만 바뀌고 `.ui` 파일은 안 바뀜. 소스를 다시 그리면 처음 값으로 — 2026.10.12 요청
+- [ ] **지원 형식 목록** 버튼: 머리 막대의 "오류 설명 끄기/켜기" 버튼 앞에 `지원 형식` 버튼, 누르면 표(listview 모양)로 보여 주기 — 2026.10.13 요청
+  - 열: `확장자`(예: `*.cppm`) · `언어`(예: C++) · `기능`. 기준은 `LANG_BY_EXT`·`LANG_BY_NAME`(표를 따로 만들지 않고 여기서 만들기)
+  - 기능 이름: `구문 강조`(색칠) · `줄 번호` · `오류 검사`(.ui 검사기 등) · `레이아웃 미리보기`(.ui) · `문서 보기`(.md)
+  - 영어 화면: `Supported formats` 버튼, 열 `Extension` · `Language` · `Features`, 기능 `Syntax highlighting` · `Line numbers` · `Error check` · `Layout preview` · `Document view`
+  - 이름은 추천으로 정함 (VS Code 등에서 가장 많이 쓰는 말: 구문 강조 = syntax highlighting)
 - 참고: C++·Rust 컴파일 오류를 브라우저에서 직접 검사하는 것은 컴파일러를 다시 만드는 일이라 하지 않음 (컴파일러 결과 보기로 대신)
 
 ## 나중에 (후보)

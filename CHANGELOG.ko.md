@@ -2,6 +2,19 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.12.0 (2026-10-13)
+
+### source-viewer.html
+
+- JSON5(`.json5`) 문법 색칠: 주석(`//`, `/* */`), 따옴표 없는 키, 작은따옴표 문자열(줄 끝 `\`로 이어지는 줄 포함), 16진수(`0x1F`), `+2.`, `.5`, `Infinity`, `NaN`, 끝 쉼표. 키는 따옴표가 있든 없든 키 색으로.
+- `json5`는 따로 둔 언어 (`.json`·`.jsonc`는 그대로). `.md`의 ` ```json5 ` 코드 블록도 색칠됨.
+- TOML·JSON5에서 숫자 앞 `+` 부호도 숫자에 포함해 색칠 (전에는 색이 안 칠해졌음).
+- 맨 위 버전 주석 v0.12.0.
+
+### tests
+
+- `tests/samples/project/language/ko/main.json5`: 위 문법을 모두 넣은 JSON5 예제.
+
 ## v0.11.0 (2026-10-13)
 
 ### source-viewer.html

@@ -2,6 +2,19 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.12.0 (2026-10-13)
+
+### source-viewer.html
+
+- Syntax colors for JSON5 (`.json5`): comments (`//`, `/* */`), keys without quotes, single-quoted strings (and line continuation `\` at the end of a line), hex numbers (`0x1F`), `+2.`, `.5`, `Infinity`, `NaN`, and trailing commas. Keys are colored as keys, with or without quotes.
+- `json5` is its own language (`.json` and `.jsonc` are unchanged). A code block marked ` ```json5 ` in a `.md` file is colored too.
+- A `+` sign in front of a number is now part of the number in TOML and JSON5 (it was left uncolored before).
+- Version comment at the top v0.12.0.
+
+### tests
+
+- `tests/samples/project/language/ko/main.json5`: a JSON5 sample with every kind above.
+
 ## v0.11.0 (2026-10-13)
 
 ### source-viewer.html

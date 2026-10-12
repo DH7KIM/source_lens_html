@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.11.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.12.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -101,7 +101,7 @@
   nav a .alt { color: var(--muted); font-size: 12px; margin-left: 4px; }
   nav a .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; vertical-align: 1px; background: var(--muted); }
   nav a .dot.cpp { background: var(--hf); } nav a .dot.rust { background: var(--hn); } nav a .dot.md { background: var(--hs); }
-  nav a .dot.toml, nav a .dot.json { background: var(--hp); } nav a .dot.bat, nav a .dot.hash { background: var(--hk); }
+  nav a .dot.toml, nav a .dot.json, nav a .dot.json5 { background: var(--hp); } nav a .dot.bat, nav a .dot.hash { background: var(--hk); }
   nav a .dot.ui { background: var(--ht); } nav a .dot.uilog { background: var(--hc); }
   main { flex: 1; min-width: 0; }
   article, .start { max-width: 820px; margin: 0 auto; padding: 24px 24px 80px; }
@@ -352,12 +352,12 @@ const t = (key, ...a) => String((UI[uiLang] || UI.en)[key] ?? UI.en[key]).replac
 const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 // ======================= 파일 종류 =======================
-// 언어: cpp, rust, toml, json, bat, hash(# 주석: 셸·PowerShell·YAML·Makefile·.gitignore), md, plain
+// 언어: cpp, rust, toml, json, json5, bat, hash(# 주석: 셸·PowerShell·YAML·Makefile·.gitignore), md, plain
 const LANG_BY_EXT = {
   cpp: "cpp", cc: "cpp", cxx: "cpp", c: "cpp", h: "cpp", hh: "cpp", hpp: "cpp", hxx: "cpp", ipp: "cpp", inl: "cpp",
   ixx: "cpp", cppm: "cpp", mpp: "cpp", ccm: "cpp", cxxm: "cpp", rc: "cpp",
   rs: "rust", toml: "toml", ini: "toml", cfg: "toml", editorconfig: "toml",
-  json: "json", jsonc: "json", bat: "bat", cmd: "bat",
+  json: "json", jsonc: "json", json5: "json5", bat: "bat", cmd: "bat",
   sh: "hash", ps1: "hash", psm1: "hash", yml: "hash", yaml: "hash", cmake: "hash", mk: "hash",
   gitignore: "hash", gitattributes: "hash",
   md: "md", txt: "plain", ui: "ui", xml: "plain", manifest: "plain", def: "plain", ld: "plain",
@@ -500,6 +500,15 @@ const RULES = {
     re(/-?\d[\d.eE+\-]*/y, "n"),
     ident(/[A-Za-z_]\w*/y, words("true false null"), new Set()),
   ],
+  json5: [                                       // JSON5: 주석, 따옴표 없는 키, 작은따옴표, 16진수, Infinity·NaN, 끝 쉼표
+    re(/\/\/.*/y, "c"),
+    re(/\/\*[\s\S]*?(?:\*\/|$)/y, "c"),
+    re(/"(?:\\[\s\S]|[^"\\\n])*"?|'(?:\\[\s\S]|[^'\\\n])*'?/y, (m, s, p) => /^\s*:/.test(s.slice(p + m[0].length, p + m[0].length + 8)) ? "f" : "s"),
+    re(/[A-Za-z_$][\w$]*(?=\s*:)/y, "f"),         // 따옴표 없는 키
+    re(/[+-]?(?:0[xX][\da-fA-F]+|(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)/y, "n"),
+    re(/[+-]?(?:Infinity|NaN)(?![\w$])/y, "n"),
+    ident(/[A-Za-z_$][\w$]*/y, words("true false null"), new Set()),
+  ],
   bat: [
     lineStart(/@?(?:rem\b|::).*/iy, "c"),
     lineStart(/:\w+/y, "f"),
@@ -550,7 +559,7 @@ function highlight(src, lang) {
       if (n > pos) { pos = n; continue outer; }
     }
     // 아무 규칙도 맞지 않으면 이름이 아닌 글자를 한꺼번에 넘긴다
-    const rx = /[^\w"'#/$%!@:;\[\-\.]+|[\s\S]/y; rx.lastIndex = pos;
+    const rx = /[^\w"'#/$%!@:;\[\-\.+]+|[\s\S]/y; rx.lastIndex = pos;
     const m = rx.exec(src)[0];
     push(null, m); pos += m.length;
   }

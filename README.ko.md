@@ -20,7 +20,7 @@ English: [README.md](README.md)
 ## 기능
 
 - **트리 목록**: 폴더 접기·펼치기(기억됨), 가지 연결선 `├ └ │`, 폭 조절(경계를 두 번 누르면 이름에 맞춤).
-- **문법 색칠 + 줄 번호** (`source-viewer`): C++(`.cpp .cppm .ixx .h .hpp` …), Rust, TOML, JSON, BAT/CMD, 셸·YAML·Makefile·`.gitignore`.
+- **문법 색칠 + 줄 번호** (`source-viewer`): C++(`.cpp .cppm .ixx .h .hpp` …), Rust, TOML, JSON·JSON5, BAT/CMD, 셸·YAML·Makefile·`.gitignore`.
   줄 번호는 복사되지 않습니다. 줄 번호를 누르면 그 줄이 표시되고 주소에 `#경로:L12`가 남습니다.
 - **마크다운**: 문서 보기 / 원문 보기, 영어 `이름.md` / 한국어 `이름.ko.md` 전환, 다른 파일로 가는 링크(`file.rs#L12`는 12번 줄로).
 - **`.ui` 레이아웃 파일** (UI 레이아웃 형식 1, 가이드라인 0.9): 색칠과 `ui-check`와 같은 전체 검사(E001~E016, W101·W103). 옛 이름(`tip` → `tooltip`, `check` → `checkbox`, `edit` → `text_field` 등)도 읽고 경고 W104로 새 이름을 알려 줍니다.

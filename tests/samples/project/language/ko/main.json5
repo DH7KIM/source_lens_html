@@ -1,0 +1,22 @@
+// JSON5 sample: language pack and settings
+/* block comment
+   over two lines */
+{
+  language: 'ko',                  // unquoted key, single-quoted string
+  "version": 0x1F,                 // hex number
+  ratio: .5,
+  scale: +2.,
+  limits: { min: -Infinity, max: Infinity, none: NaN, },
+  enabled: true,
+  parent: null,
+  sections: {
+    "ui-check": {
+      'file is larger than {} bytes': "파일이 {}바이트보다 큽니다",
+      "url": 'http://example.com/*not a comment*/',
+      text: "line one \
+line two",
+      quote: 'it\'s "fine"',
+    },
+  },
+  list: [1, 2, 3,],
+}
