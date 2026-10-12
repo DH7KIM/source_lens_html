@@ -15,11 +15,11 @@
 - [x] 메뉴 미리보기: `배치 | 보기` 모드. 보기 모드에서 dropdown 클릭 → menu 풀다운(item·separator·radio ●·check ✓·하위 메뉴 ▸), 바깥 클릭·Esc로 닫기. radio·체크박스는 보기만 (클릭으로 안 바꿈) — 2026.10.12 (v0.6.0)
 - [x] `.ui` 이름을 통상적인 것으로 (ui-guideline 0.8): `check`→`checkbox`, `item`→`menu_item`, `tip`→`tooltip`, `disabled_tip`→`disabled_tooltip`, `hint`→`placeholder`, `gap`→`spacing`, 메뉴 항목 `check`→`checkable`. 옛 이름도 읽고 경고 W104(자동 수정). 옛·새 이름을 함께 쓰면 E006. `edit`·`number`·`dropdown`은 그대로. 샘플 `.ui`를 새 이름으로 + `old_names.ui` — 2026.10.12 (v0.9.0)
 - [x] 뷰어가 ui-guideline 0.9 따르기: `edit`→`text_field`, `number`→`number_field`, `dropdown`→`menu_button` (옛 이름은 W104), 메시지·미리보기·샘플 `.ui`, `w104_old_names.ui`·`w104_mixed.ui` 추가. 다음은 C++(tile_font_editor_cpp `docs/ui-changes.ko.md`) — 2026.10.13 (v0.10.0)
+- [x] .ui 오류 설명 한국어로 보기: 번역 원본 tile_font_editor_cpp `language\ko\ui-check.json5`(섹션 `ui-check`, 159개), 뷰어에 `UI_MSG`로 내장. 화면 언어가 한국어면 진단 줄·풍선이 한국어, 풍선에 영어 원문도. 코드·ui-check 출력은 영어 그대로 — 2026.10.13 (v0.11.0)
 
 ## 다음 버전 (순서대로)
 
-- [ ] .ui 오류 설명 한국어로 보기: 번역은 tile_font_editor_cpp 언어팩(`language\ko\*.json5`, 영어 원문이 키)에 한 번만 만들고 뷰어에 내장. 연 폴더에 언어팩이 있으면 그것을 우선. 오류 코드·ui-check 출력은 영어 그대로 — 2026.10.12 요청
-- [ ] json5 지원: 색칠(따옴표 없는 키, 작은따옴표 문자열, 16진수, Infinity·NaN, 끝 쉼표) + 언어팩 읽기 (한국어 오류 설명에 필요) — 2026.10.12 요청
+- [ ] json5 지원: 색칠(따옴표 없는 키, 작은따옴표 문자열, 16진수, Infinity·NaN, 끝 쉼표) + 언어팩 읽기: 연 폴더에 `language\ko\ui-check.json5`가 있으면 내장 표(`UI_MSG`)보다 우선 — 2026.10.12 요청
 - [ ] 컴파일러 결과 보기 (GCC 먼저): 빌드 출력을 파일로 저장(예: `build.bat`에서 `2> build.log`)하면, 그 로그의 `파일:줄:칸: error/warning: ...`를 읽어 해당 소스 줄에 밑줄 + 진단 줄 표시 (.ui 진단 표시 재사용, 자동 새로 고침과 함께). Rust는 `cargo build --message-format=json` 다음 단계 — 2026.10.12 요청
 - [ ] toml 검사 (`Cargo.toml` 등): 문법이 작아 .ui처럼 정확히 검사 가능 — 2026.10.12 요청
 - [ ] `.rc`(리소스 스크립트) 검사기: GCC `windres`를 기준으로, `tests/rc`에 windres 결과를 `.expected`로 모아 맞춤 (DIALOG·MENU·STRINGTABLE·BEGIN/END·#include 등) — 2026.10.12 요청
@@ -31,6 +31,7 @@
 ## 나중에 (후보)
 
 - [ ] 보기 모드에서 메뉴 항목 `tooltip`을 상태 줄처럼 보여 주기 (ui-guideline: 메뉴 항목 설명은 상태 줄에 표시) — 2026.10.12 (v0.8.0 작업 중 나옴)
+- [ ] C++ ui-check가 `ui-check.json5` 번역을 쓰게 되면 `main.json5`의 `<import files>`에 넣기 (지금 넣으면 i18n-check가 unused로 알림). 검사기 메시지가 바뀌면 번역 파일과 뷰어 `UI_MSG`를 같이 고치기 — 2026.10.13 (v0.11.0 작업 중 나옴)
 - [ ] uilayout.cppm이 바뀌면 뷰어 검사기도 맞추기 (문서 버전이 오를 때) — 뷰어는 문서 0.9, uilayout.cppm·`tests/ui`는 아직 0.7. 고칠 곳은 tile_font_editor_cpp `docs/ui-changes.ko.md` (C++이 0.9를 따르면 새 이름·W104·메시지가 글자 하나까지 같은지 다시 비교)
 - [ ] 검사기 버전 어긋남 알림: 연 폴더에 `tests/ui`가 있으면 `.expected`와 뷰어 검사 결과를 비교해서, 다르면 "검사기가 문서 0.x와 맞지 않음" 빨간 경고 — 2026.10.12 생각
 - [ ] 문법 정의를 바깥 파일로: 기본 문법은 HTML 안에 데이터 표로 두고, 연 폴더에 `syntax\<언어>.syntax`가 있으면 그것을 우선 사용 (.ui의 내장 + 바깥 파일 우선 방식). `.syntax` 오류는 .ui처럼 줄·칸·오류 코드로 알림 — 2026.10.12 생각

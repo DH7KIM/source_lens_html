@@ -2,6 +2,17 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.11.0 (2026-10-13)
+
+### source-viewer.html
+
+- `.ui` 오류·경고 설명을 한국어로: 화면 언어가 한국어이면 소스 아래 진단 줄과 밑줄 풍선 도움말이 한국어로 나옴 (`error[E003]` 같은 코드는 그대로).
+  - 풍선 도움말에는 구분선 아래에 영어 원문(`ui-check`와 같음)도 나옴.
+  - 언어(한국어 / English)를 바꾸면 설명도 그 언어로 다시 그림.
+- 번역(메시지·help·낱말 159개)은 `UI_MSG` 표로 내장. 원본은 tile_font_editor_cpp의 `language\ko\ui-check.json5`. 번역이 없거나 빈 글이면 영어 원문.
+- `ui-check`와 같은 출력과 검사 결과는 v0.10.0과 같음 (`tests/ui`·샘플로 비교).
+- 맨 위 주석 버전 v0.11.0.
+
 ## v0.10.0 (2026-10-13)
 
 ### source-viewer.html

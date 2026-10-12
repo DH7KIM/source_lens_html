@@ -2,6 +2,17 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.11.0 (2026-10-13)
+
+### source-viewer.html
+
+- `.ui` error and warning messages in Korean: when the screen language is Korean, the lines under the source and the underline tooltips show Korean (codes like `error[E003]` stay the same).
+  - The tooltip also shows the English original (the same as `ui-check`) under a line.
+  - Switching the language (한국어 / English) redraws the messages in that language.
+- The translations (159 messages, help lines and words) are built in as the `UI_MSG` table. The original is `language\ko\ui-check.json5` in tile_font_editor_cpp. A missing or empty translation shows the English original.
+- The `ui-check` style output and the check results are the same as v0.10.0 (compared with `tests/ui` and the samples).
+- Version comment at the top v0.11.0.
+
 ## v0.10.0 (2026-10-13)
 
 ### source-viewer.html

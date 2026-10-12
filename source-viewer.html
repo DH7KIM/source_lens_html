@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.10.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.11.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -311,7 +311,7 @@ const UI = {
     pvModeVTip: "보기 모드: 프로그램처럼 보입니다. 상자에 마우스를 올리면 풍선 도움말(tooltip, disabled면 disabled_tooltip), menu_button을 클릭하면 연결된 menu가 펼쳐집니다 (보기만, 바깥 클릭·Esc로 닫기).",
     pvDropGo: "클릭하면 메뉴를 펼칩니다.", pvNoMenu: "연결된 menu가 없습니다", pvEmpty: "(빈 메뉴)", pvItem: "{0}  {1}번 줄",
     uiErrs: "오류 {0}개", uiWarns: "경고 {0}개", uiOk: "검사 통과",
-    uiErrsTip: "ui-check와 같은 전체 검사입니다 (E001~E016, W101·W103·W104, UI 문서 {0}. W104(옛 이름)는 ui-check에 아직 없음). 설명은 ui-check와 같은 영어 원문입니다. 밑줄에 마우스를 올리면 설명이 보입니다.",
+    uiErrsTip: "ui-check와 같은 전체 검사입니다 (E001~E016, W101·W103·W104, UI 문서 {0}. W104(옛 이름)는 ui-check에 아직 없음). 설명은 한국어로 보여 줍니다 (오류 코드는 그대로). 밑줄에 마우스를 올리면 설명과 함께 ui-check와 같은 영어 원문이 보입니다.",
   },
   en: {
     pick: "Choose source folder", regrant: "Open folder", pickFiles: "Choose folder",
@@ -557,6 +557,175 @@ function highlight(src, lang) {
   if (plain) out.push([null, plain]);
   return out;
 }
+
+// ---------- .ui 오류·경고 설명 번역 (원문 영어 → 번역) ----------
+// 원본: tile_font_editor_cpp의 language/ko/ui-check.json5 (섹션 "ui-check"). 그 파일을 고치면 이 표도 같게 고친다.
+// {} 자리표시자는 원문과 같은 개수·순서. 없는 키나 빈 글이면 영어 원문을 쓴다.
+const UI_MSG = {
+  ko: {
+    "file is larger than {} bytes": "파일이 {}바이트보다 큽니다",
+    "invalid UTF-8": "UTF-8이 아닌 글자가 있습니다",
+    "the first line must be '#ui 1'": "첫 줄은 '#ui 1'이어야 합니다",
+    "missing format version after '#ui'": "'#ui' 다음에 형식 버전이 없습니다",
+    "unsupported format version '{}'": "지원하지 않는 형식 버전 '{}'",
+    "'{}' cannot be used on the '#ui' line": "'{}'은(는) '#ui' 줄에 쓸 수 없습니다",
+    "'{' and '}' cannot be used on the '#ui' line": "'{'와 '}'는 '#ui' 줄에 쓸 수 없습니다",
+    "line is longer than {} bytes": "줄이 {}바이트보다 깁니다",
+    "unknown element kind '{}'": "모르는 요소 종류 '{}'",
+    "unknown attribute '{}'": "모르는 속성 '{}'",
+    "expected an element kind, got '{}='": "요소 종류가 와야 하는데 '{}='이(가) 있습니다",
+    "'{}' needs a value": "'{}'에 값이 없습니다",
+    "'{}' needs a value after '='": "'{}'의 '=' 다음에 값이 없습니다",
+    "'{}' takes no value": "'{}'은(는) 값을 받지 않습니다",
+    "'{}' expects {}": "'{}'에는 {}이(가) 와야 합니다",
+    "'{}' expects a name": "'{}'에는 이름이 와야 합니다",
+    "'{}' must be 1 or more": "'{}'은(는) 1 이상이어야 합니다",
+    "'{}' must be between {} and {}": "'{}'은(는) {}~{} 사이여야 합니다",
+    "'{}' on '{}' must be one of: {}": "'{}'('{}' 요소)은(는) 다음 중 하나여야 합니다: {}",
+    "'{}' cannot be auto on '{}'": "'{}'은(는) '{}'에서 auto가 될 수 없습니다",
+    "invalid number '{}'": "잘못된 숫자 '{}'",
+    "number '{}' is out of range": "숫자 '{}'이(가) 범위를 벗어났습니다",
+    "unclosed string": "문자열이 닫히지 않았습니다",
+    "unknown escape '\\{}'": "모르는 이스케이프 '\\{}'",
+    "string is longer than {} bytes": "문자열이 {}바이트보다 깁니다",
+    "min ({}) is greater than max ({})": "min({})이 max({})보다 큽니다",
+    "missing '=' between '{}' and the string": "'{}'와 문자열 사이에 '='가 없습니다",
+    "'=' needs an attribute name right before it": "'=' 바로 앞에 속성 이름이 있어야 합니다",
+    "expected a space after the value of '{}'": "'{}'의 값 다음에 공백이 있어야 합니다",
+    "spaces around '=' after '{}'": "'{}' 다음 '=' 앞뒤에 공백이 있습니다",
+    "'{}' needs a name": "'{}'에 이름이 없습니다",
+    "'{}' does not take a name": "'{}'은(는) 이름을 받지 않습니다",
+    "the name '{}' is already used": "이름 '{}'은(는) 이미 쓰였습니다",
+    "'{}' starts with a digit": "'{}'이(가) 숫자로 시작합니다",
+    "uppercase letter in '{}'": "'{}'에 대문자가 있습니다",
+    "'{}' is set twice": "'{}'이(가) 두 번 정해졌습니다",
+    "'{}' already has a default for '{}'": "'{}' 기본값이 이미 '{}'에 정해져 있습니다",
+    "'{}' needs a {} size or position": "'{}'에 {} 크기나 위치가 없습니다",
+    "'{}' has too many {} values": "'{}'에 {} 값이 너무 많습니다",
+    "'{}' needs {} inside a '{}'": "'{}'에는 {}이(가) 필요합니다 ('{}' 안)",
+    "no element named '{}'": "'{}'라는 요소가 없습니다",
+    "'{}' comes later (line {})": "'{}'은(는) 뒤에 나옵니다 ({}번 줄)",
+    "'{}' is in a different block": "'{}'은(는) 다른 묶음에 있습니다",
+    "'{}' refers to itself": "'{}'이(가) 자기 자신을 가리킵니다",
+    "'{}' is not a menu": "'{}'은(는) menu가 아닙니다",
+    "'{}' is a '{}', not a screen element": "'{}'은(는) 화면 요소가 아니라 '{}'입니다",
+    "'menu_button' needs menu=<menu name>": "'menu_button'에는 menu=<메뉴 이름>이 있어야 합니다",
+    "'{' is never closed": "'{'가 닫히지 않았습니다",
+    "'}' without a matching '{'": "짝이 맞는 '{'가 없는 '}'",
+    "'{' must be at the end of the line": "'{'는 줄 끝에 있어야 합니다",
+    "'{' must follow an element on the same line": "'{'는 같은 줄의 요소 다음에 와야 합니다",
+    "'}' must be alone on its line": "'}'는 혼자 한 줄에 있어야 합니다",
+    "'{}' cannot have children": "'{}'은(는) 자식 요소를 가질 수 없습니다",
+    "blocks are nested too deeply (max {})": "묶음이 너무 깊게 겹쳤습니다 (최대 {})",
+    "'{}' cannot be used on '{}'": "'{}'은(는) '{}'에 쓸 수 없습니다",
+    "'{}' takes no attributes": "'{}'은(는) 속성을 받지 않습니다",
+    "'{}' cannot be used inside a '{}'": "'{}'은(는) '{}' 안에서 쓸 수 없습니다",
+    "'defaults' must be at the top level": "'defaults'는 맨 위 단계에 있어야 합니다",
+    "'defaults' must come before all elements": "'defaults'는 모든 요소보다 앞에 있어야 합니다",
+    "'defaults' needs an element kind": "'defaults'에 요소 종류가 없습니다",
+    "'defaults' cannot open a block": "'defaults'는 묶음을 열 수 없습니다",
+    "'{}' cannot have defaults": "'{}'은(는) 기본값을 가질 수 없습니다",
+    "'{}' cannot be a default": "'{}'은(는) 기본값으로 정할 수 없습니다",
+    "'{}' must be inside a 'menu'": "'{}'은(는) 'menu' 안에 있어야 합니다",
+    "'{}' cannot be inside a 'menu'": "'{}'은(는) 'menu' 안에 있을 수 없습니다",
+    "'{}' must be at the top level or inside another 'menu'": "'{}'은(는) 맨 위 단계나 다른 'menu' 안에 있어야 합니다",
+    "'{}' must be inside a 'row' or 'column'": "'{}'은(는) 'row'나 'column' 안에 있어야 합니다",
+    "'{}' is a reserved word": "'{}'은(는) 예약 단어입니다",
+    "reserved character '{}'": "예약 문자 '{}'",
+    "character '{}' cannot be used here": "글자 '{}'은(는) 여기에 쓸 수 없습니다",
+    "too many elements (max {})": "요소가 너무 많습니다 (최대 {})",
+    "'checkable' and 'radio' cannot be used together": "'checkable'과 'radio'는 함께 쓸 수 없습니다",
+    "'checked' needs 'checkable' or 'radio'": "'checked'에는 'checkable'이나 'radio'가 있어야 합니다",
+    "only one item in a radio group can be checked": "radio 묶음에서는 항목 하나만 checked일 수 있습니다",
+    "'{}' is negative ({})": "'{}'이(가) 음수입니다 ({})",
+    "'{}' is very large ({})": "'{}'이(가) 매우 큽니다 ({})",
+    "number '{}' starts with 0": "숫자 '{}'이(가) 0으로 시작합니다",
+    "'{}' has no tooltip": "'{}'에 tooltip이 없습니다",
+    "'{}' is an old name": "'{}'은(는) 옛 이름입니다",
+    "add '#ui 1' as the first line": "첫 줄에 '#ui 1'을 넣으세요",
+    "write '#ui 1'": "'#ui 1'로 쓰세요",
+    "write '#ui', a space and the format version": "'#ui', 공백, 형식 버전 순서로 쓰세요",
+    "this program reads format 1 (UI {})": "이 프로그램은 형식 1을 읽습니다 (UI {})",
+    "the '#ui' line takes: section": "'#ui' 줄에 쓸 수 있는 것: section",
+    "save the file as UTF-8": "파일을 UTF-8로 저장하세요",
+    "split the layout into smaller files": "레이아웃을 더 작은 파일로 나누세요",
+    "split it into several lines": "여러 줄로 나누세요",
+    "did you mean '{}'?": "'{}'을(를) 쓰려던 건가요?",
+    "this program supports UI {}; '{}' may need a newer version": "이 프로그램은 UI {} 기준입니다. '{}'은(는) 더 새 버전이 필요할 수 있습니다",
+    "start the line with a kind such as button, label or row": "줄을 button, label, row 같은 종류로 시작하세요",
+    "write {}=<value>": "{}=<값>으로 쓰세요",
+    "for example: {}={}": "예: {}={}",
+    "write a number": "숫자를 쓰세요",
+    "write {}=1 or more": "{}=1 이상으로 쓰세요",
+    "write {}=<name>": "{}=<이름>으로 쓰세요",
+    "write {}=<number>": "{}=<숫자>로 쓰세요",
+    "write {}=<number>, or align=fill on the {}": "{}=<숫자>로 쓰거나, {}에 align=fill을 쓰세요",
+    "write {}=\"...\"": "{}=\"...\"로 쓰세요",
+    "write just '{}'": "'{}'만 쓰세요",
+    "write a decimal integer like 90 or -4, or hex like 0x1F": "90, -4 같은 10진수 정수나 0x1F 같은 16진수로 쓰세요",
+    "write it without the leading zeros: {}": "앞의 0을 빼고 쓰세요: {}",
+    "integers are -2147483648 to 2147483647 (hex up to 0x7FFFFFFF)": "정수는 -2147483648~2147483647입니다 (16진수는 0x7FFFFFFF까지)",
+    "positions and sizes use 16-bit numbers": "위치와 크기는 16비트 숫자를 씁니다",
+    "the usual range is -10000 to 10000": "보통 범위는 -10000~10000입니다",
+    "use 0 or more": "0 이상을 쓰세요",
+    "make min less than or equal to max": "min을 max보다 작거나 같게 하세요",
+    "close it with '\"' on the same line": "같은 줄에서 '\"'로 닫으세요",
+    "only \\\", \\\\ and \\n can be used": "\\\", \\\\, \\n만 쓸 수 있습니다",
+    "shorten it": "줄이세요",
+    "put a space between attributes": "속성 사이에 공백을 넣으세요",
+    "write key=value with no spaces around '='": "'=' 앞뒤에 공백 없이 key=value로 쓰세요",
+    "names start with a-z or _": "이름은 a-z나 _로 시작합니다",
+    "names use only a-z, 0-9 and _": "이름에는 a-z, 0-9, _만 씁니다",
+    "use lowercase: '{}'": "소문자로 쓰세요: '{}'",
+    "choose another name": "다른 이름을 고르세요",
+    "remove '{}'": "'{}'을(를) 지우세요",
+    "remove it": "지우세요",
+    "use one of them": "둘 중 하나만 쓰세요",
+    "first set at column {}": "처음 정한 곳: {}번 칸",
+    "first set at line {}": "처음 정한 곳: {}번 줄",
+    "first defined at line {}": "처음 만든 곳: {}번 줄",
+    "use one of: left+width, right+width, left+right, right_of+width, right_of+right, width only": "다음 중 하나를 쓰세요: left+width, right+width, left+right, right_of+width, right_of+right, width만",
+    "use one of: top+height, bottom+height, top+bottom, below+height, below+bottom, height only": "다음 중 하나를 쓰세요: top+height, bottom+height, top+bottom, below+height, below+bottom, height만",
+    "check the name": "이름을 확인하세요",
+    "name an element that comes before it": "앞에 나오는 요소를 가리키세요",
+    "an element can only name elements before it": "요소는 자기보다 앞에 나오는 요소만 가리킬 수 있습니다",
+    "name an element in the same block, or the block itself": "같은 묶음의 요소나 그 묶음 자체를 가리키세요",
+    "menu= must name a 'menu'": "menu=에는 'menu'를 가리켜야 합니다",
+    "{} can only name a screen element": "{}은(는) 화면 요소만 가리킬 수 있습니다",
+    "add menu= with the name of a menu": "menu=에 메뉴 이름을 넣으세요",
+    "add a '}' line": "'}' 줄을 넣으세요",
+    "put '{' at the end of the element line": "'{'를 요소 줄 끝에 두세요",
+    "move it to its own line": "따로 한 줄에 두세요",
+    "move the rest to another line": "나머지를 다른 줄로 옮기세요",
+    "remove it, or end an element line with '{'": "지우거나, 요소 줄 끝에 '{'를 쓰세요",
+    "only group, row, column and menu can open a block with '{'": "'{'로 묶음을 열 수 있는 것은 group, row, column, menu뿐입니다",
+    "put the children on the following lines": "자식 요소는 다음 줄들에 쓰세요",
+    "use fewer nested groups": "겹친 묶음을 줄이세요",
+    "'{}' takes: {}": "'{}'에 쓸 수 있는 속성: {}",
+    "inside a row or column, only width and height set the size": "row나 column 안에서는 width와 height로만 크기를 정합니다",
+    "use left/right/top/bottom to leave space in a group": "group 안에 빈 곳을 두려면 left/right/top/bottom을 쓰세요",
+    "move it right after the '#ui' line": "'#ui' 줄 바로 다음으로 옮기세요",
+    "write defaults on one line": "defaults는 한 줄에 쓰세요",
+    "for example: defaults button height=28": "예: defaults button height=28",
+    "defaults work for: label, button, text_field, number_field, menu_button, checkbox, canvas, group, row, column, menu_item": "기본값을 정할 수 있는 종류: label, button, text_field, number_field, menu_button, checkbox, canvas, group, row, column, menu_item",
+    "set it on each element": "요소마다 따로 정하세요",
+    "move it into a menu block": "menu 묶음 안으로 옮기세요",
+    "a menu holds menu_item, separator and menu": "menu에는 menu_item, separator, menu만 넣을 수 있습니다",
+    "move the menu out of this block; a menu_button opens it": "menu를 이 묶음 밖으로 옮기세요. menu는 menu_button이 엽니다",
+    "write: {} <name> ...": "이렇게 쓰세요: {} <이름> ...",
+    "add checkable or radio to the item, or remove checked": "항목에 checkable이나 radio를 넣거나, checked를 지우세요",
+    "the first checked item is at line {}": "처음 checked인 항목: {}번 줄",
+    "add tooltip=\"...\" to say what it does, or tooltip=\"\" if it needs none": "하는 일을 tooltip=\"...\"로 쓰거나, 필요 없으면 tooltip=\"\"를 쓰세요",
+    "use '{}' instead": "새 이름: '{}'",
+    "a string": "문자열",
+    "an integer": "정수",
+    "an integer or auto": "정수나 auto",
+    "horizontal": "가로",
+    "vertical": "세로",
+  },
+};
+// 번역하는 {} 값 (검사기가 만드는 낱말): 원문 → 번역할 값 번호
+const UI_MSG_ARGS = { "'{}' expects {}": [1], "'{}' needs a {} size or position": [1], "'{}' has too many {} values": [1] };
 
 // ---------- .ui 전체 검사기 (UI 형식 1, ui-guideline 문서 0.9) ----------
 // tile_font_editor_cpp의 src/uilayout.cppm(Parser)를 그대로 옮긴 것. 문서 0.7까지는 ui-check와 글자 하나까지 같은 결과를 낸다.
@@ -1357,8 +1526,17 @@ const uiCheck = (() => {
   /// .ui 파일 바이트(Uint8Array) 검사 → { diags: [{severity, line, col, length, code, msg, help}], errorCount, warningCount, nodes }
   function check(u8) {
     const doc = parse(toBytes(u8));
-    doc.diags = doc.diags.map(d => ({ ...d, msg: fromBytes(fill(d.message, d.args)), help: d.help ? fromBytes(fill(d.help, d.helpArgs)) : "" }));
+    doc.diags = doc.diags.map(d => ({ ...d, helpFmt: d.help, msg: fromBytes(fill(d.message, d.args)), help: d.help ? fromBytes(fill(d.help, d.helpArgs)) : "" }));
     return doc;
+  }
+  /// 진단 하나의 번역: { msg, help } (번역 표 table = 원문 → 번역). 번역이 없는 부분은 영어 원문
+  function localize(d, table) {
+    const one = (fmt, args) => {
+      const f = table[fmt], idx = UI_MSG_ARGS[fmt] || [];
+      if (!f) return fromBytes(fill(fmt, args));
+      return fill(f, args.map((a, i) => { const s = fromBytes(a); return idx.includes(i) && table[s] ? table[s] : s; }));
+    };
+    return { msg: one(d.message, d.args), help: d.helpFmt ? one(d.helpFmt, d.helpArgs) : "" };
   }
   /// ui-check와 같은 출력 (최대 50개, 나머지는 개수만)
   function format(doc, file) {
@@ -1535,7 +1713,7 @@ const uiCheck = (() => {
     return out;
   }
 
-  return { check, format, recover, compute, layoutText, text: fromBytes, KIND_NAMES };
+  return { check, localize, format, recover, compute, layoutText, text: fromBytes, KIND_NAMES };
 })();
 
 // ---------- .ui 색칠 (검사는 위의 uiCheck가 한다) ----------
@@ -1593,7 +1771,13 @@ function markUiDiags(tokens, diags) {
     if (!byLine.has(d.line)) byLine.set(d.line, []);
     byLine.get(d.line).push({ a: d.col, b: d.col + d.length, d });
   }
-  const tipOf = d => `${d.severity}[${d.code}]: ${d.msg}` + (d.help ? `\nhelp: ${d.help}` : "");
+  // 번역해서 보일 때(d.show)는 아래에 ui-check와 같은 영어 원문도
+  const tipOf = d => {
+    const s = d.show || d, head = `${d.severity}[${d.code}]: `;
+    let tip = head + s.msg + (s.help ? `\nhelp: ${s.help}` : "");
+    if (s !== d) tip += "\n───\n" + d.msg + (d.help ? `\nhelp: ${d.help}` : "");
+    return tip;
+  };
   const out = [];
   let ln = 1, col = 1;
   for (const [cls, text] of tokens) {
@@ -2017,6 +2201,7 @@ function drawLangs() {
       docLang = l;
       if (UI[l]) uiLang = l;
       if (cur && isMd(cur)) openFile(pathFor(keyOf(cur), l));
+      else if (cur && langOf(cur) === "ui") openFile(cur, { keepScroll: true });   // 진단 설명도 그 언어로
       else { drawNav(); drawLangs(); drawStatic(); drawPreview(); }
     };
     box.append(b);
@@ -2088,7 +2273,13 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
       if (big) note = t("tooBig");
       let toks = big || lang === "plain" ? [[null, text]] : highlight(text, lang);
       // .ui 전체 검사 (ui-check와 같은 결과). 오류·경고 범위에 밑줄, 줄 아래에 진단
-      if (lang === "ui") { check = uiCheck.check(bytes); if (!big) toks = markUiDiags(toks, check.diags); }
+      if (lang === "ui") {
+        check = uiCheck.check(bytes);
+        // 화면 언어의 번역 표가 있으면 진단 줄·풍선은 번역 (ui-check 출력·d.msg는 영어 그대로)
+        const table = UI_MSG[uiLang];
+        if (table) for (const d of check.diags) d.show = uiCheck.localize(d, table);
+        if (!big) toks = markUiDiags(toks, check.diags);
+      }
       const diags = check ? check.diags : [];
       const lines = tokensToLines(toks);
       if (lines.length > 1 && lines[lines.length - 1] === "") lines.pop();
@@ -2148,8 +2339,9 @@ function diagRows(d, line) {
   const pad = span("pad", [...line].slice(0, d.col - 1).join(""));
   const row = body => `<div class="r dg${d.severity === "warning" ? " dw" : ""}"><span class="no"></span><span class="tx">${body}</span></div>`;
   const w = Math.max(d.length, 1);
-  let html = row(pad + span("x", "^".repeat(w) + " " + d.severity + "[" + d.code + "]") + span("dm", ": " + d.msg));
-  if (d.help) html += row(pad + span("dh", " ".repeat(w + 1) + "help: " + d.help));
+  const s = d.show || d;
+  let html = row(pad + span("x", "^".repeat(w) + " " + d.severity + "[" + d.code + "]") + span("dm", ": " + s.msg));
+  if (s.help) html += row(pad + span("dh", " ".repeat(w + 1) + "help: " + s.help));
   return html;
 }
 
