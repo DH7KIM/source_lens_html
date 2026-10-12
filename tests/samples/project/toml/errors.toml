@@ -1,0 +1,19 @@
+# TOML syntax errors (one of each). Open this file in Source Lens.
+[package]
+name = "tile
+version = tile
+edition 2021
+= "no key"
+path = "C:\new\dir"
+authors = ["a"] extra
+[package.metadata
+[]
+[dependencies]
+egui = "0.29"
+egui = "0.30"
+[dependencies]
+serde = { version = "1" features = ["derive"] }
+members = [
+  "a",
+  "b"
+  "c"

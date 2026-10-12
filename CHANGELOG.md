@@ -2,6 +2,19 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.18.0 (2026-10-13)
+
+### source-viewer.html
+
+- TOML syntax check: `*.toml` files (for example `Cargo.toml`) and `Cargo.lock` are checked for TOML 1.0 syntax errors. Errors get a red wavy underline and a diagnostic line, the same way as the `.ui` check.
+  - Codes T001-T010: string not closed, invalid or missing key, expected `=`, invalid table header, invalid value, unexpected text after value, invalid escape, duplicate key, duplicate or conflicting table, array or inline table not closed.
+  - Only syntax errors are checked. Unknown Cargo keys and required `[package]` fields are not (maybe a later version).
+  - Messages follow the screen language (Korean or English); the English text is also in the tooltip.
+  - `.ini`, `.cfg` and `.editorconfig` are not TOML and are not checked.
+  - After one error in a statement, the rest of that line is skipped and checking goes on, so later errors are still found.
+- Example `tests/samples/project/toml/errors.toml` (12 errors).
+- Version comment at the top v0.18.0.
+
 ## v0.17.0 (2026-10-13)
 
 ### source-viewer.html

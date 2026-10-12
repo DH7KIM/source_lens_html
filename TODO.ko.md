@@ -25,8 +25,8 @@
 
 - [x] 컴파일러 결과 자동 새로 고침: `build.log`가 바뀌면 열려 있는 소스에 다시 그리기 — 2026.10.13 (v0.16.0)
 - [x] Rust 컴파일러 결과: `cargo build --message-format=json > cargo.json` 읽기 — 2026.10.12 요청, 2026.10.13 (v0.17.0)
+- [x] toml 검사: `*.toml`·`Cargo.lock`의 TOML 1.0 문법 오류(T001~T010)를 밑줄 + 진단 줄로, 화면 언어로 설명. 문법만 (모르는 키·필수 항목은 안 함) — 2026.10.12 요청, 2026.10.13 (v0.18.0)
 
-- [ ] toml 검사 (`Cargo.toml` 등): 문법이 작아 .ui처럼 정확히 검사 가능 — 2026.10.12 요청
 - [ ] `.rc`(리소스 스크립트) 검사기: GCC `windres`를 기준으로, `tests/rc`에 windres 결과를 `.expected`로 모아 맞춤 (DIALOG·MENU·STRINGTABLE·BEGIN/END·#include 등) — 2026.10.12 요청
 - [ ] 시험 샘플: Source Lens가 지원하는 확장자를 전부 `tests\samples`에 넣기 (`LANG_BY_EXT`·`LANG_BY_NAME` 기준, 빠진 것 채우기) — 2026.10.12 요청 (v0.6.0 작업 중)
   - 샘플은 조각이 아니라 **하나의 완성된 예제**로 만들기 (예: C++ — `#include`·`import` → `int main(...)` → `printf(...)` → `return 0;` 까지 컴파일되는 모양) — 2026.10.12 요청
