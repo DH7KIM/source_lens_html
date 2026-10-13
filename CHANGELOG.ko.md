@@ -2,6 +2,15 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.19.0 (2026-10-13)
+
+### source-viewer.html
+
+- toml 파일(`*.toml`, `Cargo.lock`)에서도 `오류 설명 끄기/켜기` 버튼이 보임. 오류 설명 줄 없이 전체 코드를 훑어볼 수 있음. 밑줄과 풍선 도움말은 `.ui`처럼 그대로 남음.
+  - 선택은 `.ui`와 같이 쓰고, 폴더마다 기억함.
+  - 컴파일러 결과 파일(`build.log`·`cargo.json`)은 이번에 바꾸지 않음.
+- 맨 위 버전 주석 v0.19.0.
+
 ## v0.18.0 (2026-10-13)
 
 ### source-viewer.html

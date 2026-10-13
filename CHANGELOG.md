@@ -2,6 +2,15 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.19.0 (2026-10-13)
+
+### source-viewer.html
+
+- The "Hide details / Show details" button is now also shown for TOML files (`*.toml`, `Cargo.lock`), so a whole file can be read without the diagnostic lines. Underlines and tooltips stay, as with `.ui`.
+  - The choice is shared with `.ui` and remembered per folder.
+  - Compiler result files (`build.log`, `cargo.json`) are not changed in this version.
+- Version comment at the top v0.19.0.
+
 ## v0.18.0 (2026-10-13)
 
 ### source-viewer.html

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.18.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.19.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -2107,7 +2107,7 @@ let hlLine = 0;          // 표시한 줄
 const $ = id => document.getElementById(id);
 const KEY = location.pathname; // file:// 페이지는 저장소를 함께 쓰므로 이 파일 경로로 구분
 try { mdRaw = localStorage.getItem("sv-md-raw:" + KEY) === "1"; } catch (e) {}
-let showDiag = true;     // .ui 오류를 줄 아래에 보일지
+let showDiag = true;     // .ui·toml 오류를 줄 아래에 보일지
 try { showDiag = localStorage.getItem("sv-diag:" + KEY) !== "0"; } catch (e) {}
 // .ui 배치 미리보기 설정: 켜짐, 창 크기("fit" | "custom" | "640x480"…), 너비·높이, 배율, 아래 칸 높이
 const pvSet = { on: true, mode: "layout", win: "640x480", w: 640, h: 480, scale: 100, paneH: 300 };
@@ -2944,7 +2944,7 @@ setInterval(async () => {
 addEventListener("focus", async () => { if (src && src.kind === "fsa") { try { await refreshList(); } catch (e) {} } });
 
 // .md 문서 보기 ↔ 원문 보기
-// .ui 오류 표시 켜기 ↔ 끄기 (밑줄과 풍선 도움말은 늘 있음)
+// .ui·toml 오류 설명 켜기 ↔ 끄기 (밑줄과 풍선 도움말은 늘 있음)
 $("diagBtn").onclick = () => {
   showDiag = !showDiag;
   try { localStorage.setItem("sv-diag:" + KEY, showDiag ? "1" : "0"); } catch (e) {}
@@ -3015,8 +3015,9 @@ function drawStatic() {
   const md = cur && isMd(cur);
   $("mdMode").hidden = !md;
   const ui = cur && langOf(cur) === "ui";
-  $("diagBtn").hidden = !ui;
-  if (ui) { $("diagBtn").textContent = showDiag ? t("diagOff") : t("diagOn"); $("diagBtn").title = t("diagTip"); }
+  const diagOk = ui || (cur && isTomlFile(cur));   // 오류 설명 켜기/끄기: .ui와 toml
+  $("diagBtn").hidden = !diagOk;
+  if (diagOk) { $("diagBtn").textContent = showDiag ? t("diagOff") : t("diagOn"); $("diagBtn").title = t("diagTip"); }
   $("pvBtn").hidden = !ui;
   if (ui) { $("pvBtn").textContent = pvSet.on ? t("pvOff") : t("pvOn"); $("pvBtn").title = t("pvTip"); }
   if (md) { $("mdMode").textContent = mdRaw ? t("doc") : t("raw"); $("mdMode").title = mdRaw ? t("docTip") : t("rawTip"); }
