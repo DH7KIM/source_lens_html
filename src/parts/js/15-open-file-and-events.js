@@ -10,7 +10,7 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   const expanded = changed && expandTo(path);
   cur = path; curMod = f.lastModified;
   logMod = await buildLogMod();
-  if (changed) { hlLine = 0; hlItem = null; }
+  if (changed) { hlLine = 0; hlItem = null; jsonSyntax = "auto"; }   // 문법 선택은 그 파일에만
   if (line) hlLine = line;
   if (lang === "md") {
     docLang = splitLang(path).lang;
@@ -21,7 +21,10 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   let lineCount = 0, note = "", check = null, packNote = "", treeErr = "", treeHtml = null;
   // JSON·JSON5 계층 보기: 읽기 오류일 때는 소스 보기. 표시한 줄(hlLine)은 두 보기가 함께 쓴다
   if (!asDoc && jsonTree && (lang === "json" || lang === "json5") && !text.includes("\u0000")) {
-    try { treeHtml = renderJsonTree(json5Tree(text)); }
+    try {
+      if (jsonSyntax === "lines") treeHtml = renderJsonTree(json5Lines(text, true), { lines: true, text });   // 직접 고른 JSON Lines
+      else treeHtml = renderJsonTree(jsonTreeOf(text));
+    }
     catch (e) {
       const jl = jsonLinesOf(text, e);   // JSON Lines(줄마다 값 하나)면 줄마다 항목 하나로, 틀린 줄은 오류 항목
       if (jl) treeHtml = renderJsonTree(jl, { lines: true, text });

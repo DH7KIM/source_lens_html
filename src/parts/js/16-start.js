@@ -86,6 +86,16 @@ function drawStatic() {
     $("treeSrc").textContent = t("treeSrc"); $("treeSrc").title = t("treeSrcTip"); $("treeSrc").setAttribute("aria-pressed", String(!treeShown));
     $("treeTree").textContent = t("treeTree"); $("treeTree").title = t("treeTreeTip"); $("treeTree").setAttribute("aria-pressed", String(treeShown));
   }
+  $("jsonSyntax").hidden = !jl;
+  if (jl) {   // 문법 고르기: 자동(지금까지처럼) / JSON / JSON5 / JSON Lines
+    const js = $("jsonSyntax"); js.innerHTML = "";
+    for (const k of JSON_SYNTAXES) {
+      const o = document.createElement("option");
+      o.value = k; o.textContent = t("syntaxN", t("syntax_" + k)); o.title = t("syntaxTip_" + k);
+      js.appendChild(o);
+    }
+    js.value = jsonSyntax; js.title = t("syntaxTip");
+  }
   const ui = cur && langOf(cur) === "ui";
   const diagOk = ui || (cur && (isTomlFile(cur) || isJsonFile(cur)));   // 오류 설명 켜기/끄기: .ui, toml, json
   $("diagBtn").hidden = !diagOk;

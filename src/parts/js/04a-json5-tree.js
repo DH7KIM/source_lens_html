@@ -12,9 +12,10 @@
 // 뿌리 노드에는 count(전체 노드 수)가 있다. 주석은 건너뛴다.
 // 틀리면 Error: e.message(영어), e.line(줄 번호), e.code(J001…), e.pos(소스 안 위치, UTF-16), e.len(길이, UTF-16), e.args
 // 컨테이너 안에서 틀리면 e.node = 오류 직전까지 읽은 부분 트리(뿌리, count 포함). 오류가 난 가장 안쪽 컨테이너에는 err = e (값 뒤 글자 J010은 뿌리에 err + errAfter)
-// opt(JSON Lines의 한 줄을 읽을 때): line0 = 그 줄 앞의 줄 수(줄 번호에 더함), id0 = 노드 번호를 시작할 값
+// opt(JSON Lines의 한 줄을 읽을 때): line0 = 그 줄 앞의 줄 수(줄 번호에 더함), id0 = 노드 번호를 시작할 값, strict = 엄격한 JSON(J013~J019)
 function json5Tree(src, opt) {
   const line0 = (opt && opt.line0) || 0;
+  const strict = !!(opt && opt.strict);   // 엄격한 JSON: JSON5 전용 문법(주석·끝 쉼표·작은따옴표·따옴표 없는 키·JSON5 숫자·JSON5 이스케이프)을 오류로 알림
   const starts = [0];
   for (let k = 0; k < src.length; k++) if (src[k] === "\n") starts.push(k + 1);
   const lineAt = p => {   // 위치 → 줄 번호 (이진 탐색)
@@ -44,8 +45,8 @@ function json5Tree(src, opt) {
     for (;;) {
       const c = src[i];
       if (c !== undefined && /\s/.test(c)) i++;
-      else if (c === "/" && src[i + 1] === "/") { while (i < src.length && src[i] !== "\n") i++; }
-      else if (c === "/" && src[i + 1] === "*") { const e = src.indexOf("*/", i + 2); if (e < 0) fail("J001", "unclosed comment", i, 2); i = e + 2; }
+      else if (c === "/" && src[i + 1] === "/") { if (strict) fail("J013", "comments are not allowed in JSON", i, 2); while (i < src.length && src[i] !== "\n") i++; }
+      else if (c === "/" && src[i + 1] === "*") { if (strict) fail("J013", "comments are not allowed in JSON", i, 2); const e = src.indexOf("*/", i + 2); if (e < 0) fail("J001", "unclosed comment", i, 2); i = e + 2; }
       else return;
     }
   };
@@ -56,13 +57,16 @@ function json5Tree(src, opt) {
   };
   const str = () => {
     const s0 = i, q = src[i++]; let out = "";
+    if (strict && q === "'") fail("J015", "single-quoted strings are not allowed in JSON", s0, 1);
     for (;;) {
       if (i >= src.length) fail("J003", "unclosed string", s0, 1);
       const c = src[i++];
       if (c === q) return out;
       if (c === "\n") { i--; fail("J003", "unclosed string", s0, 1); }
+      if (strict && c < " " && c !== "\r") fail("J019", "control character in a string", i - 1, 1);
       if (c !== "\\") { out += c; continue; }
       const e = src[i++];
+      if (strict && e !== undefined && !'"\\/bfnrtu'.includes(e)) fail("J018", "escape not allowed in JSON", i - 2, 2, "\\" + e);
       if (e === "n") out += "\n"; else if (e === "t") out += "\t"; else if (e === "r") out += "\r";
       else if (e === "b") out += "\b"; else if (e === "f") out += "\f"; else if (e === "v") out += "\v";
       else if (e === "0" && !/\d/.test(src[i] || "")) out += "\0";
@@ -80,38 +84,41 @@ function json5Tree(src, opt) {
     const m = /[A-Za-z_$][\w$]*/y; m.lastIndex = i;
     const r = m.exec(src);
     if (!r) fail("J004", "expected a key", i, 1);
+    if (strict) fail("J016", "unquoted keys are not allowed in JSON", i, r[0].length);
     i += r[0].length; return r[0];
   };
   const num = /[+-]?(?:Infinity|NaN|0[xX][\da-fA-F]+|(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)(?![\w$])/y;
+  const numStrict = /-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?(?![\w$.])/y;   // 엄격한 JSON 숫자
   const value = (k, depth) => {
     ws();
     if (depth > 200) fail("J011", "nested too deeply", i, 1);
     const at = i, c = src[i];
     const id = count++;
     if (c === "{") {
-      i++; const kids = []; let ks = -1;
+      i++; const kids = []; let ks = -1, comma = -1;
       try {
         for (;;) {
           ws();
-          if (src[i] === "}") { i++; break; }
-          ks = i; const name = key(); ws();
+          if (src[i] === "}") { if (strict && comma >= 0) fail("J014", "trailing comma is not allowed in JSON", comma, 1); i++; break; }
+          comma = -1; ks = i; const name = key(); ws();
           if (src[i] !== ":") fail("J005", "':' expected", i, 1);
           i++;
           const n = fin(value(name, depth + 1), ks, i); kids.push(n); ks = -1; ws();
-          if (src[i] === ",") i++;
+          if (src[i] === ",") { comma = i; i++; }
           else if (src[i] !== "}") fail("J006", "',' or '}' expected", i, 1);
         }
       } catch (e) { throw partial(e, { type: "object", key: k, id, kids }, at, e && e.node, ks); }
       return fin({ type: "object", key: k, id, kids }, at, i);
     }
     if (c === "[") {
-      i++; const kids = [];
+      i++; const kids = []; let comma = -1;
       try {
         for (;;) {
           ws();
-          if (src[i] === "]") { i++; break; }
+          if (src[i] === "]") { if (strict && comma >= 0) fail("J014", "trailing comma is not allowed in JSON", comma, 1); i++; break; }
+          comma = -1;
           kids.push(value(kids.length, depth + 1)); ws();
-          if (src[i] === ",") i++;
+          if (src[i] === ",") { comma = i; i++; }
           else if (src[i] !== "]") fail("J007", "',' or ']' expected", i, 1);
         }
       } catch (e) { throw partial(e, { type: "array", key: k, id, kids }, at, e && e.node, -1); }
@@ -123,6 +130,7 @@ function json5Tree(src, opt) {
     num.lastIndex = i;
     const m = num.exec(src);
     if (!m) { if (c === undefined) fail("J008", "expected a value", i, 1); const cp = String.fromCodePoint(src.codePointAt(i)); fail("J009", "unexpected '" + cp + "'", i, cp.length, cp); }
+    if (strict) { numStrict.lastIndex = i; const s = numStrict.exec(src); if (!s || s[0] !== m[0]) fail("J017", "number not allowed in JSON", i, m[0].length, m[0]); }
     i += m[0].length;
     return fin({ type: "number", key: k, id, text: m[0] }, at, i);
   };

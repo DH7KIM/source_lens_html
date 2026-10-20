@@ -2,6 +2,18 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.33.0 (2026-10-21)
+
+### source-viewer.html
+
+- **Choose the JSON syntax**: when a JSON or JSON5 file is open, the file bar has a `Syntax: auto / JSON / JSON5 / JSON Lines` box. The file is checked again with the chosen syntax, and the tree view reads it the same way. Opening another file goes back to auto (the choice is not remembered per extension).
+  - **auto**: as before: JSON5 rules, and files with one value per line are recognized as JSON Lines.
+  - **JSON**: strict JSON. New errors J013 (comments), J014 (trailing comma), J015 (single quotes), J016 (unquoted key), J017 (JSON5 numbers: `+1`, `.5`, `1.`, hex, Infinity, NaN, leading zeros), J018 (escapes JSON does not have, such as `\x`), J019 (control character in a string).
+  - **JSON5**: JSON5 rules. More than one value is an error (J010), not JSON Lines.
+  - **JSON Lines**: one strict JSON value per line. Every bad line is reported (a comment line is an error too).
+- Sample `tests/samples/project/json/json5-in-json.json` (extension `.json`, content JSON5).
+- Branch `json-syntax`.
+
 ## v0.32.0 (2026-10-20)
 
 ### source-viewer.html

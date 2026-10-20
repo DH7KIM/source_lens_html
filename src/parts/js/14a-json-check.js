@@ -4,7 +4,11 @@
 /// 이번 버전은 첫 오류 하나만 알린다 (오류 복구는 다음 후보).
 /// JSON Lines(줄마다 값 하나, `jsonLinesOf`가 판단): 줄마다 따로 읽어 틀린 줄을 모두 알린다(최대 100개). 틀린 줄이 없으면 오류 대신 안내(note) J012.
 function jsonCheck(text) {
-  try { json5Tree(text); return []; }
+  if (jsonSyntax === "lines") {   // 직접 고른 JSON Lines: 줄마다 엄격한 JSON
+    const ds = json5Lines(text, true).bads.slice(0, 100).map(b => jsonLineDiag(b.err, b.line, b.text));
+    return ds.length ? ds : [{ line: 1, col: 1, length: 0, severity: "note", code: "J012", args: [], msg: "", help: "" }];
+  }
+  try { jsonTreeOf(text); return []; }
   catch (e) {
     if (!e || e.code === undefined) throw e;
     const jl = jsonLinesOf(text, e);

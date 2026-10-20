@@ -2,6 +2,18 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.33.0 (2026-10-21)
+
+### source-viewer.html
+
+- **JSON 문법 고르기**: JSON·JSON5 파일을 열면 단추 줄에 `문법: 자동 / JSON / JSON5 / JSON Lines` 선택 상자가 생김. 고르면 그 파일을 그 문법으로 다시 검사하고 계층 보기도 같은 문법으로 읽음. 다른 파일을 열면 자동으로 돌아감 (확장자별 기억은 하지 않음).
+  - **자동**: 지금까지처럼 JSON5 규칙으로 읽고, 줄마다 값 하나인 파일은 JSON Lines로 알아봄.
+  - **JSON**: 엄격한 JSON. 새 오류 J013(주석), J014(끝 쉼표), J015(작은따옴표), J016(따옴표 없는 키), J017(JSON5 숫자: `+1`·`.5`·`1.`·16진수·Infinity·NaN·앞자리 0), J018(JSON에 없는 이스케이프 `\x` 등), J019(문자열 안 제어 문자).
+  - **JSON5**: JSON5 규칙. 값이 여러 개면 JSON Lines로 알아보지 않고 오류(J010)로 알림.
+  - **JSON Lines**: 줄마다 엄격한 JSON 값 하나. 틀린 줄을 모두 알림 (주석 줄도 오류).
+- 예제 `tests/samples/project/json/json5-in-json.json` (확장자는 `.json`, 내용은 JSON5).
+- 갈래 `json-syntax`.
+
 ## v0.32.0 (2026-10-20)
 
 ### source-viewer.html

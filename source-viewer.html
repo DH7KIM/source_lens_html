@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.32.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.33.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -323,6 +323,7 @@
     <div id="fileBar" hidden>
       <button id="mdMode" hidden></button>
       <span class="mode-seg" id="treeMode" hidden><button id="treeSrc"></button><button id="treeTree"></button></span>
+      <select id="jsonSyntax" hidden></select>
       <button id="diagBtn" hidden></button>
       <button id="wrapBtn" hidden></button>
       <button id="pvBtn" hidden></button>
@@ -417,7 +418,7 @@ const UI = {
     tomlT008: "키 `{0}`가 중복되었습니다", tomlT008h: "한 표 안에서 키는 한 번만 정할 수 있습니다. 하나를 지우거나 이름을 바꾸세요",
     tomlT009: "표 `{0}`가 이미 정해졌거나 값과 겹칩니다", tomlT009h: "[표]는 한 번만 쓸 수 있습니다. 같은 이름을 반복하려면 [[이름]]을 쓰세요",
     tomlT010: "배열 또는 인라인 표가 닫히지 않았습니다", tomlT010h: "항목은 `,`로 나누고 `]` 또는 `}`로 닫으세요",
-    jsonTip: "JSON·JSON5 문법 검사입니다 (J001~J012). 문법 오류만 검사하고, 첫 오류 하나만 보여 줍니다. 밑줄에 마우스를 올리면 설명이 보입니다.",
+    jsonTip: "JSON·JSON5 문법 검사입니다 (J001~J019). 문법 오류만 검사하고, 첫 오류 하나만 보여 줍니다. 밑줄에 마우스를 올리면 설명이 보입니다.",
     jsonJ001: "주석이 닫히지 않았습니다", jsonJ001h: "`/*`로 연 주석은 `*/`로 닫으세요",
     jsonJ002: "올바르지 않은 16진수 이스케이프입니다", jsonJ002h: "`\\x` 뒤에는 16진수 2자리, `\\u` 뒤에는 4자리를 쓰세요",
     jsonJ003: "문자열이 닫히지 않았습니다", jsonJ003h: "문자열 끝에 닫는 따옴표를 붙이세요. 문자열은 줄을 넘길 수 없습니다",
@@ -430,6 +431,19 @@ const UI = {
     jsonJ010: "값 뒤에 글자가 더 있습니다", jsonJ010h: "JSON 파일에는 값이 하나만 있어야 합니다. 여러 값을 줄마다 적는 JSON Lines라면 모든 줄이 올바른지 확인하세요",
     jsonJ011: "너무 깊게 중첩되어 있습니다 (200단계 초과)", jsonJ011h: "구조를 줄이거나 파일을 나누세요",
     jsonJ012: "JSON Lines 형식입니다 (줄마다 값이 하나)", jsonJ012h: "한 파일 전체가 아니라 줄마다 따로 읽는 형식이라 오류는 아닙니다. 계층 보기에서는 줄마다 항목 하나로 보입니다",
+    jsonJ013: "JSON에는 주석을 쓸 수 없습니다", jsonJ013h: "`//`·`/* */` 주석을 지우세요. 주석이 필요하면 문법을 JSON5로 고르세요",
+    jsonJ014: "마지막 항목 뒤에 쉼표가 있습니다", jsonJ014h: "JSON에서는 `}`·`]` 바로 앞의 쉼표를 지우세요 (JSON5는 허용)",
+    jsonJ015: "JSON에는 작은따옴표 문자열을 쓸 수 없습니다", jsonJ015h: "문자열은 \"큰따옴표\"로 감싸세요 (JSON5는 작은따옴표도 가능)",
+    jsonJ016: "JSON에는 따옴표 없는 키를 쓸 수 없습니다", jsonJ016h: "키를 \"큰따옴표\"로 감싸세요 (JSON5는 따옴표 없는 키도 가능)",
+    jsonJ017: "JSON에서 쓸 수 없는 숫자 `{0}`", jsonJ017h: "JSON 숫자는 `-1.5e3` 모양입니다. 앞의 `+`, 불필요한 앞자리 0, `.5`, `1.`, 16진수, Infinity, NaN은 JSON5에서만 가능합니다",
+    jsonJ018: "JSON에서 쓸 수 없는 이스케이프 `{0}`", jsonJ018h: "JSON은 `\\\"` `\\\\` `\\/` `\\b` `\\f` `\\n` `\\r` `\\t` `\\uXXXX`만 쓸 수 있습니다 (`\\x`·`\\v`·`\\0`·줄 잇기는 JSON5)",
+    jsonJ019: "문자열 안에 제어 문자가 있습니다", jsonJ019h: "탭 같은 제어 문자는 `\\t`처럼 이스케이프로 쓰세요",
+    syntaxN: "문법: {0}", syntax_auto: "자동", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines",
+    syntaxTip: "이 파일을 어떤 문법으로 읽을지 고릅니다. 다른 파일을 열면 자동으로 돌아갑니다.",
+    syntaxTip_auto: "JSON5 규칙으로 읽고, 줄마다 값 하나인 파일은 JSON Lines로 알아봅니다 (확장자와 상관없이)",
+    syntaxTip_json: "엄격한 JSON으로 검사합니다. 주석, 끝 쉼표, 작은따옴표, 따옴표 없는 키 등은 오류입니다",
+    syntaxTip_json5: "JSON5로 읽습니다. 값이 여러 개 있으면 JSON Lines로 알아보지 않고 오류로 알립니다",
+    syntaxTip_lines: "줄마다 엄격한 JSON 값 하나로 읽습니다. 틀린 줄을 모두 알립니다",
   },
   en: {
     pick: "Choose folder", regrant: "Allow access", pickFiles: "Choose folder",
@@ -488,7 +502,7 @@ const UI = {
     tomlT008: "duplicate key `{0}`", tomlT008h: "a key can be defined only once in a table; remove or rename one",
     tomlT009: "table `{0}` is already defined or conflicts with a value", tomlT009h: "each [table] can appear only once; use [[name]] for repeated entries",
     tomlT010: "array or inline table is not closed", tomlT010h: "separate items with `,` and close with `]` or `}`",
-    jsonTip: "JSON/JSON5 syntax check (J001-J012). Only syntax errors are checked, and only the first error is shown. Hover an underline to see the message.",
+    jsonTip: "JSON/JSON5 syntax check (J001-J019). Only syntax errors are checked, and only the first error is shown. Hover an underline to see the message.",
     jsonJ001: "comment is not closed", jsonJ001h: "close a comment opened with `/*` using `*/`",
     jsonJ002: "invalid hex escape", jsonJ002h: "`\\x` needs 2 hex digits and `\\u` needs 4",
     jsonJ003: "string is not closed", jsonJ003h: "add the closing quote; a string cannot span lines",
@@ -501,6 +515,19 @@ const UI = {
     jsonJ010: "unexpected text after the value", jsonJ010h: "a JSON file holds one value; for JSON Lines (one value per line) make sure every line is valid",
     jsonJ011: "nested too deeply (over 200 levels)", jsonJ011h: "flatten the structure or split the file",
     jsonJ012: "JSON Lines format (one value per line)", jsonJ012h: "each line is read on its own, so this is not an error; the tree view shows one item per line",
+    jsonJ013: "comments are not allowed in JSON", jsonJ013h: "remove the `//` or `/* */` comment (choose JSON5 if you need comments)",
+    jsonJ014: "trailing comma is not allowed in JSON", jsonJ014h: "remove the comma right before `}` or `]` (JSON5 allows it)",
+    jsonJ015: "single-quoted strings are not allowed in JSON", jsonJ015h: "wrap the string in \"double quotes\" (JSON5 allows single quotes)",
+    jsonJ016: "unquoted keys are not allowed in JSON", jsonJ016h: "wrap the key in \"double quotes\" (JSON5 allows unquoted keys)",
+    jsonJ017: "number `{0}` is not allowed in JSON", jsonJ017h: "write numbers like `-1.5e3`; a leading `+`, extra leading zeros, `.5`, `1.`, hex, Infinity and NaN are JSON5 only",
+    jsonJ018: "escape `{0}` is not allowed in JSON", jsonJ018h: "JSON allows only `\\\"` `\\\\` `\\/` `\\b` `\\f` `\\n` `\\r` `\\t` `\\uXXXX` (`\\x`, `\\v`, `\\0` and line continuations are JSON5)",
+    jsonJ019: "control character inside a string", jsonJ019h: "escape control characters such as tab, e.g. `\\t`",
+    syntaxN: "Syntax: {0}", syntax_auto: "auto", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines",
+    syntaxTip: "Choose the syntax used to read this file. Opening another file goes back to auto.",
+    syntaxTip_auto: "Read with JSON5 rules and recognize files with one value per line as JSON Lines (whatever the extension)",
+    syntaxTip_json: "Check as strict JSON. Comments, trailing commas, single quotes and unquoted keys are errors",
+    syntaxTip_json5: "Read as JSON5. More than one value is reported as an error instead of being treated as JSON Lines",
+    syntaxTip_lines: "Read each line as one strict JSON value. Every bad line is reported",
   },
 };
 const LANG_NAMES = { ko: "한국어", en: "English", ja: "日本語", zh: "中文" };
@@ -828,9 +855,10 @@ function json5Parse(src) {
 // 뿌리 노드에는 count(전체 노드 수)가 있다. 주석은 건너뛴다.
 // 틀리면 Error: e.message(영어), e.line(줄 번호), e.code(J001…), e.pos(소스 안 위치, UTF-16), e.len(길이, UTF-16), e.args
 // 컨테이너 안에서 틀리면 e.node = 오류 직전까지 읽은 부분 트리(뿌리, count 포함). 오류가 난 가장 안쪽 컨테이너에는 err = e (값 뒤 글자 J010은 뿌리에 err + errAfter)
-// opt(JSON Lines의 한 줄을 읽을 때): line0 = 그 줄 앞의 줄 수(줄 번호에 더함), id0 = 노드 번호를 시작할 값
+// opt(JSON Lines의 한 줄을 읽을 때): line0 = 그 줄 앞의 줄 수(줄 번호에 더함), id0 = 노드 번호를 시작할 값, strict = 엄격한 JSON(J013~J019)
 function json5Tree(src, opt) {
   const line0 = (opt && opt.line0) || 0;
+  const strict = !!(opt && opt.strict);   // 엄격한 JSON: JSON5 전용 문법(주석·끝 쉼표·작은따옴표·따옴표 없는 키·JSON5 숫자·JSON5 이스케이프)을 오류로 알림
   const starts = [0];
   for (let k = 0; k < src.length; k++) if (src[k] === "\n") starts.push(k + 1);
   const lineAt = p => {   // 위치 → 줄 번호 (이진 탐색)
@@ -860,8 +888,8 @@ function json5Tree(src, opt) {
     for (;;) {
       const c = src[i];
       if (c !== undefined && /\s/.test(c)) i++;
-      else if (c === "/" && src[i + 1] === "/") { while (i < src.length && src[i] !== "\n") i++; }
-      else if (c === "/" && src[i + 1] === "*") { const e = src.indexOf("*/", i + 2); if (e < 0) fail("J001", "unclosed comment", i, 2); i = e + 2; }
+      else if (c === "/" && src[i + 1] === "/") { if (strict) fail("J013", "comments are not allowed in JSON", i, 2); while (i < src.length && src[i] !== "\n") i++; }
+      else if (c === "/" && src[i + 1] === "*") { if (strict) fail("J013", "comments are not allowed in JSON", i, 2); const e = src.indexOf("*/", i + 2); if (e < 0) fail("J001", "unclosed comment", i, 2); i = e + 2; }
       else return;
     }
   };
@@ -872,13 +900,16 @@ function json5Tree(src, opt) {
   };
   const str = () => {
     const s0 = i, q = src[i++]; let out = "";
+    if (strict && q === "'") fail("J015", "single-quoted strings are not allowed in JSON", s0, 1);
     for (;;) {
       if (i >= src.length) fail("J003", "unclosed string", s0, 1);
       const c = src[i++];
       if (c === q) return out;
       if (c === "\n") { i--; fail("J003", "unclosed string", s0, 1); }
+      if (strict && c < " " && c !== "\r") fail("J019", "control character in a string", i - 1, 1);
       if (c !== "\\") { out += c; continue; }
       const e = src[i++];
+      if (strict && e !== undefined && !'"\\/bfnrtu'.includes(e)) fail("J018", "escape not allowed in JSON", i - 2, 2, "\\" + e);
       if (e === "n") out += "\n"; else if (e === "t") out += "\t"; else if (e === "r") out += "\r";
       else if (e === "b") out += "\b"; else if (e === "f") out += "\f"; else if (e === "v") out += "\v";
       else if (e === "0" && !/\d/.test(src[i] || "")) out += "\0";
@@ -896,38 +927,41 @@ function json5Tree(src, opt) {
     const m = /[A-Za-z_$][\w$]*/y; m.lastIndex = i;
     const r = m.exec(src);
     if (!r) fail("J004", "expected a key", i, 1);
+    if (strict) fail("J016", "unquoted keys are not allowed in JSON", i, r[0].length);
     i += r[0].length; return r[0];
   };
   const num = /[+-]?(?:Infinity|NaN|0[xX][\da-fA-F]+|(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)(?![\w$])/y;
+  const numStrict = /-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?(?![\w$.])/y;   // 엄격한 JSON 숫자
   const value = (k, depth) => {
     ws();
     if (depth > 200) fail("J011", "nested too deeply", i, 1);
     const at = i, c = src[i];
     const id = count++;
     if (c === "{") {
-      i++; const kids = []; let ks = -1;
+      i++; const kids = []; let ks = -1, comma = -1;
       try {
         for (;;) {
           ws();
-          if (src[i] === "}") { i++; break; }
-          ks = i; const name = key(); ws();
+          if (src[i] === "}") { if (strict && comma >= 0) fail("J014", "trailing comma is not allowed in JSON", comma, 1); i++; break; }
+          comma = -1; ks = i; const name = key(); ws();
           if (src[i] !== ":") fail("J005", "':' expected", i, 1);
           i++;
           const n = fin(value(name, depth + 1), ks, i); kids.push(n); ks = -1; ws();
-          if (src[i] === ",") i++;
+          if (src[i] === ",") { comma = i; i++; }
           else if (src[i] !== "}") fail("J006", "',' or '}' expected", i, 1);
         }
       } catch (e) { throw partial(e, { type: "object", key: k, id, kids }, at, e && e.node, ks); }
       return fin({ type: "object", key: k, id, kids }, at, i);
     }
     if (c === "[") {
-      i++; const kids = [];
+      i++; const kids = []; let comma = -1;
       try {
         for (;;) {
           ws();
-          if (src[i] === "]") { i++; break; }
+          if (src[i] === "]") { if (strict && comma >= 0) fail("J014", "trailing comma is not allowed in JSON", comma, 1); i++; break; }
+          comma = -1;
           kids.push(value(kids.length, depth + 1)); ws();
-          if (src[i] === ",") i++;
+          if (src[i] === ",") { comma = i; i++; }
           else if (src[i] !== "]") fail("J007", "',' or ']' expected", i, 1);
         }
       } catch (e) { throw partial(e, { type: "array", key: k, id, kids }, at, e && e.node, -1); }
@@ -939,6 +973,7 @@ function json5Tree(src, opt) {
     num.lastIndex = i;
     const m = num.exec(src);
     if (!m) { if (c === undefined) fail("J008", "expected a value", i, 1); const cp = String.fromCodePoint(src.codePointAt(i)); fail("J009", "unexpected '" + cp + "'", i, cp.length, cp); }
+    if (strict) { numStrict.lastIndex = i; const s = numStrict.exec(src); if (!s || s[0] !== m[0]) fail("J017", "number not allowed in JSON", i, m[0].length, m[0]); }
     i += m[0].length;
     return fin({ type: "number", key: k, id, text: m[0] }, at, i);
   };
@@ -957,14 +992,15 @@ function json5Tree(src, opt) {
 // 뿌리: { type: "array", lines: true, id: 0, kids, okCount, badCount, bads, count }. 항목의 key는 0부터 번호, line은 소스의 줄 번호.
 // 틀린 줄: 오류 직전까지 읽은 부분 트리가 있으면 그 줄의 항목으로 두고(오류 자리에 err, 줄 정보 errLine = { line, text }), 읽은 것이 없으면 오류 항목 { type: "error", key, id, line, col: 0, ec: -1, err: e, text: 그 줄 글 }.
 // bads = 틀린 줄 목록 [{ err, line, text }] (검사가 씀)
-function json5Lines(text) {
+// strict = true이면 줄마다 엄격한 JSON으로 읽고(주석 줄도 오류), 아니면 JSON5 규칙
+function json5Lines(text, strict) {
   const kids = [], bads = [];
   let id = 1, ok = 0, bad = 0;
   text.split("\n").forEach((raw, k) => {
     const ln = raw.replace(/\r$/, "");
-    if (ln.trim() === "" || /^\s*\/\//.test(ln)) return;   // 빈 줄·주석만 있는 줄은 건너뜀
+    if (ln.trim() === "" || (!strict && /^\s*\/\//.test(ln))) return;   // 빈 줄·주석만 있는 줄은 건너뜀
     try {
-      const n = json5Tree(ln, { line0: k, id0: id });
+      const n = json5Tree(ln, { line0: k, id0: id, strict });
       n.key = kids.length; id = n.count; ok++; kids.push(n);
     } catch (e) {
       if (!e || e.code === undefined) throw e;
@@ -979,10 +1015,18 @@ function json5Lines(text) {
 // 파일 전체로 읽다가 값 뒤에 글자가 남았을 때(J010, e = 그 오류) JSON Lines인지 판단해 줄 트리를 돌려준다 (아니면 null).
 // 조건: 첫 값이 끝난 뒤 줄이 바뀌어서 글자가 시작하고, 읽힌 줄이 2개 이상이며 틀린 줄보다 적지 않다 (한 파일 JSON의 꼬리 글자와 구별).
 function jsonLinesOf(text, e) {
+  if (jsonSyntax !== "auto") return null;   // 문법을 직접 골랐으면 알아보지 않음
   if (!e || e.code !== "J010" || !e.node || !text.slice(e.node.end, e.pos).includes("\n")) return null;
   const r = json5Lines(text);
   return r.okCount >= 2 && r.okCount >= r.badCount ? r : null;
 }
+
+// ---------- JSON 문법 고르기 (파일마다, 열려 있는 동안만) ----------
+// "auto" = 지금까지처럼 JSON5 규칙으로 읽고 JSON Lines는 알아봄, "json" = 엄격한 JSON, "json5" = JSON5(JSON Lines 알아보지 않음), "lines" = 줄마다 엄격한 JSON
+let jsonSyntax = "auto";
+const JSON_SYNTAXES = ["auto", "json", "json5", "lines"];
+/// 파일 전체를 고른 문법으로 읽는다 ("lines"는 json5Lines를 따로 부른다). 틀리면 json5Tree와 같은 오류를 던진다
+function jsonTreeOf(text) { return json5Tree(text, { strict: jsonSyntax === "json" }); }
 // ---------- .ui 오류·경고 설명 번역 (원문 영어 → 번역) ----------
 // 원본: tile_font_editor_cpp의 language/ko/ui-check.json5 (섹션 "ui-check"). 그 파일을 고치면 이 표도 같게 고친다.
 // {} 자리표시자는 원문과 같은 개수·순서. 없는 키나 빈 글이면 영어 원문을 쓴다.
@@ -3179,7 +3223,11 @@ const isTomlFile = path => /\.toml$/i.test(path) || /(^|\/)cargo\.lock$/i.test(p
 /// 이번 버전은 첫 오류 하나만 알린다 (오류 복구는 다음 후보).
 /// JSON Lines(줄마다 값 하나, `jsonLinesOf`가 판단): 줄마다 따로 읽어 틀린 줄을 모두 알린다(최대 100개). 틀린 줄이 없으면 오류 대신 안내(note) J012.
 function jsonCheck(text) {
-  try { json5Tree(text); return []; }
+  if (jsonSyntax === "lines") {   // 직접 고른 JSON Lines: 줄마다 엄격한 JSON
+    const ds = json5Lines(text, true).bads.slice(0, 100).map(b => jsonLineDiag(b.err, b.line, b.text));
+    return ds.length ? ds : [{ line: 1, col: 1, length: 0, severity: "note", code: "J012", args: [], msg: "", help: "" }];
+  }
+  try { jsonTreeOf(text); return []; }
   catch (e) {
     if (!e || e.code === undefined) throw e;
     const jl = jsonLinesOf(text, e);
@@ -3229,7 +3277,7 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   const expanded = changed && expandTo(path);
   cur = path; curMod = f.lastModified;
   logMod = await buildLogMod();
-  if (changed) { hlLine = 0; hlItem = null; }
+  if (changed) { hlLine = 0; hlItem = null; jsonSyntax = "auto"; }   // 문법 선택은 그 파일에만
   if (line) hlLine = line;
   if (lang === "md") {
     docLang = splitLang(path).lang;
@@ -3240,7 +3288,10 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   let lineCount = 0, note = "", check = null, packNote = "", treeErr = "", treeHtml = null;
   // JSON·JSON5 계층 보기: 읽기 오류일 때는 소스 보기. 표시한 줄(hlLine)은 두 보기가 함께 쓴다
   if (!asDoc && jsonTree && (lang === "json" || lang === "json5") && !text.includes("\u0000")) {
-    try { treeHtml = renderJsonTree(json5Tree(text)); }
+    try {
+      if (jsonSyntax === "lines") treeHtml = renderJsonTree(json5Lines(text, true), { lines: true, text });   // 직접 고른 JSON Lines
+      else treeHtml = renderJsonTree(jsonTreeOf(text));
+    }
     catch (e) {
       const jl = jsonLinesOf(text, e);   // JSON Lines(줄마다 값 하나)면 줄마다 항목 하나로, 틀린 줄은 오류 항목
       if (jl) treeHtml = renderJsonTree(jl, { lines: true, text });
@@ -3605,6 +3656,7 @@ function setJsonTree(on) {
 }
 $("treeSrc").onclick = () => { setJsonTree(false); if (cur) openFile(cur, { line: hlLine }); };   // 표시한 줄로 이동
 $("treeTree").onclick = () => { setJsonTree(true); if (cur) openFile(cur); };
+$("jsonSyntax").onchange = () => { jsonSyntax = $("jsonSyntax").value; if (cur) openFile(cur, { line: hlLine }); };   // 고른 문법으로 다시 열기 (표시한 줄 유지)
 
 // 소스 보기: 고른 항목(hlItem)의 글자 범위를 sel-item 클래스로 더 진하게 (첫 줄만, 칸은 UTF-16 단위, ec가 -1이면 줄 끝까지)
 function markItemRange(tokens, it) {
@@ -3710,6 +3762,16 @@ function drawStatic() {
   if (jl) {   // 소스 보기 | 계층 보기: 지금 보는 쪽이 눌린 모양
     $("treeSrc").textContent = t("treeSrc"); $("treeSrc").title = t("treeSrcTip"); $("treeSrc").setAttribute("aria-pressed", String(!treeShown));
     $("treeTree").textContent = t("treeTree"); $("treeTree").title = t("treeTreeTip"); $("treeTree").setAttribute("aria-pressed", String(treeShown));
+  }
+  $("jsonSyntax").hidden = !jl;
+  if (jl) {   // 문법 고르기: 자동(지금까지처럼) / JSON / JSON5 / JSON Lines
+    const js = $("jsonSyntax"); js.innerHTML = "";
+    for (const k of JSON_SYNTAXES) {
+      const o = document.createElement("option");
+      o.value = k; o.textContent = t("syntaxN", t("syntax_" + k)); o.title = t("syntaxTip_" + k);
+      js.appendChild(o);
+    }
+    js.value = jsonSyntax; js.title = t("syntaxTip");
   }
   const ui = cur && langOf(cur) === "ui";
   const diagOk = ui || (cur && (isTomlFile(cur) || isJsonFile(cur)));   // 오류 설명 켜기/끄기: .ui, toml, json

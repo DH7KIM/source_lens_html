@@ -138,6 +138,7 @@ function setJsonTree(on) {
 }
 $("treeSrc").onclick = () => { setJsonTree(false); if (cur) openFile(cur, { line: hlLine }); };   // 표시한 줄로 이동
 $("treeTree").onclick = () => { setJsonTree(true); if (cur) openFile(cur); };
+$("jsonSyntax").onchange = () => { jsonSyntax = $("jsonSyntax").value; if (cur) openFile(cur, { line: hlLine }); };   // 고른 문법으로 다시 열기 (표시한 줄 유지)
 
 // 소스 보기: 고른 항목(hlItem)의 글자 범위를 sel-item 클래스로 더 진하게 (첫 줄만, 칸은 UTF-16 단위, ec가 -1이면 줄 끝까지)
 function markItemRange(tokens, it) {
