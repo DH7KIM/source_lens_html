@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.25.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.26.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -311,6 +311,7 @@
   <span class="state" id="state"></span>
   <span id="langs"></span>
   <select id="theme"></select>
+  <select id="depth" hidden></select>
   <button id="folder" hidden></button>
 </header>
 <div class="wrap">
@@ -369,6 +370,7 @@ const UI = {
     binary: "글자 파일이 아니라 보여 줄 수 없습니다.", tooBig: "파일이 커서 색칠 없이 보여 줍니다.",
     lines: "{0}줄",
     folder: "폴더 바꾸기", folderTip: "다른 소스 폴더를 고릅니다",
+    depthN: "하위 {0}단계", depthAll: "하위 제한 없음", depthTip: "읽을 하위 폴더 단계를 고릅니다. 바꾸면 목록을 다시 읽습니다.", depthTipAll: "하위 폴더를 끝까지 읽습니다. 폴더가 많으면 오래 걸릴 수 있습니다.",
     raw: "원문 보기", rawTip: "마크다운 원문을 줄 번호와 함께 봅니다",
     diagOff: "오류 설명 끄기", diagOn: "오류 설명 켜기", diagTip: "오류·경고 줄 아래의 코드·설명·추천(help)을 보이거나 숨깁니다. 밑줄은 늘 보입니다.",
     wrap: "자동 줄바꿈", wrapTip: "긴 줄을 화면 너비에서 접어 보이거나 한 줄로 길게 봅니다. 소스 보기에서만 쓰입니다.",
@@ -437,6 +439,7 @@ const UI = {
     binary: "This is not a text file.", tooBig: "Large file: shown without colors.",
     lines: "{0} {0|line|lines}",
     folder: "Change folder", folderTip: "Choose another source folder",
+    depthN: "{0} subfolder levels", depthAll: "All subfolder levels", depthTip: "Choose how many levels of subfolders to read. Changing it reads the list again.", depthTipAll: "Read every subfolder. This can take a long time for big folders.",
     raw: "Raw", rawTip: "Show the markdown source with line numbers",
     diagOff: "Hide details", diagOn: "Show details", diagTip: "Show or hide the error code, message and help text under each error or warning line. Underlines always stay.",
     wrap: "Word wrap", wrapTip: "Wrap long lines to the window width, or show each on one long line. Source view only.",
@@ -2377,7 +2380,6 @@ const renderMarkdown = text => renderBlocks(text.split("\n"), new Set());
 // 1) FSA: 폴더 핸들 (Chrome·Edge) → 자동 새로 고침, 다음 실행 때 다시 씀
 // 2) files: <input webkitdirectory>로 고른 파일 목록 (다른 브라우저) → 그 순간의 내용만
 const SKIP_DIRS = new Set(["obj", "gcm.cache", ".git", "target", "node_modules", "bin", "build", "Claude outputs"]);
-const MAX_DEPTH = 4;
 const HL_MAX = 1.5 * 1024 * 1024;    // 이보다 큰 파일은 색칠하지 않음
 let src = null;          // { kind, name, list() → [path], get(path) → File }
 let fileSet = new Set(); // 목록에 있는 모든 경로
@@ -2397,6 +2399,11 @@ try { jsonTree = localStorage.getItem("sv-json-tree:" + KEY) === "1"; } catch (e
 let treeShown = false;   // 지금 계층으로 보여 주고 있는지 (오류면 소스 보기로 돌아가므로 jsonTree와 다를 수 있음)
 let showDiag = true;     // .ui·toml 오류를 줄 아래에 보일지
 try { showDiag = localStorage.getItem("sv-diag:" + KEY) !== "0"; } catch (e) {}
+// 읽을 하위 폴더 단계: 2 / 4 / 6 / 8 / 제한 없음(0). 기본 4. 폴더(열쇠)마다 기억
+const DEPTHS = [2, 4, 6, 8, 0];
+let maxDepth = 4;
+try { const raw = localStorage.getItem("sv-depth:" + KEY); if (raw !== null && DEPTHS.includes(+raw)) maxDepth = +raw; } catch (e) {}
+const depthLimit = () => maxDepth === 0 ? Infinity : maxDepth;
 let wrapLines = false;   // 소스 보기에서 긴 줄을 화면 너비에서 접어 보일지 (기본: 끔)
 try { wrapLines = localStorage.getItem("sv-wrap:" + KEY) === "1"; } catch (e) {}
 // .ui 배치 미리보기 설정: 켜짐, 창 크기("fit" | "custom" | "640x480"…), 너비·높이, 배율, 아래 칸 높이
@@ -2409,7 +2416,7 @@ let pvCheck = null;      // 지금 .ui 파일의 검사 결과 (배치 미리보
 async function scanHandle(dir, prefix = "", depth = 0, out = []) {
   for await (const [name, h] of dir.entries()) {
     if (h.kind === "directory") {
-      if (depth < MAX_DEPTH && !SKIP_DIRS.has(name) && !name.startsWith(".")) await scanHandle(h, prefix + name + "/", depth + 1, out);
+      if (depth < depthLimit() && !SKIP_DIRS.has(name) && !name.startsWith(".")) await scanHandle(h, prefix + name + "/", depth + 1, out);
     } else if (langOf(name)) out.push(prefix + name);
   }
   return out;
@@ -2426,18 +2433,23 @@ function useHandle(dir) {
 }
 
 function useFiles(fileList) {
+  const all = [...fileList];
   const map = new Map();
   let root = "";
-  for (const f of fileList) {
-    const rel = f.webkitRelativePath || f.name;
-    const parts = rel.split("/");
-    if (parts.length > 1) { root = parts[0]; parts.shift(); }
-    const dirs = parts.slice(0, -1);
-    if (dirs.some(d => SKIP_DIRS.has(d) || d.startsWith(".")) || dirs.length > MAX_DEPTH) continue;
-    if (langOf(rel)) map.set(parts.join("/"), f);
-  }
+  for (const f of all) { const parts = (f.webkitRelativePath || f.name).split("/"); if (parts.length > 1) root = parts[0]; }
+  const build = () => {   // 단계를 바꾸면 다시 걸러야 해서 목록을 부를 때마다 만든다
+    map.clear();
+    for (const f of all) {
+      const rel = f.webkitRelativePath || f.name;
+      const parts = rel.split("/");
+      if (parts.length > 1) parts.shift();
+      const dirs = parts.slice(0, -1);
+      if (dirs.some(d => SKIP_DIRS.has(d) || d.startsWith(".")) || dirs.length > depthLimit()) continue;
+      if (langOf(rel)) map.set(parts.join("/"), f);
+    }
+  };
   src = { kind: "files", name: root || "files",
-          list: async () => [...map.keys()],
+          list: async () => { build(); return [...map.keys()]; },
           get: async p => { const f = map.get(p); if (!f) throw new Error("not found"); return f; } };
 }
 
@@ -3569,7 +3581,7 @@ function savedTarget() {
 async function startWith(target) {
   const n = await refreshList();
   if (!n) { showStart("noFiles"); return; }
-  $("folder").hidden = false;
+  $("folder").hidden = false; $("depth").hidden = false;
   if (target && target.path && fileSet.has(target.path)) openFile(target.path, { line: target.line || 0, hash: target.hash || "" });
   else openFile(pathFor(orderedKeys()[0], docLang));
 }
@@ -3608,6 +3620,14 @@ function showStart(kind) {
 function drawStatic() {
   $("pick").textContent = t("pick"); $("regrant").textContent = t("regrant"); $("pickFiles").textContent = t("pickFiles");
   $("folder").textContent = t("folder"); $("folder").title = t("folderTip");
+  const ds = $("depth"); ds.innerHTML = "";   // 하위 폴더 단계 선택 (폴더 전체에 적용되는 설정이라 머리 막대에 둠)
+  for (const d of DEPTHS) {
+    const o = document.createElement("option");
+    o.value = String(d); o.textContent = d ? t("depthN", d) : t("depthAll");
+    if (!d) o.title = t("depthTipAll");
+    ds.appendChild(o);
+  }
+  ds.value = String(maxDepth); ds.title = maxDepth === 0 ? t("depthTipAll") : t("depthTip");
   $("navSize").title = t("navSizeTip");
   const md = cur && isMd(cur);
   $("mdMode").hidden = !md;
@@ -3647,6 +3667,12 @@ async function pickFolder() {
 $("pick").onclick = pickFolder;
 $("pickFiles").onclick = pickFolder;
 $("folder").onclick = pickFolder;
+$("depth").onchange = async () => {   // 단계를 바꾸면 기억하고 목록을 다시 읽음 (열어 둔 파일이 아직 있으면 그대로)
+  maxDepth = +$("depth").value;
+  try { localStorage.setItem("sv-depth:" + KEY, String(maxDepth)); } catch (e) {}
+  drawStatic();
+  if (src) await startWith({ path: cur });
+};
 $("dirInput").onchange = async () => { if ($("dirInput").files.length) { useFiles($("dirInput").files); await startWith(savedTarget()); } };
 $("regrant").onclick = async () => {
   try {

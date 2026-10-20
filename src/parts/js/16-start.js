@@ -13,7 +13,7 @@ function savedTarget() {
 async function startWith(target) {
   const n = await refreshList();
   if (!n) { showStart("noFiles"); return; }
-  $("folder").hidden = false;
+  $("folder").hidden = false; $("depth").hidden = false;
   if (target && target.path && fileSet.has(target.path)) openFile(target.path, { line: target.line || 0, hash: target.hash || "" });
   else openFile(pathFor(orderedKeys()[0], docLang));
 }
@@ -52,6 +52,14 @@ function showStart(kind) {
 function drawStatic() {
   $("pick").textContent = t("pick"); $("regrant").textContent = t("regrant"); $("pickFiles").textContent = t("pickFiles");
   $("folder").textContent = t("folder"); $("folder").title = t("folderTip");
+  const ds = $("depth"); ds.innerHTML = "";   // 하위 폴더 단계 선택 (폴더 전체에 적용되는 설정이라 머리 막대에 둠)
+  for (const d of DEPTHS) {
+    const o = document.createElement("option");
+    o.value = String(d); o.textContent = d ? t("depthN", d) : t("depthAll");
+    if (!d) o.title = t("depthTipAll");
+    ds.appendChild(o);
+  }
+  ds.value = String(maxDepth); ds.title = maxDepth === 0 ? t("depthTipAll") : t("depthTip");
   $("navSize").title = t("navSizeTip");
   const md = cur && isMd(cur);
   $("mdMode").hidden = !md;
@@ -91,6 +99,12 @@ async function pickFolder() {
 $("pick").onclick = pickFolder;
 $("pickFiles").onclick = pickFolder;
 $("folder").onclick = pickFolder;
+$("depth").onchange = async () => {   // 단계를 바꾸면 기억하고 목록을 다시 읽음 (열어 둔 파일이 아직 있으면 그대로)
+  maxDepth = +$("depth").value;
+  try { localStorage.setItem("sv-depth:" + KEY, String(maxDepth)); } catch (e) {}
+  drawStatic();
+  if (src) await startWith({ path: cur });
+};
 $("dirInput").onchange = async () => { if ($("dirInput").files.length) { useFiles($("dirInput").files); await startWith(savedTarget()); } };
 $("regrant").onclick = async () => {
   try {

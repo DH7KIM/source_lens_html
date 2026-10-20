@@ -2,6 +2,15 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.26.0 (2026-10-20)
+
+### source-viewer.html
+
+- **Subfolder levels**: a new select in the header (next to `Change folder`) with `2 / 4 / 6 / 8 subfolder levels` and `All subfolder levels` (default 4, the same as the old fixed value). Changing it reads the list again; the open file stays if it is still in range, otherwise the first file opens. The choice is remembered in the browser. `All subfolder levels` shows a tooltip warning that it can take a long time for big folders.
+- Both ways of reading a folder (File System Access and `webkitdirectory`) follow the same level.
+- Not in this version (candidate for later): a "reading..." indicator and cancel.
+- Branch `folder-depth`.
+
 ## v0.25.0 (2026-10-20)
 
 ### source-viewer.html

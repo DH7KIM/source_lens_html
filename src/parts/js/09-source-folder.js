@@ -2,7 +2,6 @@
 // 1) FSA: 폴더 핸들 (Chrome·Edge) → 자동 새로 고침, 다음 실행 때 다시 씀
 // 2) files: <input webkitdirectory>로 고른 파일 목록 (다른 브라우저) → 그 순간의 내용만
 const SKIP_DIRS = new Set(["obj", "gcm.cache", ".git", "target", "node_modules", "bin", "build", "Claude outputs"]);
-const MAX_DEPTH = 4;
 const HL_MAX = 1.5 * 1024 * 1024;    // 이보다 큰 파일은 색칠하지 않음
 let src = null;          // { kind, name, list() → [path], get(path) → File }
 let fileSet = new Set(); // 목록에 있는 모든 경로
@@ -22,6 +21,11 @@ try { jsonTree = localStorage.getItem("sv-json-tree:" + KEY) === "1"; } catch (e
 let treeShown = false;   // 지금 계층으로 보여 주고 있는지 (오류면 소스 보기로 돌아가므로 jsonTree와 다를 수 있음)
 let showDiag = true;     // .ui·toml 오류를 줄 아래에 보일지
 try { showDiag = localStorage.getItem("sv-diag:" + KEY) !== "0"; } catch (e) {}
+// 읽을 하위 폴더 단계: 2 / 4 / 6 / 8 / 제한 없음(0). 기본 4. 폴더(열쇠)마다 기억
+const DEPTHS = [2, 4, 6, 8, 0];
+let maxDepth = 4;
+try { const raw = localStorage.getItem("sv-depth:" + KEY); if (raw !== null && DEPTHS.includes(+raw)) maxDepth = +raw; } catch (e) {}
+const depthLimit = () => maxDepth === 0 ? Infinity : maxDepth;
 let wrapLines = false;   // 소스 보기에서 긴 줄을 화면 너비에서 접어 보일지 (기본: 끔)
 try { wrapLines = localStorage.getItem("sv-wrap:" + KEY) === "1"; } catch (e) {}
 // .ui 배치 미리보기 설정: 켜짐, 창 크기("fit" | "custom" | "640x480"…), 너비·높이, 배율, 아래 칸 높이
@@ -34,7 +38,7 @@ let pvCheck = null;      // 지금 .ui 파일의 검사 결과 (배치 미리보
 async function scanHandle(dir, prefix = "", depth = 0, out = []) {
   for await (const [name, h] of dir.entries()) {
     if (h.kind === "directory") {
-      if (depth < MAX_DEPTH && !SKIP_DIRS.has(name) && !name.startsWith(".")) await scanHandle(h, prefix + name + "/", depth + 1, out);
+      if (depth < depthLimit() && !SKIP_DIRS.has(name) && !name.startsWith(".")) await scanHandle(h, prefix + name + "/", depth + 1, out);
     } else if (langOf(name)) out.push(prefix + name);
   }
   return out;
@@ -51,18 +55,23 @@ function useHandle(dir) {
 }
 
 function useFiles(fileList) {
+  const all = [...fileList];
   const map = new Map();
   let root = "";
-  for (const f of fileList) {
-    const rel = f.webkitRelativePath || f.name;
-    const parts = rel.split("/");
-    if (parts.length > 1) { root = parts[0]; parts.shift(); }
-    const dirs = parts.slice(0, -1);
-    if (dirs.some(d => SKIP_DIRS.has(d) || d.startsWith(".")) || dirs.length > MAX_DEPTH) continue;
-    if (langOf(rel)) map.set(parts.join("/"), f);
-  }
+  for (const f of all) { const parts = (f.webkitRelativePath || f.name).split("/"); if (parts.length > 1) root = parts[0]; }
+  const build = () => {   // 단계를 바꾸면 다시 걸러야 해서 목록을 부를 때마다 만든다
+    map.clear();
+    for (const f of all) {
+      const rel = f.webkitRelativePath || f.name;
+      const parts = rel.split("/");
+      if (parts.length > 1) parts.shift();
+      const dirs = parts.slice(0, -1);
+      if (dirs.some(d => SKIP_DIRS.has(d) || d.startsWith(".")) || dirs.length > depthLimit()) continue;
+      if (langOf(rel)) map.set(parts.join("/"), f);
+    }
+  };
   src = { kind: "files", name: root || "files",
-          list: async () => [...map.keys()],
+          list: async () => { build(); return [...map.keys()]; },
           get: async p => { const f = map.get(p); if (!f) throw new Error("not found"); return f; } };
 }
 
