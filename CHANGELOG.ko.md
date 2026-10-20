@@ -2,6 +2,13 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.31.0 (2026-10-20)
+
+### source-viewer.html
+
+- **파일이 많아도 목록 줄 강조가 빠름**: 파일이 수천 개면 마우스를 올릴 때마다 브라우저가 목록의 모든 줄을 훑어서 느렸음. 이제 줄을 200개씩 묶고, 화면 밖 묶음은 그리지 않음(`content-visibility: auto`). 줄 2만 개 시험: 마우스를 한 번 올릴 때 드는 시간이 약 106ms → 약 3ms. 모양과 동작은 그대로.
+- 갈래 `nav-hover`.
+
 ## v0.30.0 (2026-10-20)
 
 ### source-viewer.html

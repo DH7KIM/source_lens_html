@@ -70,6 +70,7 @@
   nav .dir .fi { width: 15px; height: 15px; flex: none; margin-right: 2px; }
   /* 가지 연결선: ├ └ │ (각 칸 14px, 부모 폴더 화살표 가운데에 세로선) */
   nav .dir, nav a { position: relative; }
+  nav .chunk { content-visibility: auto; contain-intrinsic-size: auto 5960px; }   /* 200줄 × 약 29.8px. 화면 밖 묶음은 그리지 않음 */
   nav .g { position: absolute; top: 0; bottom: 0; left: calc(10px + var(--k) * 14px); width: 14px; pointer-events: none; color: var(--muted); }
   nav .g::before, nav .g.t::after, nav .g.l::after { content: ""; position: absolute; opacity: 0.5; }
   nav .g::before { left: 6px; top: 0; bottom: 0; border-left: 1px solid; }

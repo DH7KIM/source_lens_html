@@ -43,6 +43,7 @@ function guides(el, list, isFile) {
 
 // 목록을 그릴 때 기억해 두는 것: 줄(경로 → <a>), 접힌 폴더 줄(경로 → .dir), 그릴 때의 문서·화면 언어.
 // 파일을 누를 때는 이것으로 현재 파일 강조만 옮기고, 목록 전체를 다시 만들지 않음 (파일이 많으면 오래 걸려서)
+const NAV_CHUNK = 200;   // 목록을 묶는 줄 수
 let navRows = new Map(), navDirs = new Map(), navDrawnLang = "";
 /// 지금 파일(cur)로 강조만 옮김. 목록을 다시 그려야 하면(펼친 폴더·언어 바뀜·목록에 없음) 전체를 다시 그림
 function selectNav(needRedraw) {
@@ -58,6 +59,12 @@ function drawNav() {
   const top = nav.scrollTop;
   nav.innerHTML = "";
   navRows = new Map(); navDirs = new Map(); navDrawnLang = docLang + "|" + uiLang;
+  // 줄을 NAV_CHUNK개씩 묶어 담음: 묶음마다 content-visibility로 화면 밖은 그리지 않아서, 파일이 수만 개여도 마우스를 올릴 때 느려지지 않음
+  let chunk = null, inChunk = 0;
+  const put = el => {
+    if (!chunk || inChunk >= NAV_CHUNK) { chunk = document.createElement("div"); chunk.className = "chunk"; nav.append(chunk); inChunk = 0; }
+    chunk.append(el); inChunk++;
+  };
   const fileRank = k => { const n = k.slice(k.lastIndexOf("/") + 1); return /^readme\.md$/i.test(n) ? 0 : /^changelog\.md$/i.test(n) ? 1 : 2; };
   const fileRow = (key, depth) => {
     const p = pathFor(key, docLang);
@@ -74,7 +81,7 @@ function drawNav() {
     if (p === cur) a.className = "cur";
     a.onclick = () => openFile(p);
     navRows.set(p, a);
-    nav.append(a);
+    return a;
   };
   const walk = (node, prefix, depth, trail) => {
     const files = node.files.sort((a, b) => fileRank(a) - fileRank(b) || a.localeCompare(b));
@@ -85,7 +92,7 @@ function drawNav() {
       const last = i === kids.length - 1;
       // 연결선: 위 칸들은 그 조상 폴더 뒤에 형제가 있으면 │, 마지막 칸은 ├ (마지막 항목이면 └)
       const g = depth ? [...trail.map(l => l ? "" : "v"), last ? "l" : "t"] : [];
-      if (kid.f) { fileRow(kid.f, depth); guides(nav.lastChild, g, true); return; }
+      if (kid.f) { const a = fileRow(kid.f, depth); guides(a, g, true); put(a); return; }
       const path = prefix + kid.name + "/";
       const open = !closed.has(path);
       const d = document.createElement("div");
@@ -96,8 +103,8 @@ function drawNav() {
       d.title = path + "\n" + t("dirTip");
       d.onclick = () => { if (open) closed.add(path); else closed.delete(path); saveClosed(); drawNav(); };
       if (!open) navDirs.set(path, d);   // 접힌 폴더만 현재 파일이 안에 있는지(has-cur) 따로 바뀜
-      nav.append(d);
       guides(d, g, false);
+      put(d);
       if (open) walk(kid.sub, path, depth + 1, depth ? [...trail, last] : []);
     });
   };

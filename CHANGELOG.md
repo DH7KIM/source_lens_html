@@ -2,6 +2,13 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.31.0 (2026-10-20)
+
+### source-viewer.html
+
+- **File list highlight is fast with many files**: hovering a row was slow with thousands of files because the browser walked every row of the list each time. Rows are now grouped 200 at a time, and groups outside the screen are not drawn (`content-visibility: auto`). Test with 20,000 rows: the cost of one hover went from about 106 ms to about 3 ms. Looks and behavior are the same.
+- Branch `nav-hover`.
+
 ## v0.30.0 (2026-10-20)
 
 ### source-viewer.html
