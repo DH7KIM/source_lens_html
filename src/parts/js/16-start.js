@@ -65,6 +65,10 @@ function drawStatic() {
   const diagOk = ui || (cur && (isTomlFile(cur) || isJsonFile(cur)));   // 오류 설명 켜기/끄기: .ui, toml, json
   $("diagBtn").hidden = !diagOk;
   if (diagOk) { $("diagBtn").textContent = showDiag ? t("diagOff") : t("diagOn"); $("diagBtn").title = t("diagTip"); }
+  const wrapOk = !!cur && !$("code").hidden && !treeShown;   // 소스 보기(계층 보기·문서 보기가 아닐 때)
+  $("wrapBtn").hidden = !wrapOk;
+  $("code").classList.toggle("wrap", wrapOk && wrapLines);
+  if (wrapOk) { $("wrapBtn").textContent = t("wrap"); $("wrapBtn").title = t("wrapTip"); $("wrapBtn").setAttribute("aria-pressed", String(wrapLines)); }
   $("pvBtn").hidden = !ui;
   if (ui) { $("pvBtn").textContent = pvSet.on ? t("pvOff") : t("pvOn"); $("pvBtn").title = t("pvTip"); }
   if (md) { $("mdMode").textContent = mdRaw ? t("doc") : t("raw"); $("mdMode").title = mdRaw ? t("docTip") : t("rawTip"); }

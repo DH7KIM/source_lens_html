@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.24.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.25.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -114,6 +114,7 @@
   body.has-bar { --bar: 41px; }
   #fileBar { position: sticky; top: var(--hdr, 49px); z-index: 1; height: 41px; display: flex; gap: 8px; align-items: center; padding: 0 16px; background: var(--bg); border-bottom: 1px solid var(--line); }
   #fileBar[hidden] { display: none; }
+  #wrapBtn[aria-pressed="true"] { background: var(--accent); color: var(--bg); font-weight: 700; }
   article, .start { max-width: 820px; margin: 0 auto; padding: 24px 24px 80px; }
   .start { margin-top: 8vh; text-align: center; color: var(--muted); }
   .start .box { border: 2px dashed var(--line); border-radius: 16px; padding: 40px 16px; }
@@ -132,6 +133,9 @@
   .code .no::before { content: attr(data-n); } /* 글자가 아니므로 복사되지 않음 */
   .code .no:hover { color: var(--fg); }
   .code .tx { flex: 1; white-space: pre; padding: 0 24px 0 14px; tab-size: 4; -moz-tab-size: 4; }
+  /* 자동 줄바꿈: 긴 줄을 화면 너비에서 접음. 줄 번호는 첫 줄에만 (칸이 위쪽 맞춤) */
+  .code.wrap .lines { display: block; min-width: 0; }
+  .code.wrap .tx { min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
   /* 줄 강조: 선택한 줄은 강조색 배경 + 왼쪽 굵은 막대(색만으로 구분하지 않음), 마우스를 올린 줄은 연한 배경 */
   .code .r.hl .tx, .code .r.hl .no { background: var(--hl); color: var(--fg); }
   .code .r.hl .no { box-shadow: inset 3px 0 0 var(--accent); }
@@ -317,6 +321,7 @@
       <button id="mdMode" hidden></button>
       <span class="mode-seg" id="treeMode" hidden><button id="treeSrc"></button><button id="treeTree"></button></span>
       <button id="diagBtn" hidden></button>
+      <button id="wrapBtn" hidden></button>
       <button id="pvBtn" hidden></button>
     </div>
     <div class="start" id="start">
@@ -366,6 +371,7 @@ const UI = {
     folder: "폴더 바꾸기", folderTip: "다른 소스 폴더를 고릅니다",
     raw: "원문 보기", rawTip: "마크다운 원문을 줄 번호와 함께 봅니다",
     diagOff: "오류 설명 끄기", diagOn: "오류 설명 켜기", diagTip: "오류·경고 줄 아래의 코드·설명·추천(help)을 보이거나 숨깁니다. 밑줄은 늘 보입니다.",
+    wrap: "자동 줄바꿈", wrapTip: "긴 줄을 화면 너비에서 접어 보이거나 한 줄로 길게 봅니다. 소스 보기에서만 쓰입니다.",
     doc: "문서 보기", docTip: "마크다운을 문서 모양으로 봅니다",
     treeSrc: "소스 보기", treeTree: "계층 보기",
     treeSrcTip: "원문을 줄 번호와 함께 봅니다", treeTreeTip: "JSON·JSON5를 객체 {} 과 배열 [] 구조로 접고 펼치며 봅니다. 보기만 하고 고치지 않습니다.",
@@ -433,6 +439,7 @@ const UI = {
     folder: "Change folder", folderTip: "Choose another source folder",
     raw: "Raw", rawTip: "Show the markdown source with line numbers",
     diagOff: "Hide details", diagOn: "Show details", diagTip: "Show or hide the error code, message and help text under each error or warning line. Underlines always stay.",
+    wrap: "Word wrap", wrapTip: "Wrap long lines to the window width, or show each on one long line. Source view only.",
     doc: "Document", docTip: "Show the markdown as a document",
     treeSrc: "Source", treeTree: "Tree",
     treeSrcTip: "Show the source with line numbers", treeTreeTip: "Show JSON / JSON5 as collapsible objects {} and arrays []. View only, nothing is edited.",
@@ -2390,6 +2397,8 @@ try { jsonTree = localStorage.getItem("sv-json-tree:" + KEY) === "1"; } catch (e
 let treeShown = false;   // 지금 계층으로 보여 주고 있는지 (오류면 소스 보기로 돌아가므로 jsonTree와 다를 수 있음)
 let showDiag = true;     // .ui·toml 오류를 줄 아래에 보일지
 try { showDiag = localStorage.getItem("sv-diag:" + KEY) !== "0"; } catch (e) {}
+let wrapLines = false;   // 소스 보기에서 긴 줄을 화면 너비에서 접어 보일지 (기본: 끔)
+try { wrapLines = localStorage.getItem("sv-wrap:" + KEY) === "1"; } catch (e) {}
 // .ui 배치 미리보기 설정: 켜짐, 창 크기("fit" | "custom" | "640x480"…), 너비·높이, 배율, 아래 칸 높이
 const pvSet = { on: true, mode: "layout", win: "640x480", w: 640, h: 480, scale: 100, paneH: 300 };
 try { Object.assign(pvSet, JSON.parse(localStorage.getItem("sv-preview:" + KEY) || "{}")); } catch (e) {}
@@ -3374,6 +3383,13 @@ $("diagBtn").onclick = () => {
   if (cur) openFile(cur, { keepScroll: true });
 };
 
+// 자동 줄바꿈 켜기 ↔ 끄기 (소스 보기만. 파일을 다시 읽지 않고 클래스만 바꿈)
+$("wrapBtn").onclick = () => {
+  wrapLines = !wrapLines;
+  try { localStorage.setItem("sv-wrap:" + KEY, wrapLines ? "1" : "0"); } catch (e) {}
+  drawStatic();
+};
+
 $("mdMode").onclick = () => {
   mdRaw = !mdRaw;
   try { localStorage.setItem("sv-md-raw:" + KEY, mdRaw ? "1" : "0"); } catch (e) {}
@@ -3605,6 +3621,10 @@ function drawStatic() {
   const diagOk = ui || (cur && (isTomlFile(cur) || isJsonFile(cur)));   // 오류 설명 켜기/끄기: .ui, toml, json
   $("diagBtn").hidden = !diagOk;
   if (diagOk) { $("diagBtn").textContent = showDiag ? t("diagOff") : t("diagOn"); $("diagBtn").title = t("diagTip"); }
+  const wrapOk = !!cur && !$("code").hidden && !treeShown;   // 소스 보기(계층 보기·문서 보기가 아닐 때)
+  $("wrapBtn").hidden = !wrapOk;
+  $("code").classList.toggle("wrap", wrapOk && wrapLines);
+  if (wrapOk) { $("wrapBtn").textContent = t("wrap"); $("wrapBtn").title = t("wrapTip"); $("wrapBtn").setAttribute("aria-pressed", String(wrapLines)); }
   $("pvBtn").hidden = !ui;
   if (ui) { $("pvBtn").textContent = pvSet.on ? t("pvOff") : t("pvOn"); $("pvBtn").title = t("pvTip"); }
   if (md) { $("mdMode").textContent = mdRaw ? t("doc") : t("raw"); $("mdMode").title = mdRaw ? t("docTip") : t("rawTip"); }

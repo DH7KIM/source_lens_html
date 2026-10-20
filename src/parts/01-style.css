@@ -94,6 +94,7 @@
   body.has-bar { --bar: 41px; }
   #fileBar { position: sticky; top: var(--hdr, 49px); z-index: 1; height: 41px; display: flex; gap: 8px; align-items: center; padding: 0 16px; background: var(--bg); border-bottom: 1px solid var(--line); }
   #fileBar[hidden] { display: none; }
+  #wrapBtn[aria-pressed="true"] { background: var(--accent); color: var(--bg); font-weight: 700; }
   article, .start { max-width: 820px; margin: 0 auto; padding: 24px 24px 80px; }
   .start { margin-top: 8vh; text-align: center; color: var(--muted); }
   .start .box { border: 2px dashed var(--line); border-radius: 16px; padding: 40px 16px; }
@@ -112,6 +113,9 @@
   .code .no::before { content: attr(data-n); } /* 글자가 아니므로 복사되지 않음 */
   .code .no:hover { color: var(--fg); }
   .code .tx { flex: 1; white-space: pre; padding: 0 24px 0 14px; tab-size: 4; -moz-tab-size: 4; }
+  /* 자동 줄바꿈: 긴 줄을 화면 너비에서 접음. 줄 번호는 첫 줄에만 (칸이 위쪽 맞춤) */
+  .code.wrap .lines { display: block; min-width: 0; }
+  .code.wrap .tx { min-width: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
   /* 줄 강조: 선택한 줄은 강조색 배경 + 왼쪽 굵은 막대(색만으로 구분하지 않음), 마우스를 올린 줄은 연한 배경 */
   .code .r.hl .tx, .code .r.hl .no { background: var(--hl); color: var(--fg); }
   .code .r.hl .no { box-shadow: inset 3px 0 0 var(--accent); }

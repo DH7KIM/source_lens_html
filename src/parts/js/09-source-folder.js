@@ -22,6 +22,8 @@ try { jsonTree = localStorage.getItem("sv-json-tree:" + KEY) === "1"; } catch (e
 let treeShown = false;   // 지금 계층으로 보여 주고 있는지 (오류면 소스 보기로 돌아가므로 jsonTree와 다를 수 있음)
 let showDiag = true;     // .ui·toml 오류를 줄 아래에 보일지
 try { showDiag = localStorage.getItem("sv-diag:" + KEY) !== "0"; } catch (e) {}
+let wrapLines = false;   // 소스 보기에서 긴 줄을 화면 너비에서 접어 보일지 (기본: 끔)
+try { wrapLines = localStorage.getItem("sv-wrap:" + KEY) === "1"; } catch (e) {}
 // .ui 배치 미리보기 설정: 켜짐, 창 크기("fit" | "custom" | "640x480"…), 너비·높이, 배율, 아래 칸 높이
 const pvSet = { on: true, mode: "layout", win: "640x480", w: 640, h: 480, scale: 100, paneH: 300 };
 try { Object.assign(pvSet, JSON.parse(localStorage.getItem("sv-preview:" + KEY) || "{}")); } catch (e) {}

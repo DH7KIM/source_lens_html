@@ -233,6 +233,13 @@ $("diagBtn").onclick = () => {
   if (cur) openFile(cur, { keepScroll: true });
 };
 
+// 자동 줄바꿈 켜기 ↔ 끄기 (소스 보기만. 파일을 다시 읽지 않고 클래스만 바꿈)
+$("wrapBtn").onclick = () => {
+  wrapLines = !wrapLines;
+  try { localStorage.setItem("sv-wrap:" + KEY, wrapLines ? "1" : "0"); } catch (e) {}
+  drawStatic();
+};
+
 $("mdMode").onclick = () => {
   mdRaw = !mdRaw;
   try { localStorage.setItem("sv-md-raw:" + KEY, mdRaw ? "1" : "0"); } catch (e) {}

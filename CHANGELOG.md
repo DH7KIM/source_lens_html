@@ -2,6 +2,13 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.25.0 (2026-10-20)
+
+### source-viewer.html
+
+- **Word wrap** button, added to the button bar. When on, long lines in the source view are wrapped to the window width (no horizontal scroll); when off, each line stays on one long line. The line number appears only on the first row of a wrapped line, and error underlines and diagnostic lines stay aligned. The choice is remembered in the browser (default: off). Shown in the source view and the raw Markdown view only; hidden in the tree view and the rendered document view.
+- Branch `word-wrap`.
+
 ## v0.24.0 (2026-10-20)
 
 ### source-viewer.html
