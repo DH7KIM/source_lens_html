@@ -80,4 +80,6 @@ Screen texts live in one file per language, so a new language is one new file:
 4. Add the language name to `LANG_NAMES` in `parts/js/01-strings.js`.
 5. Join the parts: `tools/merge-parts src source-viewer.html`.
 
-Limits for now: the language is picked automatically only for `ko` and `en` from the browser language, and a language button appears only when the opened folder has documents (`name.<code>.md`) in that language. The `.ui` error descriptions (`05-ui-messages.js`) are a separate table and have Korean only.
+6. The language box lists every language that has a screen text table or a document (`name.<code>.md`) in the opened folder, in the order of `LANG_NAMES`; the names there are written in each language itself.
+
+Limits for now: the language is picked automatically only for `ko` and `en` from the browser language, and the chosen language is not remembered. The `.ui` error descriptions (`05-ui-messages.js`) are a separate table and have Korean only.

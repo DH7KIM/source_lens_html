@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.35.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.36.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -311,7 +311,7 @@
   <span class="name" id="name">Source Viewer</span>
   <span class="state" id="state"></span>
   <span class="state" id="reading" hidden><span id="readingText"></span> <button id="readCancel"></button></span>
-  <span id="langs"></span>
+  <select id="langs"></select>
   <select id="theme"></select>
   <select id="depth" hidden></select>
   <button id="folder" hidden></button>
@@ -361,7 +361,8 @@
 "use strict";
 // ======================= 화면 문자열 =======================
 const UI = {};   // 언어별 표는 01-strings-ko.js, 01-strings-en.js 같은 파일에서 UI.<언어 코드> = { ... }로 채움
-const LANG_NAMES = { ko: "한국어", en: "English", ja: "日本語", zh: "中文" };
+// 언어 이름은 번역하지 않고 각 언어 자신의 이름으로 (화면 언어를 못 읽어도 찾을 수 있게). 이 표의 순서가 언어 목록 상자의 순서
+const LANG_NAMES = { ko: "한국어", en: "English", ja: "日本語", "zh-cn": "中文(简体)", "zh-tw": "中文(繁體)", fr: "Français", de: "Deutsch", it: "Italiano", es: "Español", zh: "中文" };
 let uiLang = (navigator.language || "en").toLowerCase().startsWith("ko") ? "ko" : "en";
 // {0|item|items} = 값이 1이면 앞의 말, 아니면 뒤의 말 (영어 단수·복수, 한국어 문구는 쓰지 않음)
 const t = (key, ...a) => String((UI[uiLang] || UI.en)[key] ?? UI.en[key]).replace(/\{(\d)\|([^|}]*)\|([^|}]*)\}/g, (_, i, one, many) => +a[+i] === 1 ? one : many).replace(/\{(\d)\}/g, (_, i) => a[+i] ?? "");
@@ -392,7 +393,8 @@ UI.ko = {
   treeErr: "계층으로 볼 수 없어 소스 보기로 보여 줍니다 ({0}번 줄: {1})",
   treeStop: "오류 때문에 계층 보기를 이어갈 수 없습니다 ({0}번 줄: {1})",
   treeLines: "JSON Lines (줄마다 값 하나) {0}줄",
-  langTip: "문서(.md)를 이 언어로 봅니다",
+  langTip: "화면과 문서를 이 언어로 봅니다",
+  docFallback: "\"{0}\" 문서가 없어 \"{1}\" 문서를 보여 줍니다",
   noTip: "클릭: 이 줄 표시 (주소에 줄 번호가 남아 다음에 바로 열림)",
   navSizeTip: "끌어서 폭 조절 / 두 번 클릭하면 기본 폭",
   dirTip: "클릭: 폴더 접기 / 펼치기",
@@ -477,7 +479,8 @@ UI.en = {
   treeErr: "Cannot show the tree view; showing the source view instead (line {0}: {1})",
   treeStop: "The tree view stops here because of an error (line {0}: {1})",
   treeLines: "JSON Lines (one value per line), {0} {0|line|lines}",
-  langTip: "Show documents (.md) in this language",
+  langTip: "Show the screen and documents in this language",
+  docFallback: "No \"{0}\" document; showing the \"{1}\" document",
   noTip: "Click: mark this line (the line number stays in the address)",
   navSizeTip: "Drag to resize / double-click for default width",
   dirTip: "Click: collapse / expand the folder",
@@ -2649,26 +2652,29 @@ $("navSize").addEventListener("dblclick", () => {
   document.body.style.removeProperty("--nav-w");   // 기본 폭(CSS의 230px)으로
 });
 
+// 언어 목록 상자: 내장 화면 언어(UI)와 연 폴더의 문서 언어(이름.<코드>.md)를 합쳐 항상 모두 보여 줌. 고르면 문서·화면 언어가 같이 바뀜
 function drawLangs() {
-  const all = new Set();
+  const all = new Set(Object.keys(UI));
   for (const e of entries.values()) if (e.md) for (const l of Object.keys(e.md)) all.add(l);
+  const known = Object.keys(LANG_NAMES);   // 이름 표의 순서가 목록 순서, 표에 없는 코드는 그 뒤에 코드 순
+  const pos = l => known.indexOf(l) < 0 ? 1e3 : known.indexOf(l);
   const box = $("langs");
   box.innerHTML = "";
-  if (all.size < 2) return;
-  for (const l of [...all].sort((a, b) => (a === "ko" ? -1 : b === "ko" ? 1 : a.localeCompare(b)))) {
-    const b = document.createElement("button");
-    b.textContent = LANG_NAMES[l] || l;
-    b.title = t("langTip");
-    b.className = l === docLang ? "on" : "";
-    b.onclick = () => {
-      docLang = l;
-      if (UI[l]) uiLang = l;
-      if (cur && isMd(cur)) openFile(pathFor(keyOf(cur), l));
-      else if (cur) openFile(cur, { keepScroll: true });   // 다시 열어서 상태 줄·진단 설명·계층 보기 안내도 그 언어로 (.ui, JSON, TOML 등)
-      else { drawNav(); drawLangs(); drawStatic(); drawPreview(); }
-    };
-    box.append(b);
+  for (const l of [...all].sort((a, b) => pos(a) - pos(b) || a.localeCompare(b))) {
+    const o = document.createElement("option");
+    o.value = l; o.textContent = LANG_NAMES[l] || l;
+    box.appendChild(o);
   }
+  box.value = docLang; box.title = t("langTip");
+  box.onchange = () => setLanguage(box.value);
+}
+function setLanguage(l) {
+  docLang = l;
+  if (UI[l]) uiLang = l;   // 화면 글자 표가 있는 언어만 화면 언어가 바뀜
+  if (cur && isMd(cur)) openFile(pathFor(keyOf(cur), l) || cur);
+  else if (cur) openFile(cur, { keepScroll: true });   // 다시 열어서 상태 줄·진단 설명·계층 보기 안내도 그 언어로 (.ui, JSON, TOML 등)
+  else if (!$("start").hidden) showStart(startKind);
+  else { drawNav(); drawLangs(); drawStatic(); drawPreview(); }
 }
 
 // a/b/c.md 기준으로 상대 경로 풀기
@@ -3162,10 +3168,14 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   logMod = await buildLogMod();
   if (changed) { hlLine = 0; hlItem = null; jsonSyntax = "auto"; }   // 문법 선택은 그 파일에만
   if (line) hlLine = line;
+  let docNote = "";
   if (lang === "md") {
-    docLang = splitLang(path).lang;
-    if (UI[docLang]) uiLang = docLang;
-    document.documentElement.lang = docLang;
+    const fileLang = splitLang(path).lang, e = entries.get(keyOf(path));
+    // 고른 언어(docLang)의 판이 없어서 다른 언어 판이 열린 것이면 고른 언어는 그대로 두고 안내.
+    // 고른 언어판이거나, 다른 언어 문서로 직접 간 것(링크 등)이면 문서 언어를 그 파일의 언어로
+    if (fileLang !== docLang && e && e.md && pathFor(keyOf(path), docLang) === path) docNote = t("docFallback", LANG_NAMES[docLang] || docLang, LANG_NAMES[fileLang] || fileLang);
+    else { docLang = fileLang; if (UI[docLang]) uiLang = docLang; }
+    document.documentElement.lang = fileLang;
   }
   const asDoc = lang === "md" && !mdRaw;
   let lineCount = 0, note = "", check = null, treeErr = "", treeHtml = null;
@@ -3260,7 +3270,7 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   $("start").hidden = true; $("fileBar").hidden = false; document.body.classList.add("has-bar");
   drawName();
   document.title = path + " - Source Viewer";
-  setState([lineCount ? t("lines", lineCount) : "", fmtSize(size), enc, src.kind === "fsa" ? t("auto") : t("noAuto"), note].filter(Boolean).join(" · "));
+  setState([lineCount ? t("lines", lineCount) : "", fmtSize(size), enc, src.kind === "fsa" ? t("auto") : t("noAuto"), note, docNote].filter(Boolean).join(" · "));
   if (treeErr) {   // 계층 보기 오류 (빨강)
     const b = document.createElement("span");
     b.className = "bad"; b.textContent = " · " + treeErr;
@@ -3608,14 +3618,16 @@ async function loadDir() {
 const hasFsa = !!window.showDirectoryPicker;
 let savedDir = null;
 
+let startKind = "";   // 시작 화면 종류 (언어를 바꿀 때 다시 그리려고 기억)
 function showStart(kind) {
+  startKind = kind;
   $("start").hidden = false; $("out").hidden = true; $("code").hidden = true; $("fileBar").hidden = true; document.body.classList.remove("has-bar");
   pvCheck = null; drawPreview();
   $("pick").hidden = !hasFsa; $("pickFiles").hidden = hasFsa;
   $("regrant").hidden = kind !== "regrant";
   $("startMsg").innerHTML = kind === "regrant" ? esc(t("startRegrant", savedDir.name)) : kind === "noFiles" ? esc(t("noFiles")) : t("startNew");
   $("startNote").textContent = hasFsa ? t("noteFsa") : t("noteFallback");
-  drawStatic();
+  drawLangs(); drawStatic();
 }
 
 // 화면 언어에 따라 바뀌는 고정 글자

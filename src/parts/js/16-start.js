@@ -54,14 +54,16 @@ async function loadDir() {
 const hasFsa = !!window.showDirectoryPicker;
 let savedDir = null;
 
+let startKind = "";   // 시작 화면 종류 (언어를 바꿀 때 다시 그리려고 기억)
 function showStart(kind) {
+  startKind = kind;
   $("start").hidden = false; $("out").hidden = true; $("code").hidden = true; $("fileBar").hidden = true; document.body.classList.remove("has-bar");
   pvCheck = null; drawPreview();
   $("pick").hidden = !hasFsa; $("pickFiles").hidden = hasFsa;
   $("regrant").hidden = kind !== "regrant";
   $("startMsg").innerHTML = kind === "regrant" ? esc(t("startRegrant", savedDir.name)) : kind === "noFiles" ? esc(t("noFiles")) : t("startNew");
   $("startNote").textContent = hasFsa ? t("noteFsa") : t("noteFallback");
-  drawStatic();
+  drawLangs(); drawStatic();
 }
 
 // 화면 언어에 따라 바뀌는 고정 글자

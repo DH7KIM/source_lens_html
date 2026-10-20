@@ -80,4 +80,6 @@ tools/merge-parts src source-viewer.merged.html --check source-viewer.html
 4. `parts/js/01-strings.js`의 `LANG_NAMES`에 언어 이름을 넣습니다.
 5. 조각을 합칩니다: `tools/merge-parts src source-viewer.html`.
 
-지금의 한계: 화면 언어는 브라우저 언어로 `ko`·`en`만 자동으로 고르고, 언어 단추는 연 폴더에 그 언어의 문서(`이름.<코드>.md`)가 있을 때만 나옵니다. `.ui` 오류 설명(`05-ui-messages.js`)은 따로 있는 표이고 한국어뿐입니다.
+6. 언어 목록 상자에는 화면 글자 표가 있거나 연 폴더에 문서(`이름.<코드>.md`)가 있는 언어가 모두 나오고, 순서는 `LANG_NAMES`의 순서입니다. 이름은 각 언어 자신의 말로 적습니다.
+
+지금의 한계: 화면 언어는 브라우저 언어로 `ko`·`en`만 자동으로 고르고, 고른 언어를 기억하지 않습니다. `.ui` 오류 설명(`05-ui-messages.js`)은 따로 있는 표이고 한국어뿐입니다.

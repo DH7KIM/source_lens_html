@@ -12,10 +12,14 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   logMod = await buildLogMod();
   if (changed) { hlLine = 0; hlItem = null; jsonSyntax = "auto"; }   // 문법 선택은 그 파일에만
   if (line) hlLine = line;
+  let docNote = "";
   if (lang === "md") {
-    docLang = splitLang(path).lang;
-    if (UI[docLang]) uiLang = docLang;
-    document.documentElement.lang = docLang;
+    const fileLang = splitLang(path).lang, e = entries.get(keyOf(path));
+    // 고른 언어(docLang)의 판이 없어서 다른 언어 판이 열린 것이면 고른 언어는 그대로 두고 안내.
+    // 고른 언어판이거나, 다른 언어 문서로 직접 간 것(링크 등)이면 문서 언어를 그 파일의 언어로
+    if (fileLang !== docLang && e && e.md && pathFor(keyOf(path), docLang) === path) docNote = t("docFallback", LANG_NAMES[docLang] || docLang, LANG_NAMES[fileLang] || fileLang);
+    else { docLang = fileLang; if (UI[docLang]) uiLang = docLang; }
+    document.documentElement.lang = fileLang;
   }
   const asDoc = lang === "md" && !mdRaw;
   let lineCount = 0, note = "", check = null, treeErr = "", treeHtml = null;
@@ -110,7 +114,7 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   $("start").hidden = true; $("fileBar").hidden = false; document.body.classList.add("has-bar");
   drawName();
   document.title = path + " - Source Viewer";
-  setState([lineCount ? t("lines", lineCount) : "", fmtSize(size), enc, src.kind === "fsa" ? t("auto") : t("noAuto"), note].filter(Boolean).join(" · "));
+  setState([lineCount ? t("lines", lineCount) : "", fmtSize(size), enc, src.kind === "fsa" ? t("auto") : t("noAuto"), note, docNote].filter(Boolean).join(" · "));
   if (treeErr) {   // 계층 보기 오류 (빨강)
     const b = document.createElement("span");
     b.className = "bad"; b.textContent = " · " + treeErr;

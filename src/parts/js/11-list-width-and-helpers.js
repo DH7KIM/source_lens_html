@@ -25,26 +25,29 @@ $("navSize").addEventListener("dblclick", () => {
   document.body.style.removeProperty("--nav-w");   // 기본 폭(CSS의 230px)으로
 });
 
+// 언어 목록 상자: 내장 화면 언어(UI)와 연 폴더의 문서 언어(이름.<코드>.md)를 합쳐 항상 모두 보여 줌. 고르면 문서·화면 언어가 같이 바뀜
 function drawLangs() {
-  const all = new Set();
+  const all = new Set(Object.keys(UI));
   for (const e of entries.values()) if (e.md) for (const l of Object.keys(e.md)) all.add(l);
+  const known = Object.keys(LANG_NAMES);   // 이름 표의 순서가 목록 순서, 표에 없는 코드는 그 뒤에 코드 순
+  const pos = l => known.indexOf(l) < 0 ? 1e3 : known.indexOf(l);
   const box = $("langs");
   box.innerHTML = "";
-  if (all.size < 2) return;
-  for (const l of [...all].sort((a, b) => (a === "ko" ? -1 : b === "ko" ? 1 : a.localeCompare(b)))) {
-    const b = document.createElement("button");
-    b.textContent = LANG_NAMES[l] || l;
-    b.title = t("langTip");
-    b.className = l === docLang ? "on" : "";
-    b.onclick = () => {
-      docLang = l;
-      if (UI[l]) uiLang = l;
-      if (cur && isMd(cur)) openFile(pathFor(keyOf(cur), l));
-      else if (cur) openFile(cur, { keepScroll: true });   // 다시 열어서 상태 줄·진단 설명·계층 보기 안내도 그 언어로 (.ui, JSON, TOML 등)
-      else { drawNav(); drawLangs(); drawStatic(); drawPreview(); }
-    };
-    box.append(b);
+  for (const l of [...all].sort((a, b) => pos(a) - pos(b) || a.localeCompare(b))) {
+    const o = document.createElement("option");
+    o.value = l; o.textContent = LANG_NAMES[l] || l;
+    box.appendChild(o);
   }
+  box.value = docLang; box.title = t("langTip");
+  box.onchange = () => setLanguage(box.value);
+}
+function setLanguage(l) {
+  docLang = l;
+  if (UI[l]) uiLang = l;   // 화면 글자 표가 있는 언어만 화면 언어가 바뀜
+  if (cur && isMd(cur)) openFile(pathFor(keyOf(cur), l) || cur);
+  else if (cur) openFile(cur, { keepScroll: true });   // 다시 열어서 상태 줄·진단 설명·계층 보기 안내도 그 언어로 (.ui, JSON, TOML 등)
+  else if (!$("start").hidden) showStart(startKind);
+  else { drawNav(); drawLangs(); drawStatic(); drawPreview(); }
 }
 
 // a/b/c.md 기준으로 상대 경로 풀기

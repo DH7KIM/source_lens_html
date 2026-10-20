@@ -2,6 +2,15 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.36.0 (2026-10-21)
+
+### source-viewer.html
+
+- **Language buttons became a list box**: the `한국어` and `English` buttons in the header are one list box now. It always lists the built-in screen languages together with the document languages of the opened folder (`name.<code>.md`); before, it showed only document languages and only when there were two or more. It can be used on the start screen too. Language names are not translated: each is written in its own language (`한국어`, `English`, `日本語`, `中文(简体)`, `中文(繁體)`, `Français`, `Deutsch`, `Italiano`, `Español`), in the order of the name table (`LANG_NAMES`). The tooltip is "Show the screen and documents in this language".
+- **Documents without the chosen language**: choosing `한국어` on a document that exists only in English did nothing visible. Now the document that exists (the English one) is opened, the status line says `No "한국어" document; showing the "English" document`, and the chosen language stays. (Cause: every time a document was opened, the document and screen language were overwritten by the language of the opened file.) Going straight to a document of another language (a link, for example) still switches to that language as before.
+- Added `zh-cn`, `zh-tw`, `fr`, `de`, `it` and `es` to `LANG_NAMES` (this also fixes `zh-cn` being shown as plain text). Choosing a language that has no screen text table changes only the document language; the screen texts stay as they are.
+- Branch `lang-select`.
+
 ## v0.35.0 (2026-10-21)
 
 ### source-viewer.html
