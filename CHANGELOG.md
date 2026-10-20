@@ -2,6 +2,14 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.37.2 (2026-10-21)
+
+### source-viewer.html
+
+- **The language box is a plain select box again** (it behaves like the theme and subfolder boxes): the column styling of v0.37.0 (`appearance: base-select`) and the explicit list position of v0.37.1 are removed. The position, keyboard and click-outside behavior are the browser's own, so the list can no longer cover the closed box.
+- Each item shows only the name in the screen language (for example `중국어(간체)`). The names still come from the `langName_<code>` keys.
+- Branch `lang-plain-select`.
+
 ## v0.37.1 (2026-10-21)
 
 ### source-viewer.html

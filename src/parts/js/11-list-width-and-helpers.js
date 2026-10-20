@@ -26,11 +26,10 @@ $("navSize").addEventListener("dblclick", () => {
 });
 
 // 언어 목록 상자: 내장 화면 언어(UI)와 연 폴더의 문서 언어(이름.<코드>.md)를 합쳐 항상 모두 보여 줌. 고르면 문서·화면 언어가 같이 바뀜
-// 항목 = 화면 언어로 번역한 이름 | 그 언어 자신의 이름(같으면 비움) | 코드. 새 Chrome·Edge(appearance: base-select)에서는 열로 맞춰 보이고, 다른 브라우저는 이름만 나오는 기본 목록
-function langNames(l) {
-  const k = "langName_" + l, own = LANG_NAMES[l] || l;
-  const main = (UI[uiLang] && UI[uiLang][k]) || UI.en[k] || own;
-  return { main, own: own === main ? "" : own };
+// 항목 = 화면 언어로 번역한 이름 (일반 선택 상자, 테마·하위 단계 상자와 같은 모양과 동작)
+function langName(l) {
+  const k = "langName_" + l;
+  return (UI[uiLang] && UI[uiLang][k]) || UI.en[k] || LANG_NAMES[l] || l;
 }
 function drawLangs() {
   const all = new Set(Object.keys(UI));
@@ -38,15 +37,10 @@ function drawLangs() {
   const known = Object.keys(LANG_NAMES);   // 이름 표의 순서가 목록 순서, 표에 없는 코드는 그 뒤에 코드 순
   const pos = l => known.indexOf(l) < 0 ? 1e3 : known.indexOf(l);
   const box = $("langs");
-  box.querySelectorAll("option").forEach(o => o.remove());   // 닫힌 상태를 그리는 <button><selectedcontent>는 HTML에 한 번만 두고 항목만 다시 만듦 (새로 만들면 비어 버림)
-  const columns = !!(window.CSS && CSS.supports("appearance", "base-select"));   // 새 Chrome·Edge: 항목 안을 열로 꾸밈
+  box.querySelectorAll("option").forEach(o => o.remove());
   for (const l of [...all].sort((a, b) => pos(a) - pos(b) || a.localeCompare(b))) {
-    const nm = langNames(l), o = document.createElement("option");
-    o.value = l;
-    if (!columns) o.textContent = nm.main;   // 열을 못 쓰는 브라우저는 이름만
-    else for (const [cls, txt] of [["ln", nm.main], ["lo", nm.own], ["lc", l]]) {
-      const sp = document.createElement("span"); sp.className = cls; sp.textContent = txt; o.appendChild(sp);
-    }
+    const o = document.createElement("option");
+    o.value = l; o.textContent = langName(l);
     box.appendChild(o);
   }
   box.value = docLang; box.title = t("langTip");

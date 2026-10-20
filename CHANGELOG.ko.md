@@ -2,6 +2,14 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.37.2 (2026-10-21)
+
+### source-viewer.html
+
+- **언어 상자를 다시 일반 선택 상자로** (테마·하위 단계 상자와 같은 모양과 동작): v0.37.0의 열 꾸미기(`appearance: base-select`)와 v0.37.1의 목록 위치 지정을 걷어냄. 위치·키보드·바깥 클릭 닫힘이 브라우저 기본 동작이라 목록이 닫힌 상자를 덮지 않음.
+- 항목에는 화면 언어로 번역한 이름만 나옴 (예: `중국어(간체)`). 이름은 그대로 `langName_<코드>` 키에서 가져옴.
+- 갈래 `lang-plain-select`.
+
 ## v0.37.1 (2026-10-21)
 
 ### source-viewer.html
