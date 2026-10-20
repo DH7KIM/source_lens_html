@@ -2,6 +2,14 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.35.0 (2026-10-21)
+
+### source-viewer.html
+
+- **Screen texts split into one file per language**: Korean and English, which shared `01-strings.js`, are now `01-strings-ko.js` (`UI.ko`) and `01-strings-en.js` (`UI.en`); `01-strings.js` keeps only the empty `UI` table, the language names and `t()`. A new language is one more file (see "Adding a language" in `src/README`).
+- Behavior is unchanged: the `UI` table has exactly the same content as before (159 texts each in Korean and English, compared with Node). The joined HTML is a few lines longer because of the header comments.
+- Branch `strings-split`.
+
 ## v0.34.0 (2026-10-21)
 
 ### source-viewer.html

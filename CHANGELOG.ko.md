@@ -2,6 +2,14 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.35.0 (2026-10-21)
+
+### source-viewer.html
+
+- **화면 글자를 언어별 파일로 나눔**: `01-strings.js`에 같이 있던 한국어·영어를 `01-strings-ko.js`(`UI.ko`)와 `01-strings-en.js`(`UI.en`)로 나누고, `01-strings.js`에는 빈 `UI` 표와 언어 이름, `t()`만 남김. 새 언어는 파일 하나를 더하면 됨 (`src/README`의 "새 언어 넣기").
+- 동작은 그대로: 나누기 전후의 `UI` 표 내용이 한국어·영어 각 159개 모두 같음 (Node로 비교). 합친 HTML은 머리말 주석이 늘어 몇 줄 더 길어짐.
+- 갈래 `strings-split`.
+
 ## v0.34.0 (2026-10-21)
 
 ### source-viewer.html

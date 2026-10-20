@@ -44,7 +44,9 @@ The exit code is 0 when done (and equal), 1 when the check finds a difference, 2
 | `parts/00-head.html` | `<!doctype>` to `<style>` |
 | `parts/01-style.css` | CSS |
 | `parts/02-body.html` | `</style>` to `<script>` |
-| `parts/js/01-strings.js` | screen texts |
+| `parts/js/01-strings.js` | screen texts: the empty `UI` table, language names, `t()` |
+| `parts/js/01-strings-ko.js` | screen texts, Korean (`UI.ko`) |
+| `parts/js/01-strings-en.js` | screen texts, English (`UI.en`, the original) |
 | `parts/js/02-file-kinds.js` | file kinds |
 | `parts/js/03-highlight.js` | syntax colors |
 | `parts/js/05-ui-messages.js` | `.ui` error and warning texts |
@@ -67,3 +69,15 @@ The exit code is 0 when done (and equal), 1 when the check finds a difference, 2
 | `parts/99-tail.html` | `</script>` to `</html>` |
 
 `docs-viewer.html` is not split yet.
+
+## Adding a language
+
+Screen texts live in one file per language, so a new language is one new file:
+
+1. Copy `parts/js/01-strings-en.js` to `parts/js/01-strings-<code>.js` (for example `01-strings-ja.js`) and change `UI.en` to `UI.<code>` (`UI.ja`).
+2. Translate the values. Keep the keys and the `{0}` `{1}` placeholders as they are. A text that is missing falls back to English, so a partial translation works.
+3. Add the file to `parts.txt` right after `parts/js/01-strings-en.js`.
+4. Add the language name to `LANG_NAMES` in `parts/js/01-strings.js`.
+5. Join the parts: `tools/merge-parts src source-viewer.html`.
+
+Limits for now: the language is picked automatically only for `ko` and `en` from the browser language, and a language button appears only when the opened folder has documents (`name.<code>.md`) in that language. The `.ui` error descriptions (`05-ui-messages.js`) are a separate table and have Korean only.

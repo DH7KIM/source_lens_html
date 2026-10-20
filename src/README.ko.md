@@ -44,7 +44,9 @@ tools/merge-parts src source-viewer.merged.html --check source-viewer.html
 | `parts/00-head.html` | `<!doctype>` ~ `<style>` |
 | `parts/01-style.css` | CSS |
 | `parts/02-body.html` | `</style>` ~ `<script>` |
-| `parts/js/01-strings.js` | 화면 문자열 |
+| `parts/js/01-strings.js` | 화면 문자열: 빈 `UI` 표, 언어 이름, `t()` |
+| `parts/js/01-strings-ko.js` | 화면 문자열, 한국어 (`UI.ko`) |
+| `parts/js/01-strings-en.js` | 화면 문자열, 영어 (`UI.en`, 원문) |
 | `parts/js/02-file-kinds.js` | 파일 종류 |
 | `parts/js/03-highlight.js` | 문법 색칠 |
 | `parts/js/05-ui-messages.js` | `.ui` 오류·경고 설명 번역 |
@@ -67,3 +69,15 @@ tools/merge-parts src source-viewer.merged.html --check source-viewer.html
 | `parts/99-tail.html` | `</script>` ~ `</html>` |
 
 `docs-viewer.html`은 아직 나누지 않았습니다.
+
+## 새 언어 넣기
+
+화면 글자는 언어마다 파일이 하나라서, 새 언어는 파일 하나를 더하면 됩니다.
+
+1. `parts/js/01-strings-en.js`를 `parts/js/01-strings-<코드>.js`로 복사하고 (예: `01-strings-ja.js`), `UI.en`을 `UI.<코드>`(`UI.ja`)로 바꿉니다.
+2. 값을 번역합니다. 키와 `{0}` `{1}` 자리는 그대로 둡니다. 빠진 글자는 영어로 보이니 일부만 번역해도 됩니다.
+3. `parts.txt`에서 `parts/js/01-strings-en.js` 바로 뒤에 그 파일을 적습니다.
+4. `parts/js/01-strings.js`의 `LANG_NAMES`에 언어 이름을 넣습니다.
+5. 조각을 합칩니다: `tools/merge-parts src source-viewer.html`.
+
+지금의 한계: 화면 언어는 브라우저 언어로 `ko`·`en`만 자동으로 고르고, 언어 단추는 연 폴더에 그 언어의 문서(`이름.<코드>.md`)가 있을 때만 나옵니다. `.ui` 오류 설명(`05-ui-messages.js`)은 따로 있는 표이고 한국어뿐입니다.
