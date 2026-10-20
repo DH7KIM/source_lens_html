@@ -2,6 +2,13 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.30.0 (2026-10-20)
+
+### source-viewer.html
+
+- **Opening a file no longer redraws the whole file list**: it only moves the highlight of the current file (and the "contains the current file" mark of closed folders). The list is still redrawn when a folder is opened up for the file, when the document or screen language changes, and when the folder is read again. Test with 60,000 files: a click used to redraw the list (about 5 s) and now takes about 0.1-0.4 s, almost all of it reading the file.
+- Branch `nav-select`.
+
 ## v0.29.0 (2026-10-20)
 
 ### source-viewer.html

@@ -7,7 +7,7 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   const lang = langOf(path);
   const { text, enc, size, bytes } = await readText(f, lang === "ui");
   const changed = path !== cur;
-  if (changed) expandTo(path);
+  const expanded = changed && expandTo(path);
   cur = path; curMod = f.lastModified;
   logMod = await buildLogMod();
   if (changed) { hlLine = 0; hlItem = null; }
@@ -130,7 +130,7 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
     }
   }
   pvCheck = lang === "ui" && check ? check : null;
-  drawNav(); drawLangs(); drawStatic(); drawPreview();
+  selectNav(expanded); drawLangs(); drawStatic(); drawPreview();
   try { localStorage.setItem("sv-last:" + KEY, path); } catch (e) {}
   if (changed || line || hash) setHash(hash);
   if (asDoc) {
