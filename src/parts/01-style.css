@@ -5,8 +5,13 @@
     --mono: "Cascadia Code", "Cascadia Mono", Consolas, "D2Coding", "Malgun Gothic", monospace;
     /* 문법 색: 키워드, 타입, 문자열, 주석, 숫자·상수, 전처리·속성, 함수·매크로 */
     --hk: #a0365e; --ht: #2a6f97; --hs: #3d7a2a; --hc: #8a8780; --hn: #b5651d; --hp: #7b4fa0; --hf: #2f6fc0;
+    /* 오류 빨강(--err)과 헷갈리지 않게 쓰는 색: 보통 --hk·--hp와 같고, 빨강 계열인 테마(GitHub, Gruvbox)만 따로 정함. false·.bat·.json 점·계층 보기 아이콘에 씀 */
+    --hk2: var(--hk); --hp2: var(--hp);
     --err: #d03030; /* 오류: 빨간 글자 */
     --warn: #b06a00; /* 경고: 주황 (.ui W1xx) */
+    --hl: color-mix(in srgb, var(--accent) 22%, var(--bg)); /* 선택한 줄 */
+    --hover: color-mix(in srgb, var(--fg) 8%, var(--bg));   /* 마우스를 올린 줄 */
+    --hl-hover: color-mix(in srgb, var(--accent) 32%, var(--bg));   /* 선택한 줄 + 마우스 */
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme]) {
@@ -81,7 +86,7 @@
   nav a .alt { color: var(--muted); font-size: 12px; margin-left: 4px; }
   nav a .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; vertical-align: 1px; background: var(--muted); }
   nav a .dot.cpp { background: var(--hf); } nav a .dot.rust { background: var(--hn); } nav a .dot.md { background: var(--hs); }
-  nav a .dot.toml, nav a .dot.json, nav a .dot.json5 { background: var(--hp); } nav a .dot.bat, nav a .dot.hash { background: var(--hk); }
+  nav a .dot.toml, nav a .dot.json, nav a .dot.json5 { background: var(--hp2); } nav a .dot.bat, nav a .dot.hash { background: var(--hk2); }
   nav a .dot.ui { background: var(--ht); } nav a .dot.uilog { background: var(--hc); }
   main { flex: 1; min-width: 0; }
   article, .start { max-width: 820px; margin: 0 auto; padding: 24px 24px 80px; }
@@ -102,7 +107,12 @@
   .code .no::before { content: attr(data-n); } /* 글자가 아니므로 복사되지 않음 */
   .code .no:hover { color: var(--fg); }
   .code .tx { flex: 1; white-space: pre; padding: 0 24px 0 14px; tab-size: 4; -moz-tab-size: 4; }
-  .code .r.hl .tx, .code .r.hl .no { background: var(--sel); color: var(--fg); }
+  /* 줄 강조: 선택한 줄은 강조색 배경 + 왼쪽 굵은 막대(색만으로 구분하지 않음), 마우스를 올린 줄은 연한 배경 */
+  .code .r.hl .tx, .code .r.hl .no { background: var(--hl); color: var(--fg); }
+  .code .r.hl .no { box-shadow: inset 3px 0 0 var(--accent); }
+  .code .r:not(.dg):not(.hl):hover .tx, .code .r:not(.dg):not(.hl):hover .no { background: var(--hover); }
+  .code .r.hl .sel-item { background: color-mix(in srgb, var(--accent) 42%, var(--bg)); border-radius: 3px; }   /* 계층 보기에서 고른 항목의 글자 범위 */
+  .code .r.hl:hover .tx, .code .r.hl:hover .no { background: var(--hl-hover); }   /* 선택한 줄에 올려도 선택 모양이 유지되고 조금 더 진해짐 */
   .code .msg { padding: 24px; color: var(--muted); font-family: var(--font); }
   .k { color: var(--hk); } .t { color: var(--ht); } .s { color: var(--hs); } .c { color: var(--hc); font-style: italic; }
   .n { color: var(--hn); } .p { color: var(--hp); } .f { color: var(--hf); }
@@ -177,6 +187,56 @@
     white-space: pre-wrap; overflow-wrap: anywhere; }
   .pv-tooltip[hidden] { display: none; }
   .pv-pop .mi > .pv-pop { display: none; left: 100%; top: -4px; } .pv-pop .mi:hover > .pv-pop { display: block; }
+
+  /* 소스 보기 | 계층 보기 단추 (눌린 쪽은 강조색 + 굵은 글자, 색만으로 구분하지 않음) */
+  .mode-seg { display: inline-flex; } .mode-seg button { border-radius: 0; margin: 0; }
+  .mode-seg button:first-child { border-radius: 8px 0 0 8px; } .mode-seg button:last-child { border-radius: 0 8px 8px 0; border-left: 0; }
+  .mode-seg button[aria-pressed="true"] { background: var(--accent); color: var(--bg); font-weight: 700; }
+  /* JSON·JSON5 계층 보기 (.code 안에 그림). 객체·배열 아이콘, 접기·펼치기, 오른쪽 끝은 소스 줄 번호 */
+  .tj-root { padding: 8px 12px 40px; font: 13.5px/1.6 var(--mono); }
+  .tj summary, .tj-row { display: flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 4px; white-space: pre; }
+  .tj summary { cursor: pointer; list-style: none; user-select: none; }
+  .tj summary::-webkit-details-marker { display: none; }
+  .tj summary:hover, .tj-row:hover { background: var(--hover); }
+  .tj summary.hl, .tj-row.hl { background: var(--hl); box-shadow: inset 3px 0 0 var(--accent); }
+  .tj summary.hl:hover, .tj-row.hl:hover { background: var(--hl-hover); }
+  /* 같은 줄의 나머지 항목: 연하게 */
+  .tj summary.hl2, .tj-row.hl2 { background: color-mix(in srgb, var(--accent) 10%, var(--bg)); }
+  .tj summary.hl2:hover, .tj-row.hl2:hover { background: var(--hl); }
+  .tj .tw { width: 12px; height: 12px; flex: none; color: var(--muted); transition: transform 0.12s; }
+  .tj[open] > summary .tw { transform: rotate(90deg); }
+  .tj-ic { width: 16px; height: 16px; flex: none; color: var(--hp2); }
+  .tj-sp { width: 12px; flex: none; }
+  .tj-dot { width: 12px; height: 16px; flex: none; display: inline-flex; align-items: center; justify-content: center; }
+  .tj-dot::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
+  /* 점 색 = 값의 종류 (문자열·숫자·true/false/null), 파일 목록의 종류별 점과 같은 모양 */
+  .tj-dot.s::before { background: var(--hs); } .tj-dot.n::before { background: var(--hn); }
+  .tj-dot.tj-true::before { background: var(--ht); } .tj-dot.tj-false::before { background: var(--hk2); } .tj-dot.tj-null::before { background: var(--hc); }
+  /* 값 글자 색도 점과 같은 종류별 색 */
+  .tj-v.tj-true { color: var(--ht); } .tj-v.tj-false { color: var(--hk2); } .tj-v.tj-null { color: var(--hc); }
+  .tj-k { color: var(--hf); } .tj-i { color: var(--muted); } .tj-sum { color: var(--muted); }
+  .tj-v { white-space: pre-wrap; overflow-wrap: anywhere; min-width: 0; }
+  .tj-go { margin-left: auto; padding-left: 16px; color: var(--muted); font-size: 12px; text-decoration: none; cursor: pointer; flex: none; }
+  .tj-go:hover { color: var(--accent); text-decoration: underline; }
+  /* 가지 연결선 ├── └── │ : 자식마다 세로선과 가로선. 마지막 자식은 세로선이 줄 가운데에서 끝남 */
+  .tj-ego { margin-left: auto; padding-left: 16px; color: var(--muted); font-size: 12px; text-decoration: none; cursor: pointer; flex: none; }
+  .tj-ego:hover { color: var(--accent); text-decoration: underline; }
+  .tj-edot::before { background: var(--err); }
+  .tj-etext { color: var(--muted); }
+  .tj-errbox { margin: 2px 0; }
+  .tj-err { display: flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 4px; color: var(--err); font-weight: 600; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .tj-esrc { color: var(--fg); font-weight: 400; white-space: pre; overflow: hidden; background: color-mix(in srgb, var(--err) 7%, transparent); }
+  .tj-ebad { color: var(--err); font-weight: 600; text-decoration: underline wavy var(--err); text-underline-offset: 3px; text-decoration-skip-ink: none; }
+  /* 단계마다 16px 들여쓰기 (14px + 선과 화살표가 겹치지 않게 2px). 세로선은 위 항목 화살표 가운데(8+6=14px), 가로선 11px는 점·화살표 바로 앞까지 */
+  .tj-kids { margin-left: 14px; }
+  .tj-kids > * { position: relative; }
+  .tj-kids > .tj { padding-left: 2px; }   /* 묶음(화살표) 줄은 가지선 가까이 */
+  .tj-kids > .tj-errbox { padding-left: 8px; }   /* 오류 안내 글자는 값 줄의 키 이름과 같은 자리 (8 + 8 + 12 + 4 = 16 + 12 + 4) */
+  .tj-kids > .tj-row { padding-left: 16px; }   /* 16 = 8(가지선 끝과 점 사이, 파일 목록의 파일 줄과 같음) + 8(줄 자체 안쪽 여백). 화살표 줄은 파일 목록의 폴더 줄처럼 선 가까이 */
+  .tj-kids > *::before, .tj-kids > *::after { content: ""; position: absolute; left: 0; opacity: 0.5; pointer-events: none; }
+  .tj-kids > *::before { top: 0; bottom: 0; border-left: 1px solid var(--muted); }
+  .tj-kids > *::after { top: 11px; width: 11px; border-top: 1px solid var(--muted); }
+  .tj-kids > :last-child::before { bottom: auto; height: 11px; }
 
   @media (max-width: 760px) {
     .wrap { display: block; }

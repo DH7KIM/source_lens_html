@@ -1,0 +1,9 @@
+{
+  "name": "source-lens",
+  "version": "0.23.0",
+  "debug": false,
+  "limit": null,
+  "ratio": 1.5e2,
+  "tags": ["json", "viewer", "한글"],
+  "nested": { "a": [1, 2, { "b": true }], "empty": {}, "list": [] }
+}

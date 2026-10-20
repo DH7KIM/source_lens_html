@@ -2,6 +2,18 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.23.0 (2026-10-20)
+
+### source-viewer.html
+
+- JSON / JSON5 / JSON Lines support, brought over from the `feature_notes` test bed (its v0.0.9–v0.0.36) as one version, on the `json-tree` branch.
+  - **Tree view** for `.json`, `.jsonc`, `.json5`, `.jsonl` and `.ndjson`: a `Source` / `Tree` switch, branch lines, value dots colored by type, and line highlight with jump between the two views. For broken files the tree is shown up to the error.
+  - **Syntax check** (J001 and up): the first error is underlined with an explanation in the screen language. JSON Lines are checked line by line (up to 100 wrong lines). Opening a file scrolls to the first error.
+  - Switching the screen language now redraws any open file at once (JSON, TOML, compiler output, `.ui`).
+  - English wording cleanup (`1 error` / `2 errors`) and the error red is kept apart from the theme colors.
+- New samples: `tests/samples/project/json/` (`ok.json`, `sample.json5`, `error.json`, `lines.jsonl`).
+- Version comment at the top v0.23.0.
+
 ## v0.22.1 (2026-10-20)
 
 ### tools

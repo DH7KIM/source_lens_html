@@ -43,7 +43,7 @@ function json5Parse(src) {
     if (c === '"' || c === "'") return str();
     const m = /[A-Za-z_$][\w$]*/y; m.lastIndex = i;
     const r = m.exec(src);
-    if (!r) fail("key expected");
+    if (!r) fail("expected a key");
     i += r[0].length; return r[0];
   };
   const num = /[+-]?(?:Infinity|NaN|0[xX][\da-fA-F]+|(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)(?![\w$])/y;
@@ -77,7 +77,7 @@ function json5Parse(src) {
       if (src.startsWith(w, i) && !/[\w$]/.test(src[i + w.length] || "")) { i += w.length; return v; }
     num.lastIndex = i;
     const m = num.exec(src);
-    if (!m) fail(c === undefined ? "value expected" : "unexpected '" + c + "'");
+    if (!m) fail(c === undefined ? "expected a value" : "unexpected '" + c + "'");
     i += m[0].length;
     const s = m[0], sign = s[0] === "-" ? -1 : 1, b = s.replace(/^[+-]/, "");
     return b === "Infinity" ? sign * Infinity : b === "NaN" ? NaN : sign * Number(b);

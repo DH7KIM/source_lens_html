@@ -13,9 +13,13 @@ let logMod = "";         // 소스를 그릴 때 본 컴파일러 결과 파일�
 let docLang = uiLang;    // 고른 문서 언어
 let mdRaw = false;       // .md를 원문으로 볼지
 let hlLine = 0;          // 표시한 줄
+let hlItem = null;       // 계층 보기에서 고른 항목 { id, line, col, ec } (소스 보기에서 그 글자 범위를 더 진하게). 줄만 고른 때는 null
 const $ = id => document.getElementById(id);
 const KEY = location.pathname; // file:// 페이지는 저장소를 함께 쓰므로 이 파일 경로로 구분
 try { mdRaw = localStorage.getItem("sv-md-raw:" + KEY) === "1"; } catch (e) {}
+let jsonTree = false;    // JSON·JSON5를 계층으로 볼지
+try { jsonTree = localStorage.getItem("sv-json-tree:" + KEY) === "1"; } catch (e) {}
+let treeShown = false;   // 지금 계층으로 보여 주고 있는지 (오류면 소스 보기로 돌아가므로 jsonTree와 다를 수 있음)
 let showDiag = true;     // .ui·toml 오류를 줄 아래에 보일지
 try { showDiag = localStorage.getItem("sv-diag:" + KEY) !== "0"; } catch (e) {}
 // .ui 배치 미리보기 설정: 켜짐, 창 크기("fit" | "custom" | "640x480"…), 너비·높이, 배율, 아래 칸 높이

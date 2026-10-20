@@ -2,6 +2,18 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.23.0 (2026-10-20)
+
+### source-viewer.html
+
+- JSON·JSON5·JSON Lines 지원을 `feature_notes` 시험 소스(v0.0.9~v0.0.36)에서 한 버전으로 가져옴. `json-tree` 갈래에서 만들어 합침.
+  - `.json`, `.jsonc`, `.json5`, `.jsonl`, `.ndjson`의 **계층 보기**: `소스 보기` / `계층 보기` 전환, 가지 연결선, 값 종류별 색 점, 두 보기 사이 줄 강조·이동. 틀린 파일은 오류까지만 계층을 보여 줌.
+  - **문법 검사** (J001~): 첫 오류 하나를 밑줄 + 화면 언어 설명으로 알림. JSON Lines는 줄마다 따로 검사 (틀린 줄 최대 100개). 파일을 열면 첫 오류 줄로 스크롤.
+  - 화면 언어를 바꾸면 열려 있는 파일이 바로 바뀜 (JSON, TOML, 컴파일러 결과, `.ui`).
+  - 영어 문구 정리(`1 error` / `2 errors`), 오류 빨강을 테마 색과 분리.
+- 새 예제: `tests/samples/project/json/` (`ok.json`, `sample.json5`, `error.json`, `lines.jsonl`).
+- 맨 위 버전 주석 v0.23.0.
+
 ## v0.22.1 (2026-10-20)
 
 ### tools

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.22.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.23.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -25,8 +25,13 @@
     --mono: "Cascadia Code", "Cascadia Mono", Consolas, "D2Coding", "Malgun Gothic", monospace;
     /* 문법 색: 키워드, 타입, 문자열, 주석, 숫자·상수, 전처리·속성, 함수·매크로 */
     --hk: #a0365e; --ht: #2a6f97; --hs: #3d7a2a; --hc: #8a8780; --hn: #b5651d; --hp: #7b4fa0; --hf: #2f6fc0;
+    /* 오류 빨강(--err)과 헷갈리지 않게 쓰는 색: 보통 --hk·--hp와 같고, 빨강 계열인 테마(GitHub, Gruvbox)만 따로 정함. false·.bat·.json 점·계층 보기 아이콘에 씀 */
+    --hk2: var(--hk); --hp2: var(--hp);
     --err: #d03030; /* 오류: 빨간 글자 */
     --warn: #b06a00; /* 경고: 주황 (.ui W1xx) */
+    --hl: color-mix(in srgb, var(--accent) 22%, var(--bg)); /* 선택한 줄 */
+    --hover: color-mix(in srgb, var(--fg) 8%, var(--bg));   /* 마우스를 올린 줄 */
+    --hl-hover: color-mix(in srgb, var(--accent) 32%, var(--bg));   /* 선택한 줄 + 마우스 */
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme]) {
@@ -101,7 +106,7 @@
   nav a .alt { color: var(--muted); font-size: 12px; margin-left: 4px; }
   nav a .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 7px; vertical-align: 1px; background: var(--muted); }
   nav a .dot.cpp { background: var(--hf); } nav a .dot.rust { background: var(--hn); } nav a .dot.md { background: var(--hs); }
-  nav a .dot.toml, nav a .dot.json, nav a .dot.json5 { background: var(--hp); } nav a .dot.bat, nav a .dot.hash { background: var(--hk); }
+  nav a .dot.toml, nav a .dot.json, nav a .dot.json5 { background: var(--hp2); } nav a .dot.bat, nav a .dot.hash { background: var(--hk2); }
   nav a .dot.ui { background: var(--ht); } nav a .dot.uilog { background: var(--hc); }
   main { flex: 1; min-width: 0; }
   article, .start { max-width: 820px; margin: 0 auto; padding: 24px 24px 80px; }
@@ -122,7 +127,12 @@
   .code .no::before { content: attr(data-n); } /* 글자가 아니므로 복사되지 않음 */
   .code .no:hover { color: var(--fg); }
   .code .tx { flex: 1; white-space: pre; padding: 0 24px 0 14px; tab-size: 4; -moz-tab-size: 4; }
-  .code .r.hl .tx, .code .r.hl .no { background: var(--sel); color: var(--fg); }
+  /* 줄 강조: 선택한 줄은 강조색 배경 + 왼쪽 굵은 막대(색만으로 구분하지 않음), 마우스를 올린 줄은 연한 배경 */
+  .code .r.hl .tx, .code .r.hl .no { background: var(--hl); color: var(--fg); }
+  .code .r.hl .no { box-shadow: inset 3px 0 0 var(--accent); }
+  .code .r:not(.dg):not(.hl):hover .tx, .code .r:not(.dg):not(.hl):hover .no { background: var(--hover); }
+  .code .r.hl .sel-item { background: color-mix(in srgb, var(--accent) 42%, var(--bg)); border-radius: 3px; }   /* 계층 보기에서 고른 항목의 글자 범위 */
+  .code .r.hl:hover .tx, .code .r.hl:hover .no { background: var(--hl-hover); }   /* 선택한 줄에 올려도 선택 모양이 유지되고 조금 더 진해짐 */
   .code .msg { padding: 24px; color: var(--muted); font-family: var(--font); }
   .k { color: var(--hk); } .t { color: var(--ht); } .s { color: var(--hs); } .c { color: var(--hc); font-style: italic; }
   .n { color: var(--hn); } .p { color: var(--hp); } .f { color: var(--hf); }
@@ -198,6 +208,56 @@
   .pv-tooltip[hidden] { display: none; }
   .pv-pop .mi > .pv-pop { display: none; left: 100%; top: -4px; } .pv-pop .mi:hover > .pv-pop { display: block; }
 
+  /* 소스 보기 | 계층 보기 단추 (눌린 쪽은 강조색 + 굵은 글자, 색만으로 구분하지 않음) */
+  .mode-seg { display: inline-flex; } .mode-seg button { border-radius: 0; margin: 0; }
+  .mode-seg button:first-child { border-radius: 8px 0 0 8px; } .mode-seg button:last-child { border-radius: 0 8px 8px 0; border-left: 0; }
+  .mode-seg button[aria-pressed="true"] { background: var(--accent); color: var(--bg); font-weight: 700; }
+  /* JSON·JSON5 계층 보기 (.code 안에 그림). 객체·배열 아이콘, 접기·펼치기, 오른쪽 끝은 소스 줄 번호 */
+  .tj-root { padding: 8px 12px 40px; font: 13.5px/1.6 var(--mono); }
+  .tj summary, .tj-row { display: flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 4px; white-space: pre; }
+  .tj summary { cursor: pointer; list-style: none; user-select: none; }
+  .tj summary::-webkit-details-marker { display: none; }
+  .tj summary:hover, .tj-row:hover { background: var(--hover); }
+  .tj summary.hl, .tj-row.hl { background: var(--hl); box-shadow: inset 3px 0 0 var(--accent); }
+  .tj summary.hl:hover, .tj-row.hl:hover { background: var(--hl-hover); }
+  /* 같은 줄의 나머지 항목: 연하게 */
+  .tj summary.hl2, .tj-row.hl2 { background: color-mix(in srgb, var(--accent) 10%, var(--bg)); }
+  .tj summary.hl2:hover, .tj-row.hl2:hover { background: var(--hl); }
+  .tj .tw { width: 12px; height: 12px; flex: none; color: var(--muted); transition: transform 0.12s; }
+  .tj[open] > summary .tw { transform: rotate(90deg); }
+  .tj-ic { width: 16px; height: 16px; flex: none; color: var(--hp2); }
+  .tj-sp { width: 12px; flex: none; }
+  .tj-dot { width: 12px; height: 16px; flex: none; display: inline-flex; align-items: center; justify-content: center; }
+  .tj-dot::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
+  /* 점 색 = 값의 종류 (문자열·숫자·true/false/null), 파일 목록의 종류별 점과 같은 모양 */
+  .tj-dot.s::before { background: var(--hs); } .tj-dot.n::before { background: var(--hn); }
+  .tj-dot.tj-true::before { background: var(--ht); } .tj-dot.tj-false::before { background: var(--hk2); } .tj-dot.tj-null::before { background: var(--hc); }
+  /* 값 글자 색도 점과 같은 종류별 색 */
+  .tj-v.tj-true { color: var(--ht); } .tj-v.tj-false { color: var(--hk2); } .tj-v.tj-null { color: var(--hc); }
+  .tj-k { color: var(--hf); } .tj-i { color: var(--muted); } .tj-sum { color: var(--muted); }
+  .tj-v { white-space: pre-wrap; overflow-wrap: anywhere; min-width: 0; }
+  .tj-go { margin-left: auto; padding-left: 16px; color: var(--muted); font-size: 12px; text-decoration: none; cursor: pointer; flex: none; }
+  .tj-go:hover { color: var(--accent); text-decoration: underline; }
+  /* 가지 연결선 ├── └── │ : 자식마다 세로선과 가로선. 마지막 자식은 세로선이 줄 가운데에서 끝남 */
+  .tj-ego { margin-left: auto; padding-left: 16px; color: var(--muted); font-size: 12px; text-decoration: none; cursor: pointer; flex: none; }
+  .tj-ego:hover { color: var(--accent); text-decoration: underline; }
+  .tj-edot::before { background: var(--err); }
+  .tj-etext { color: var(--muted); }
+  .tj-errbox { margin: 2px 0; }
+  .tj-err { display: flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 4px; color: var(--err); font-weight: 600; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .tj-esrc { color: var(--fg); font-weight: 400; white-space: pre; overflow: hidden; background: color-mix(in srgb, var(--err) 7%, transparent); }
+  .tj-ebad { color: var(--err); font-weight: 600; text-decoration: underline wavy var(--err); text-underline-offset: 3px; text-decoration-skip-ink: none; }
+  /* 단계마다 16px 들여쓰기 (14px + 선과 화살표가 겹치지 않게 2px). 세로선은 위 항목 화살표 가운데(8+6=14px), 가로선 11px는 점·화살표 바로 앞까지 */
+  .tj-kids { margin-left: 14px; }
+  .tj-kids > * { position: relative; }
+  .tj-kids > .tj { padding-left: 2px; }   /* 묶음(화살표) 줄은 가지선 가까이 */
+  .tj-kids > .tj-errbox { padding-left: 8px; }   /* 오류 안내 글자는 값 줄의 키 이름과 같은 자리 (8 + 8 + 12 + 4 = 16 + 12 + 4) */
+  .tj-kids > .tj-row { padding-left: 16px; }   /* 16 = 8(가지선 끝과 점 사이, 파일 목록의 파일 줄과 같음) + 8(줄 자체 안쪽 여백). 화살표 줄은 파일 목록의 폴더 줄처럼 선 가까이 */
+  .tj-kids > *::before, .tj-kids > *::after { content: ""; position: absolute; left: 0; opacity: 0.5; pointer-events: none; }
+  .tj-kids > *::before { top: 0; bottom: 0; border-left: 1px solid var(--muted); }
+  .tj-kids > *::after { top: 11px; width: 11px; border-top: 1px solid var(--muted); }
+  .tj-kids > :last-child::before { bottom: auto; height: 11px; }
+
   @media (max-width: 760px) {
     .wrap { display: block; }
     #pvSize { display: none; }
@@ -240,6 +300,7 @@
   <span class="name" id="name">Source Viewer</span>
   <span class="state" id="state"></span>
   <button id="mdMode" hidden></button>
+  <span class="mode-seg" id="treeMode" hidden><button id="treeSrc"></button><button id="treeTree"></button></span>
   <button id="diagBtn" hidden></button>
   <button id="pvBtn" hidden></button>
   <span id="langs"></span>
@@ -298,6 +359,12 @@ const UI = {
     raw: "원문 보기", rawTip: "마크다운 원문을 줄 번호와 함께 봅니다",
     diagOff: "오류 설명 끄기", diagOn: "오류 설명 켜기", diagTip: "오류·경고 줄 아래의 코드·설명·추천(help)을 보이거나 숨깁니다. 밑줄은 늘 보입니다.",
     doc: "문서 보기", docTip: "마크다운을 문서 모양으로 봅니다",
+    treeSrc: "소스 보기", treeTree: "계층 보기",
+    treeSrcTip: "원문을 줄 번호와 함께 봅니다", treeTreeTip: "JSON·JSON5를 객체 {} 과 배열 [] 구조로 접고 펼치며 봅니다. 보기만 하고 고치지 않습니다.",
+    treeLine: "{0}번 줄. 클릭하면 소스 보기에서 이 줄로 갑니다", treeMap: "객체 (키: 값) {0}개", treeArray: "배열 (순서 있는 목록) {0}개",
+    treeErr: "계층으로 볼 수 없어 소스 보기로 보여 줍니다 ({0}번 줄: {1})",
+    treeStop: "오류 때문에 계층 보기를 이어갈 수 없습니다 ({0}번 줄: {1})",
+    treeLines: "JSON Lines (줄마다 값 하나) {0}줄",
     langTip: "문서(.md)를 이 언어로 봅니다",
     noTip: "클릭: 이 줄 표시 (주소에 줄 번호가 남아 다음에 바로 열림)",
     navSizeTip: "끌어서 폭 조절 / 두 번 클릭하면 이름에 맞춤",
@@ -330,22 +397,41 @@ const UI = {
     tomlT008: "키 `{0}`가 중복되었습니다", tomlT008h: "한 표 안에서 키는 한 번만 정할 수 있습니다. 하나를 지우거나 이름을 바꾸세요",
     tomlT009: "표 `{0}`가 이미 정해졌거나 값과 겹칩니다", tomlT009h: "[표]는 한 번만 쓸 수 있습니다. 같은 이름을 반복하려면 [[이름]]을 쓰세요",
     tomlT010: "배열 또는 인라인 표가 닫히지 않았습니다", tomlT010h: "항목은 `,`로 나누고 `]` 또는 `}`로 닫으세요",
+    jsonTip: "JSON·JSON5 문법 검사입니다 (J001~J012). 문법 오류만 검사하고, 첫 오류 하나만 보여 줍니다. 밑줄에 마우스를 올리면 설명이 보입니다.",
+    jsonJ001: "주석이 닫히지 않았습니다", jsonJ001h: "`/*`로 연 주석은 `*/`로 닫으세요",
+    jsonJ002: "올바르지 않은 16진수 이스케이프입니다", jsonJ002h: "`\\x` 뒤에는 16진수 2자리, `\\u` 뒤에는 4자리를 쓰세요",
+    jsonJ003: "문자열이 닫히지 않았습니다", jsonJ003h: "문자열 끝에 닫는 따옴표를 붙이세요. 문자열은 줄을 넘길 수 없습니다",
+    jsonJ004: "키가 필요합니다", jsonJ004h: "키는 \"따옴표\"로 감싼 문자열이어야 합니다 (JSON5는 따옴표 없는 영문 키도 가능)",
+    jsonJ005: "키 뒤에 `:`가 필요합니다", jsonJ005h: "`\"키\": 값` 모양으로 쓰세요. 공백이 있는 키는 따옴표로 감싸고, 여는 따옴표가 빠지지 않았는지 확인하세요",
+    jsonJ006: "`,` 또는 `}`가 필요합니다", jsonJ006h: "항목 사이에는 `,`를 쓰고, 객체는 `}`로 닫으세요",
+    jsonJ007: "`,` 또는 `]`가 필요합니다", jsonJ007h: "항목 사이에는 `,`를 쓰고, 배열은 `]`로 닫으세요",
+    jsonJ008: "값이 없습니다 (내용이 끝났습니다)", jsonJ008h: "열어 둔 `{`·`[`를 닫았는지, 마지막 값이 빠지지 않았는지 확인하세요",
+    jsonJ009: "올바르지 않은 글자 `{0}`", jsonJ009h: "값은 \"문자열\", 숫자, true/false/null, {객체}, [배열] 중 하나여야 합니다",
+    jsonJ010: "값 뒤에 글자가 더 있습니다", jsonJ010h: "JSON 파일에는 값이 하나만 있어야 합니다. 여러 값을 줄마다 적는 JSON Lines라면 모든 줄이 올바른지 확인하세요",
+    jsonJ011: "너무 깊게 중첩되어 있습니다 (200단계 초과)", jsonJ011h: "구조를 줄이거나 파일을 나누세요",
+    jsonJ012: "JSON Lines 형식입니다 (줄마다 값이 하나)", jsonJ012h: "한 파일 전체가 아니라 줄마다 따로 읽는 형식이라 오류는 아닙니다. 계층 보기에서는 줄마다 항목 하나로 보입니다",
   },
   en: {
-    pick: "Choose source folder", regrant: "Open folder", pickFiles: "Choose folder",
+    pick: "Choose folder", regrant: "Allow access", pickFiles: "Choose folder",
     startNew: "Choose the folder that contains this file (source-viewer.html) once.<br>After that, just click a file in the list.",
     startRegrant: "Allow access to the \"{0}\" folder once.",
     noteFsa: "In Chrome, choose \"Allow on every visit\" to skip this step next time.",
     noteFallback: "This browser cannot auto-refresh a folder. (Chrome or Edge recommended)",
     noFiles: "No viewable source files in the chosen folder.", auto: "Auto refresh", noAuto: "No auto refresh",
     notFound: "Not found: {0}", notFile: "\"{0}\" is not a source file in this folder",
-    packErr: "Cannot read language pack {0} (line {1}: {2}) — using built-in translation", packSkip: "Language pack {0}: {1} translations ignored (different number of {})",
+    packErr: "Cannot read language pack {0} (line {1}: {2}) — using built-in translation", packSkip: "Language pack {0}: {1} translations ignored (different number of placeholders)",
     binary: "This is not a text file.", tooBig: "Large file: shown without colors.",
-    lines: "{0} lines",
+    lines: "{0} {0|line|lines}",
     folder: "Change folder", folderTip: "Choose another source folder",
     raw: "Raw", rawTip: "Show the markdown source with line numbers",
-    diagOff: "Hide details", diagOn: "Show details", diagTip: "Show or hide the code, message and suggestion (help) under each error or warning line. Underlines always stay.",
+    diagOff: "Hide details", diagOn: "Show details", diagTip: "Show or hide the error code, message and help text under each error or warning line. Underlines always stay.",
     doc: "Document", docTip: "Show the markdown as a document",
+    treeSrc: "Source", treeTree: "Tree",
+    treeSrcTip: "Show the source with line numbers", treeTreeTip: "Show JSON / JSON5 as collapsible objects {} and arrays []. View only, nothing is edited.",
+    treeLine: "Line {0}. Click to go to this line in the source view", treeMap: "Object (key: value), {0} {0|item|items}", treeArray: "Array (ordered list), {0} {0|item|items}",
+    treeErr: "Cannot show the tree view; showing the source view instead (line {0}: {1})",
+    treeStop: "The tree view stops here because of an error (line {0}: {1})",
+    treeLines: "JSON Lines (one value per line), {0} {0|line|lines}",
     langTip: "Show documents (.md) in this language",
     noTip: "Click: mark this line (the line number stays in the address)",
     navSizeTip: "Drag to resize / double-click to fit",
@@ -355,14 +441,14 @@ const UI = {
     pvSizeTip: "Drag to change the height of the source / layout panes", pvWinTip: "Window size to preview. 'Fit to pane' uses the lower pane size as the window size.",
     pvFit: "Fit to pane", pvCustom: "Custom", pvW: "Width", pvH: "Height", pvWHTip: "Type the window size in pixels",
     pvScaleTip: "DPI scale. Numbers (positions, sizes) and the font grow with this scale.",
-    pvRecovered: "{0} error(s): drawn without the wrong elements", pvRecoveredTip: "Same as 'Ignore' in the program: elements with errors are left out with their blocks; right_of/below naming a missing element become left=0/top=0.",
+    pvRecovered: "{0} {0|error|errors}: drawn without the wrong elements", pvRecoveredTip: "Same as 'Ignore' in the program: elements with errors are left out with their blocks; right_of/below naming a missing element become left=0/top=0.",
     pvCannot: "The layout cannot be drawn with this error (header line '#ui 1', file size, …). Fix the errors above first.",
     pvBox: "{0}  line {5}  position {1}, {2}  size {3}×{4}", pvBoxGo: "Click to go to this line in the source.", pvHidden: "(hidden)", pvDisabled: "(disabled)",
     pvModeL: "Layout", pvModeV: "View", pvModeLTip: "Layout mode: click a box to go to its line in the source.",
     pvModeVTip: "View mode: looks like the program. Hover a box to see its tooltip (tooltip, or disabled_tooltip when disabled); click a menu_button to open its menu (view only; click outside or press Esc to close).",
     pvDropGo: "Click to open the menu.", pvNoMenu: "No menu is linked", pvEmpty: "(empty menu)", pvItem: "{0}  line {1}",
     gccTip: "Compiler output. Reads build.log (GCC) and cargo.json (Rust) at the top of the opened folder and shows the errors, warnings and notes for this file on the source lines. Hover an underline to see the message. (read when the folder or a file is opened, and again when the result file changes)",
-    uiErrs: "{0} error(s)", uiWarns: "{0} warning(s)", uiOk: "check passed",
+    uiErrs: "{0} {0|error|errors}", uiWarns: "{0} {0|warning|warnings}", uiOk: "check passed",
     uiErrsTip: "The same full check as ui-check (E001-E016, W101, W103 and W104, UI document {0}; W104 for old names is not in ui-check yet). Hover an underline to see the message.",
     tomlTip: "TOML 1.0 syntax check (T001-T010). Only syntax errors are checked; unknown Cargo keys and required fields are not. Hover an underline to see the message.",
     tomlT001: "string is not closed", tomlT001h: "add the closing quote at the end of the string",
@@ -378,11 +464,25 @@ const UI = {
     tomlT008: "duplicate key `{0}`", tomlT008h: "a key can be defined only once in a table; remove or rename one",
     tomlT009: "table `{0}` is already defined or conflicts with a value", tomlT009h: "each [table] can appear only once; use [[name]] for repeated entries",
     tomlT010: "array or inline table is not closed", tomlT010h: "separate items with `,` and close with `]` or `}`",
+    jsonTip: "JSON/JSON5 syntax check (J001-J012). Only syntax errors are checked, and only the first error is shown. Hover an underline to see the message.",
+    jsonJ001: "comment is not closed", jsonJ001h: "close a comment opened with `/*` using `*/`",
+    jsonJ002: "invalid hex escape", jsonJ002h: "`\\x` needs 2 hex digits and `\\u` needs 4",
+    jsonJ003: "string is not closed", jsonJ003h: "add the closing quote; a string cannot span lines",
+    jsonJ004: "expected a key", jsonJ004h: "a key is a \"quoted\" string (JSON5 also allows unquoted identifiers)",
+    jsonJ005: "expected `:` after the key", jsonJ005h: "write `\"key\": value`; quote keys that contain spaces and check for a missing opening quote",
+    jsonJ006: "expected `,` or `}`", jsonJ006h: "separate members with `,` and close the object with `}`",
+    jsonJ007: "expected `,` or `]`", jsonJ007h: "separate items with `,` and close the array with `]`",
+    jsonJ008: "expected a value (end of input)", jsonJ008h: "check that every `{` and `[` is closed and the last value is not missing",
+    jsonJ009: "unexpected character `{0}`", jsonJ009h: "a value is a \"string\", number, true/false/null, {object} or [array]",
+    jsonJ010: "unexpected text after the value", jsonJ010h: "a JSON file holds one value; for JSON Lines (one value per line) make sure every line is valid",
+    jsonJ011: "nested too deeply (over 200 levels)", jsonJ011h: "flatten the structure or split the file",
+    jsonJ012: "JSON Lines format (one value per line)", jsonJ012h: "each line is read on its own, so this is not an error; the tree view shows one item per line",
   },
 };
 const LANG_NAMES = { ko: "한국어", en: "English", ja: "日本語", zh: "中文" };
 let uiLang = (navigator.language || "en").toLowerCase().startsWith("ko") ? "ko" : "en";
-const t = (key, ...a) => String((UI[uiLang] || UI.en)[key] ?? UI.en[key]).replace(/\{(\d)\}/g, (_, i) => a[+i] ?? "");
+// {0|item|items} = 값이 1이면 앞의 말, 아니면 뒤의 말 (영어 단수·복수, 한국어 문구는 쓰지 않음)
+const t = (key, ...a) => String((UI[uiLang] || UI.en)[key] ?? UI.en[key]).replace(/\{(\d)\|([^|}]*)\|([^|}]*)\}/g, (_, i, one, many) => +a[+i] === 1 ? one : many).replace(/\{(\d)\}/g, (_, i) => a[+i] ?? "");
 const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
 // ======================= 파일 종류 =======================
@@ -391,7 +491,7 @@ const LANG_BY_EXT = {
   cpp: "cpp", cc: "cpp", cxx: "cpp", c: "cpp", h: "cpp", hh: "cpp", hpp: "cpp", hxx: "cpp", ipp: "cpp", inl: "cpp",
   ixx: "cpp", cppm: "cpp", mpp: "cpp", ccm: "cpp", cxxm: "cpp", rc: "cpp",
   rs: "rust", toml: "toml", ini: "toml", cfg: "toml", editorconfig: "toml",
-  json: "json", jsonc: "json", json5: "json5", bat: "bat", cmd: "bat",
+  json: "json", jsonc: "json", jsonl: "json", ndjson: "json", json5: "json5", bat: "bat", cmd: "bat",
   sh: "hash", ps1: "hash", psm1: "hash", yml: "hash", yaml: "hash", cmake: "hash", mk: "hash",
   gitignore: "hash", gitattributes: "hash",
   md: "md", txt: "plain", log: "plain", ui: "ui", xml: "plain", manifest: "plain", def: "plain", ld: "plain",
@@ -646,7 +746,7 @@ function json5Parse(src) {
     if (c === '"' || c === "'") return str();
     const m = /[A-Za-z_$][\w$]*/y; m.lastIndex = i;
     const r = m.exec(src);
-    if (!r) fail("key expected");
+    if (!r) fail("expected a key");
     i += r[0].length; return r[0];
   };
   const num = /[+-]?(?:Infinity|NaN|0[xX][\da-fA-F]+|(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)(?![\w$])/y;
@@ -680,7 +780,7 @@ function json5Parse(src) {
       if (src.startsWith(w, i) && !/[\w$]/.test(src[i + w.length] || "")) { i += w.length; return v; }
     num.lastIndex = i;
     const m = num.exec(src);
-    if (!m) fail(c === undefined ? "value expected" : "unexpected '" + c + "'");
+    if (!m) fail(c === undefined ? "expected a value" : "unexpected '" + c + "'");
     i += m[0].length;
     const s = m[0], sign = s[0] === "-" ? -1 : 1, b = s.replace(/^[+-]/, "");
     return b === "Infinity" ? sign * Infinity : b === "NaN" ? NaN : sign * Number(b);
@@ -690,6 +790,175 @@ function json5Parse(src) {
   return v;
 }
 
+// ---------- JSON5 트리 읽기 (계층 보기용, 줄 위치를 기록) ----------
+// json5Parse와 같은 문법을 읽되, 값 대신 노드 트리를 만든다. 읽기만 하고 고치지는 않는다.
+// 노드: { type, key, line, kids | text }
+//   type: object | array | string | number | boolean | null
+//   key : 객체 멤버는 이름(문자열), 배열 원소는 번호(숫자), 뿌리는 null
+//   id  : 노드 번호 (읽은 순서, 0부터)
+//   line: 소스의 줄 번호 (객체 멤버는 키가 있는 줄)
+//   col : 그 줄에서 시작 칸 (0부터, UTF-16 단위). 객체 멤버는 키 시작
+//   ec  : 그 줄에서 끝 칸 (포함 안 함). 항목이 여러 줄에 걸치면 -1 (그 줄 끝까지)
+//   kids: object·array의 자식 노드 목록 (같은 키가 둘이어도 그대로 둠)
+//   text: 값의 모양 글 (문자열은 따옴표를 붙인 글, 그 밖에는 소스에 적힌 그대로)
+// 뿌리 노드에는 count(전체 노드 수)가 있다. 주석은 건너뛴다.
+// 틀리면 Error: e.message(영어), e.line(줄 번호), e.code(J001…), e.pos(소스 안 위치, UTF-16), e.len(길이, UTF-16), e.args
+// 컨테이너 안에서 틀리면 e.node = 오류 직전까지 읽은 부분 트리(뿌리, count 포함). 오류가 난 가장 안쪽 컨테이너에는 err = e (값 뒤 글자 J010은 뿌리에 err + errAfter)
+// opt(JSON Lines의 한 줄을 읽을 때): line0 = 그 줄 앞의 줄 수(줄 번호에 더함), id0 = 노드 번호를 시작할 값
+function json5Tree(src, opt) {
+  const line0 = (opt && opt.line0) || 0;
+  const starts = [0];
+  for (let k = 0; k < src.length; k++) if (src[k] === "\n") starts.push(k + 1);
+  const lineAt = p => {   // 위치 → 줄 번호 (이진 탐색)
+    let lo = 0, hi = starts.length - 1;
+    while (lo < hi) { const m = (lo + hi + 1) >> 1; if (starts[m] <= p) lo = m; else hi = m - 1; }
+    return lo + 1 + line0;
+  };
+  let i = 0, count = (opt && opt.id0) || 0;
+  const fail = (code, msg, pos, len, ...args) => { const e = new Error(msg); e.line = lineAt(pos); e.code = code; e.pos = pos; e.len = len; e.args = args; throw e; };
+  const fin = (n, a, b) => {   // 시작 a·끝 b(포함 안 함) 위치 → 줄, 칸, 끝 칸
+    n.line = lineAt(a); n.col = a - starts[n.line - 1 - line0];
+    n.ec = lineAt(Math.max(a, b - 1)) === n.line ? b - starts[n.line - 1 - line0] : -1;
+    n.end = b;
+    return n;
+  };
+  // 컨테이너가 오류를 만나면: 읽은 항목까지로 자기를 닫고 e.node에 붙여 위로 넘김 (child = 안쪽 컨테이너가 넘긴 부분 노드, ks = 그 항목의 키 시작)
+  const partial = (e, node, at, child, ks) => {
+    if (e && e.code !== undefined) {
+      if (child) { if (ks >= 0) fin(child, ks, e.pos); node.kids.push(child); }
+      else node.err = e;
+      fin(node, at, e.pos);
+      e.node = node;
+    }
+    return e;
+  };
+  const ws = () => {
+    for (;;) {
+      const c = src[i];
+      if (c !== undefined && /\s/.test(c)) i++;
+      else if (c === "/" && src[i + 1] === "/") { while (i < src.length && src[i] !== "\n") i++; }
+      else if (c === "/" && src[i + 1] === "*") { const e = src.indexOf("*/", i + 2); if (e < 0) fail("J001", "unclosed comment", i, 2); i = e + 2; }
+      else return;
+    }
+  };
+  const hex = n => {
+    const h = src.slice(i, i + n);
+    if (h.length < n || !/^[\da-fA-F]+$/.test(h)) fail("J002", "invalid hex escape", i - 2, 2 + h.length);
+    i += n; return String.fromCharCode(parseInt(h, 16));
+  };
+  const str = () => {
+    const s0 = i, q = src[i++]; let out = "";
+    for (;;) {
+      if (i >= src.length) fail("J003", "unclosed string", s0, 1);
+      const c = src[i++];
+      if (c === q) return out;
+      if (c === "\n") { i--; fail("J003", "unclosed string", s0, 1); }
+      if (c !== "\\") { out += c; continue; }
+      const e = src[i++];
+      if (e === "n") out += "\n"; else if (e === "t") out += "\t"; else if (e === "r") out += "\r";
+      else if (e === "b") out += "\b"; else if (e === "f") out += "\f"; else if (e === "v") out += "\v";
+      else if (e === "0" && !/\d/.test(src[i] || "")) out += "\0";
+      else if (e === "x") out += hex(2);
+      else if (e === "u") out += hex(4);
+      else if (e === "\r") { if (src[i] === "\n") i++; }
+      else if (e === "\n" || e === "\u2028" || e === "\u2029") { /* 줄 잇기 */ }
+      else if (e === undefined) fail("J003", "unclosed string", s0, 1);
+      else out += e;
+    }
+  };
+  const key = () => {
+    const c = src[i];
+    if (c === '"' || c === "'") return str();
+    const m = /[A-Za-z_$][\w$]*/y; m.lastIndex = i;
+    const r = m.exec(src);
+    if (!r) fail("J004", "expected a key", i, 1);
+    i += r[0].length; return r[0];
+  };
+  const num = /[+-]?(?:Infinity|NaN|0[xX][\da-fA-F]+|(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)(?![\w$])/y;
+  const value = (k, depth) => {
+    ws();
+    if (depth > 200) fail("J011", "nested too deeply", i, 1);
+    const at = i, c = src[i];
+    const id = count++;
+    if (c === "{") {
+      i++; const kids = []; let ks = -1;
+      try {
+        for (;;) {
+          ws();
+          if (src[i] === "}") { i++; break; }
+          ks = i; const name = key(); ws();
+          if (src[i] !== ":") fail("J005", "':' expected", i, 1);
+          i++;
+          const n = fin(value(name, depth + 1), ks, i); kids.push(n); ks = -1; ws();
+          if (src[i] === ",") i++;
+          else if (src[i] !== "}") fail("J006", "',' or '}' expected", i, 1);
+        }
+      } catch (e) { throw partial(e, { type: "object", key: k, id, kids }, at, e && e.node, ks); }
+      return fin({ type: "object", key: k, id, kids }, at, i);
+    }
+    if (c === "[") {
+      i++; const kids = [];
+      try {
+        for (;;) {
+          ws();
+          if (src[i] === "]") { i++; break; }
+          kids.push(value(kids.length, depth + 1)); ws();
+          if (src[i] === ",") i++;
+          else if (src[i] !== "]") fail("J007", "',' or ']' expected", i, 1);
+        }
+      } catch (e) { throw partial(e, { type: "array", key: k, id, kids }, at, e && e.node, -1); }
+      return fin({ type: "array", key: k, id, kids }, at, i);
+    }
+    if (c === '"' || c === "'") return fin({ type: "string", key: k, id, text: JSON.stringify(str()) }, at, i);
+    for (const [w, ty] of [["true", "boolean"], ["false", "boolean"], ["null", "null"]])
+      if (src.startsWith(w, i) && !/[\w$]/.test(src[i + w.length] || "")) { i += w.length; return fin({ type: ty, key: k, id, text: w }, at, i); }
+    num.lastIndex = i;
+    const m = num.exec(src);
+    if (!m) { if (c === undefined) fail("J008", "expected a value", i, 1); const cp = String.fromCodePoint(src.codePointAt(i)); fail("J009", "unexpected '" + cp + "'", i, cp.length, cp); }
+    i += m[0].length;
+    return fin({ type: "number", key: k, id, text: m[0] }, at, i);
+  };
+  let root;
+  try { root = value(null, 0); ws(); }
+  catch (e) { if (e && e.node) e.node.count = count; throw e; }
+  if (i < src.length) {
+    try { fail("J010", "unexpected text after the value", i, 1); }
+    catch (e) { root.err = e; root.errAfter = true; root.count = count; e.node = root; throw e; }
+  }
+  root.count = count;
+  return root;
+}
+// ---------- JSON Lines 읽기 (줄마다 값 하나) ----------
+// 줄을 따로따로 json5Tree로 읽는다. 틀린 줄은 오류 항목({ type: "error" })으로 두고 나머지는 계속 읽는다 (줄끼리 영향이 없어서 오류 복구가 필요 없다).
+// 뿌리: { type: "array", lines: true, id: 0, kids, okCount, badCount, bads, count }. 항목의 key는 0부터 번호, line은 소스의 줄 번호.
+// 틀린 줄: 오류 직전까지 읽은 부분 트리가 있으면 그 줄의 항목으로 두고(오류 자리에 err, 줄 정보 errLine = { line, text }), 읽은 것이 없으면 오류 항목 { type: "error", key, id, line, col: 0, ec: -1, err: e, text: 그 줄 글 }.
+// bads = 틀린 줄 목록 [{ err, line, text }] (검사가 씀)
+function json5Lines(text) {
+  const kids = [], bads = [];
+  let id = 1, ok = 0, bad = 0;
+  text.split("\n").forEach((raw, k) => {
+    const ln = raw.replace(/\r$/, "");
+    if (ln.trim() === "" || /^\s*\/\//.test(ln)) return;   // 빈 줄·주석만 있는 줄은 건너뜀
+    try {
+      const n = json5Tree(ln, { line0: k, id0: id });
+      n.key = kids.length; id = n.count; ok++; kids.push(n);
+    } catch (e) {
+      if (!e || e.code === undefined) throw e;
+      bads.push({ err: e, line: k + 1, text: ln }); bad++;
+      if (e.node) { const n = e.node; n.key = kids.length; id = n.count; n.errLine = { line: k + 1, text: ln }; kids.push(n); }   // 오류 직전까지 읽은 부분
+      else kids.push({ type: "error", key: kids.length, id: id++, line: k + 1, col: 0, ec: -1, err: e, text: ln });
+    }
+  });
+  return { type: "array", key: null, lines: true, id: 0, line: 1, col: 0, ec: -1, kids, okCount: ok, badCount: bad, bads, count: id };
+}
+
+// 파일 전체로 읽다가 값 뒤에 글자가 남았을 때(J010, e = 그 오류) JSON Lines인지 판단해 줄 트리를 돌려준다 (아니면 null).
+// 조건: 첫 값이 끝난 뒤 줄이 바뀌어서 글자가 시작하고, 읽힌 줄이 2개 이상이며 틀린 줄보다 적지 않다 (한 파일 JSON의 꼬리 글자와 구별).
+function jsonLinesOf(text, e) {
+  if (!e || e.code !== "J010" || !e.node || !text.slice(e.node.end, e.pos).includes("\n")) return null;
+  const r = json5Lines(text);
+  return r.okCount >= 2 && r.okCount >= r.badCount ? r : null;
+}
 // ---------- .ui 오류·경고 설명 번역 (원문 영어 → 번역) ----------
 // 원본: tile_font_editor_cpp의 language/ko/ui-check.json5 (섹션 "ui-check"). 그 파일을 고치면 이 표도 같게 고친다.
 // {} 자리표시자는 원문과 같은 개수·순서. 없는 키나 빈 글이면 영어 원문을 쓴다.
@@ -2104,9 +2373,13 @@ let logMod = "";         // 소스를 그릴 때 본 컴파일러 결과 파일�
 let docLang = uiLang;    // 고른 문서 언어
 let mdRaw = false;       // .md를 원문으로 볼지
 let hlLine = 0;          // 표시한 줄
+let hlItem = null;       // 계층 보기에서 고른 항목 { id, line, col, ec } (소스 보기에서 그 글자 범위를 더 진하게). 줄만 고른 때는 null
 const $ = id => document.getElementById(id);
 const KEY = location.pathname; // file:// 페이지는 저장소를 함께 쓰므로 이 파일 경로로 구분
 try { mdRaw = localStorage.getItem("sv-md-raw:" + KEY) === "1"; } catch (e) {}
+let jsonTree = false;    // JSON·JSON5를 계층으로 볼지
+try { jsonTree = localStorage.getItem("sv-json-tree:" + KEY) === "1"; } catch (e) {}
+let treeShown = false;   // 지금 계층으로 보여 주고 있는지 (오류면 소스 보기로 돌아가므로 jsonTree와 다를 수 있음)
 let showDiag = true;     // .ui·toml 오류를 줄 아래에 보일지
 try { showDiag = localStorage.getItem("sv-diag:" + KEY) !== "0"; } catch (e) {}
 // .ui 배치 미리보기 설정: 켜짐, 창 크기("fit" | "custom" | "640x480"…), 너비·높이, 배율, 아래 칸 높이
@@ -2345,11 +2618,11 @@ function drawLangs() {
     b.textContent = LANG_NAMES[l] || l;
     b.title = t("langTip");
     b.className = l === docLang ? "on" : "";
-    b.onclick = async () => {
+    b.onclick = () => {
       docLang = l;
       if (UI[l]) uiLang = l;
       if (cur && isMd(cur)) openFile(pathFor(keyOf(cur), l));
-      else if (cur && (langOf(cur) === "ui" || isTomlFile(cur) || (await loadBuildLog()).files.has(cur))) openFile(cur, { keepScroll: true });   // 진단 설명도 그 언어로
+      else if (cur) openFile(cur, { keepScroll: true });   // 다시 열어서 상태 줄·진단 설명·계층 보기 안내도 그 언어로 (.ui, JSON, TOML 등)
       else { drawNav(); drawLangs(); drawStatic(); drawPreview(); }
     };
     box.append(b);
@@ -2814,6 +3087,50 @@ function tomlText(d, L) {
 }
 const isTomlFile = path => /\.toml$/i.test(path) || /(^|\/)cargo\.lock$/i.test(path);   // ini·cfg는 TOML이 아니라서 검사 안 함
 
+// ======================= JSON·JSON5 문법 검사 =======================
+/// JSON·JSON5 문법 검사 (문법 오류만. 값의 뜻은 검사하지 않음). 읽기 코드는 계층 보기와 같은 json5Tree를 쓴다.
+/// 진단: { line, col, length(코드 포인트, 줄 끝까지로 자름), severity: "error"|"note", code: "J001"…, args, msg, help }
+/// 이번 버전은 첫 오류 하나만 알린다 (오류 복구는 다음 후보).
+/// JSON Lines(줄마다 값 하나, `jsonLinesOf`가 판단): 줄마다 따로 읽어 틀린 줄을 모두 알린다(최대 100개). 틀린 줄이 없으면 오류 대신 안내(note) J012.
+function jsonCheck(text) {
+  try { json5Tree(text); return []; }
+  catch (e) {
+    if (!e || e.code === undefined) throw e;
+    const jl = jsonLinesOf(text, e);
+    if (jl) {
+      const ds = jl.bads.slice(0, 100).map(b => jsonLineDiag(b.err, b.line, b.text));
+      return ds.length ? ds : [{ line: 1, col: 1, length: 0, severity: "note", code: "J012", args: [], msg: "", help: "" }];
+    }
+    const p = jsonPos(text, e.pos, e.len);
+    return [{ line: p.line, col: p.col, length: p.length, severity: "error", code: e.code, args: e.args || [], msg: "", help: "" }];
+  }
+}
+
+/// 소스 안 위치(UTF-16) → 줄, 칸, 길이 (칸·길이는 코드 포인트, 길이는 줄 끝까지로 자름)
+function jsonPos(text, pos, len) {
+  const before = text.slice(0, pos), line = before.split("\n").length;
+  const lineStart = before.lastIndexOf("\n") + 1;
+  const col = Array.from(before.slice(lineStart)).length + 1;
+  let lineEnd = text.indexOf("\n", pos); if (lineEnd < 0) lineEnd = text.length;
+  if (lineEnd > lineStart && text[lineEnd - 1] === "\r") lineEnd--;
+  const length = Array.from(text.slice(pos, Math.min(pos + len, Math.max(lineEnd, pos)))).length;
+  return { line, col, length };
+}
+
+/// JSON Lines의 한 줄(lineNo번 줄, 글 lineText)에서 난 오류 e → 진단 (위치는 그 줄 안의 것)
+function jsonLineDiag(e, lineNo, lineText) {
+  const p = jsonPos(lineText, e.pos, e.len);
+  return { line: lineNo, col: p.col, length: p.length, severity: "error", code: e.code, args: e.args || [], msg: "", help: "" };
+}
+
+/// 진단의 설명 글: 화면 언어 표(UI)에서 가져온다 (영어는 d.msg·d.help, 화면 언어가 영어가 아니면 d.show)
+function jsonText(d, L) {
+  const a = d.args || [];
+  const f = k => String((UI[L] || UI.en)[k] ?? UI.en[k]).replace(/\{(\d)\}/g, (_, i) => a[+i] ?? "");
+  const key = "json" + d.code;
+  return { msg: f(key), help: f(key + "h") };
+}
+const isJsonFile = path => { const k = langOf(path); return k === "json" || k === "json5"; };
 async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) {
   let f;
   try { f = await src.get(path); }
@@ -2826,7 +3143,7 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   if (changed) expandTo(path);
   cur = path; curMod = f.lastModified;
   logMod = await buildLogMod();
-  if (changed) hlLine = 0;
+  if (changed) { hlLine = 0; hlItem = null; }
   if (line) hlLine = line;
   if (lang === "md") {
     docLang = splitLang(path).lang;
@@ -2834,7 +3151,24 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
     document.documentElement.lang = docLang;
   }
   const asDoc = lang === "md" && !mdRaw;
-  let lineCount = 0, note = "", check = null, packNote = "";
+  let lineCount = 0, note = "", check = null, packNote = "", treeErr = "", treeHtml = null;
+  // JSON·JSON5 계층 보기: 읽기 오류일 때는 소스 보기. 표시한 줄(hlLine)은 두 보기가 함께 쓴다
+  if (!asDoc && jsonTree && (lang === "json" || lang === "json5") && !text.includes("\u0000")) {
+    try { treeHtml = renderJsonTree(json5Tree(text)); }
+    catch (e) {
+      const jl = jsonLinesOf(text, e);   // JSON Lines(줄마다 값 하나)면 줄마다 항목 하나로, 틀린 줄은 오류 항목
+      if (jl) treeHtml = renderJsonTree(jl, { lines: true, text });
+      else {
+      // 오류가 있어도 오류 직전까지 읽은 부분은 계층으로 보여 주고, 오류 자리에 안내 (읽은 것이 없거나 JSON Lines면 소스 보기)
+      const d = e && e.node ? jsonCheck(text)[0] : null;
+      if (d && d.severity === "error") {
+        Object.assign(d, jsonText(d, "en")); if (uiLang !== "en") d.show = jsonText(d, uiLang);
+        treeHtml = renderJsonTree(e.node, { d, text });
+      } else treeErr = t("treeErr", e.line || 1, e.message);
+      }
+    }
+  }
+  treeShown = treeHtml !== null;
   if (asDoc) {
     art.innerHTML = renderMarkdown(text);
     await loadImages();
@@ -2843,6 +3177,9 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   } else {
     if (text.includes("\u0000") && enc !== "UTF-16") {
       codeEl.innerHTML = `<div class="msg">${esc(t("binary"))}</div>`;
+    } else if (treeHtml !== null) {
+      codeEl.innerHTML = treeHtml;
+      lineCount = text.split("\n").length - (text.endsWith("\n") ? 1 : 0);
     } else {
       const big = text.length > HL_MAX;
       if (big) note = t("tooBig");
@@ -2859,6 +3196,7 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
         // 컴파일러 결과 (build.log): 이 파일의 진단이 있으면 같은 방식으로 밑줄 + 진단 줄
         const ds = (await loadBuildLog()).files.get(path);
         const toml = !big && isTomlFile(path);
+        const json = !big && isJsonFile(path);
         let diags = ds && ds.length ? gccFit(ds, text) : [];
         diags = diags.map(d => d.src === "gcc" ? gccApply(d, uiLang) : d);   // GCC 설명은 화면 언어로 (원문은 d.msg)
         if (toml) {   // TOML 문법 검사: 설명은 화면 언어로 (영어 원문은 d.msg)
@@ -2866,11 +3204,18 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
           for (const d of tds) { Object.assign(d, tomlText(d, "en")); if (uiLang !== "en") d.show = tomlText(d, uiLang); }
           diags = tds.concat(diags).sort((a, b) => a.line - b.line || a.col - b.col);
         }
-        if (toml || diags.length) {
-          check = { diags, gcc: !toml, toml, errorCount: diags.filter(d => d.severity === "error").length, warningCount: diags.filter(d => d.severity === "warning").length };
+        if (json) {   // JSON·JSON5 문법 검사: 첫 오류 하나. 설명은 화면 언어로
+          const jds = jsonCheck(text);
+          for (const d of jds) { Object.assign(d, jsonText(d, "en")); if (uiLang !== "en") d.show = jsonText(d, uiLang); }
+          diags = jds.concat(diags).sort((a, b) => a.line - b.line || a.col - b.col);
+        }
+        if (toml || json || diags.length) {
+          check = { diags, gcc: !toml && !json, toml, json, errorCount: diags.filter(d => d.severity === "error").length, warningCount: diags.filter(d => d.severity === "warning").length };
           if (!big) toks = markUiDiags(toks, diags);
         }
       }
+      // 계층 보기에서 고른 항목의 글자 범위 (JSON·JSON5, 그 줄을 보고 있을 때)
+      if (!big && hlItem && hlItem.line === hlLine && (lang === "json" || lang === "json5")) toks = markItemRange(toks, hlItem);
       const diags = check ? check.diags : [];
       const lines = tokensToLines(toks);
       if (lines.length > 1 && lines[lines.length - 1] === "") lines.pop();
@@ -2897,6 +3242,11 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   $("name").textContent = projectLabel() + path;
   document.title = path + " - Source Viewer";
   setState([lineCount ? t("lines", lineCount) : "", fmtSize(size), enc, src.kind === "fsa" ? t("auto") : t("noAuto"), note].filter(Boolean).join(" · "));
+  if (treeErr) {   // 계층 보기 오류 (빨강)
+    const b = document.createElement("span");
+    b.className = "bad"; b.textContent = " · " + treeErr;
+    $("state").append(b);
+  }
   if (check && !(check.gcc && !check.errorCount && !check.warningCount)) {   // .ui 검사 결과(또는 컴파일러 결과): 오류(빨강)·경고(주황)·문제 없음
     const b = document.createElement("span");
     const parts = [];
@@ -2904,7 +3254,7 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
     if (check.warningCount) parts.push(t("uiWarns", check.warningCount));
     b.className = check.errorCount ? "bad" : check.warningCount ? "warn" : "okay";
     b.textContent = " · " + (parts.length ? parts.join(" · ") : t("uiOk"));
-    b.title = check.toml ? t("tomlTip") : check.gcc ? t("gccTip") : t("uiErrsTip", UI_DOC_VERSION);
+    b.title = check.toml ? t("tomlTip") : check.json ? t("jsonTip") : check.gcc ? t("gccTip") : t("uiErrsTip", UI_DOC_VERSION);
     $("state").append(b);
     if (packNote) {   // 언어팩 문제 (빨강)
       const pb = document.createElement("span");
@@ -2921,10 +3271,23 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
     scrollTo(0, keepScroll ? prevY : 0);
   } else {
     scrollTo(0, 0);
-    if (keepScroll) codeEl.scrollTop = prevY;
+    if (keepScroll) { codeEl.scrollTop = prevY; if (treeShown) markTreeLines(hlLine); }
+    else if (treeShown) { if (!(changed && !hlLine && scrollToFirstError(codeEl, check))) scrollTreeToLine(hlLine); }
     else if (line) { const r = $("L" + line); if (r) r.scrollIntoView({ block: "center" }); }
-    else codeEl.scrollTop = 0;
+    else if (!(changed && scrollToFirstError(codeEl, check))) codeEl.scrollTop = 0;
   }
+}
+
+// 파일을 처음 열 때 첫 오류 위치로 이동 (소스 보기: 오류 줄, 계층 보기: 오류 안내 항목). 오류가 없으면 false.
+// 가로로는 움직이지 않게 inline: "start" (긴 줄이 있어도 왼쪽 끝에서 시작)
+function scrollToFirstError(codeEl, check) {
+  let el = null;
+  if (treeShown) el = codeEl.querySelector(".tj-err");
+  else { const d = check && check.diags.find(x => x.severity === "error"); if (d) el = $("L" + d.line); }
+  if (!el) return false;
+  for (let d = el.closest("details"); d; d = d.parentElement.closest("details")) d.open = true;
+  el.scrollIntoView({ block: "center", inline: "start" });
+  return true;
 }
 
 /// 진단 2줄: "   ^^^^ error[E003]: 메시지" / "        help: 추천" (경고는 warning[W103], 주황)
@@ -2945,14 +3308,20 @@ function setHash(anchor = "") {
   history.replaceState(null, "", "#" + encodeURI(cur) + (hlLine && !$("code").hidden ? ":L" + hlLine : anchor ? "#" + anchor : ""));
 }
 
-// 줄 번호 클릭 → 그 줄 표시 (주소에 남김)
+// 줄 클릭 → 그 줄 표시 (주소에 남김). 줄 번호뿐 아니라 글자 부분을 눌러도 되고, 같은 줄을 또 누르면 해제.
+// 글자를 끌어서 고른 뒤에는 줄 선택을 바꾸지 않는다 (복사하려는 것이므로)
 $("code").addEventListener("click", e => {
-  const no = e.target.closest(".no");
-  if (!no) return;
+  const r = e.target.closest(".r");
+  if (!r || r.classList.contains("dg")) return;
+  const no = r.querySelector(".no");
+  if (!no || !no.dataset.n) return;
+  if (!e.target.closest(".no") && String(getSelection()).length) return;
   const n = +no.dataset.n;
-  for (const r of $("code").querySelectorAll(".r.hl")) r.classList.remove("hl");
+  for (const x of $("code").querySelectorAll(".r.hl")) x.classList.remove("hl");
+  for (const x of $("code").querySelectorAll(".sel-item")) x.classList.remove("sel-item");
+  hlItem = null;   // 줄만 고름 (계층 보기에서는 그 줄의 첫 항목이 진하게)
   if (hlLine === n) hlLine = 0;
-  else { hlLine = n; no.parentElement.classList.add("hl"); }
+  else { hlLine = n; r.classList.add("hl"); }
   setHash(); markPreview();
 });
 
@@ -2990,7 +3359,7 @@ setInterval(async () => {
 addEventListener("focus", async () => { if (src && src.kind === "fsa") { try { await refreshList(); } catch (e) {} } });
 
 // .md 문서 보기 ↔ 원문 보기
-// .ui·toml 오류 설명 켜기 ↔ 끄기 (밑줄과 풍선 도움말은 늘 있음)
+// .ui·toml·json 오류 설명 켜기 ↔ 끄기 (밑줄과 풍선 도움말은 늘 있음)
 $("diagBtn").onclick = () => {
   showDiag = !showDiag;
   try { localStorage.setItem("sv-diag:" + KEY, showDiag ? "1" : "0"); } catch (e) {}
@@ -3003,6 +3372,164 @@ $("mdMode").onclick = () => {
   if (cur) openFile(cur);
 };
 
+// ======================= JSON·JSON5 계층 보기 =======================
+// json5Tree()로 읽은 노드를 접고 펼치는 목록으로 그린다 (보기만 함). 객체 {} 과 배열 [] 은 아이콘으로 구분한다.
+// 줄(항목)을 누르면 강조하고, 소스 보기와 같은 표시한 줄(hlLine)로 기억한다. 오른쪽 숫자(소스의 줄 번호)를 누르면 소스 보기로 바꿔 그 줄로 간다.
+const ICON_MAP = '<svg class="tj-ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2.5c-1.6 0-2 .8-2 2v2c0 1-.6 1.5-1.5 1.5.9 0 1.5.5 1.5 1.5v2c0 1.2.4 2 2 2M10 2.5c1.6 0 2 .8 2 2v2c0 1 .6 1.5 1.5 1.5-.9 0-1.5.5-1.5 1.5v2c0 1.2-.4 2-2 2" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ICON_ARRAY = '<svg class="tj-ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M6.5 2.5h-2.5v11h2.5M9.5 2.5h2.5v11h-2.5" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const TREE_CLASS = { string: "s", number: "n", null: "tj-null" };
+// 값 종류별 클래스: 문자열 s, 숫자 n, true / false / null 은 각각 따로
+const valueClass = n => n.type === "boolean" ? (n.text === "true" ? "tj-true" : "tj-false") : TREE_CLASS[n.type];
+
+// ei = 오류가 있는 파일의 부분 트리일 때 { d: 진단(jsonCheck), text: 소스 }. 오류가 난 자리에 빨간 안내와 오류 줄 하나만 보여 주고, 그 뒤는 표시하지 않는다
+// JSON Lines 줄 트리(root.lines)일 때는 ei = { lines: true }: 줄마다 항목 하나, 틀린 줄은 빨간 오류 항목
+function renderJsonTree(root, ei) {
+  const openDepth = root.count > 3000 ? 1 : 2;   // 항목이 많으면 처음에는 덜 펼침
+  // 오류가 안에 있는 항목(오류까지 가는 길)은 깊이와 상관없이 펼쳐서 오류가 바로 보이게 한다 (값 뒤 글자 오류 errAfter는 항목 밖에 그려지므로 제외)
+  const markErr = n => {
+    let h = !!(n.err && !n.errAfter);
+    if (n.kids) for (const k of n.kids) if (markErr(k)) h = true;
+    n.hasErr = h;
+    return h;
+  };
+  markErr(root);
+  const dataOf = n => ` data-line="${n.line}" data-id="${n.id}" data-col="${n.col}" data-ec="${n.ec}"`;
+  const go = n => `<a class="tj-go" data-n="${n.line}" title="${esc(t("treeLine", n.line))}">${n.line}</a>`;
+  // 키의 줄바꿈·탭 같은 제어 문자는 풀어서 그리지 않고 \n 처럼 글자 그대로 보여 줌 (값과 같게, 줄이 깨지지 않게)
+  const keyText = k => k.replace(/[\u0000-\u001f\u007f\u2028\u2029]/g, c => ({ "\n": "\\n", "\r": "\\r", "\t": "\\t", "\b": "\\b", "\f": "\\f", "\v": "\\v" })[c] || "\\u" + c.charCodeAt(0).toString(16).padStart(4, "0"));
+  const keyHtml = n => n.key === null ? ""
+    : '<span class="tj-kk">' + (typeof n.key === "number" ? `<span class="tj-i">${n.key}</span>` : `<span class="tj-k">${esc(keyText(n.key))}</span>`) + '<span class="tj-sum">:</span></span>';
+  // 오류 자리: 빨간 안내 + 오류 줄 하나 (줄 번호가 아니라 글자 그대로, 오류 글자에 밑줄). 아주 긴 줄은 오류 둘레만
+  // 오류 자리 정보: 한 파일 부분 트리는 ei.d·ei.text, JSON Lines는 줄마다(n.err, n.errLine)
+  const errInfo = (n, ln) => {   // ln = 그 항목이 속한 줄의 정보 (JSON Lines에서 줄 뿌리의 errLine을 아래로 물려줌)
+    if (!ei.lines) return { d: ei.d, text: ei.text, lineNo: 0 };
+    const dg = jsonLineDiag(n.err, ln.line, ln.text); Object.assign(dg, jsonText(dg, uiLang));
+    return { d: dg, text: ln.text, lineNo: 1 };
+  };
+  const errBox = (n, ln) => {
+    const { d, text, lineNo } = errInfo(n, ln), s = d.show || d, line = d.line;
+    const chars = Array.from((lineNo ? text : text.split("\n")[line - 1] || "").replace(/\r$/, ""));
+    const c0 = Math.min(d.col - 1, chars.length), len = Math.max(d.length, 1);
+    const from = Math.max(0, c0 - 60), to = Math.min(chars.length, c0 + len + 60);
+    const pre = (from > 0 ? "…" : "") + chars.slice(from, c0).join(""), bad = chars.slice(c0, c0 + len).join("") || " ", post = chars.slice(c0 + len, to).join("") + (to < chars.length ? "…" : "");
+    return `<div class="tj-errbox"><div class="tj-err"><span class="tj-sp"></span><span class="tj-estop">${esc(t("treeStop", line, s.msg))}</span><a class="tj-ego" data-n="${line}" title="${esc(t("treeLine", line))}">${line}</a></div>` +
+      `<div class="tj-err tj-esrc"><span class="tj-sp"></span><span>${esc(pre)}<span class="tj-ebad">${esc(bad)}</span>${esc(post)}</span></div></div>`;
+  };
+  // JSON Lines의 틀린 줄: 번호와 오류 메시지(빨강), 그 줄 글 (길면 앞부분만)
+  const errRow = n => {
+    const dg = jsonLineDiag(n.err, n.line, n.text); Object.assign(dg, jsonText(dg, uiLang));
+    const tx = Array.from(n.text); const short = tx.length > 120 ? tx.slice(0, 120).join("") + "…" : n.text;
+    return `<div class="tj-row"${dataOf(n)}><span class="tj-dot tj-edot"></span>${keyHtml(n)}<span class="tj-v tj-ebad">${esc(dg.msg)}</span><span class="tj-v tj-etext">${esc(short)}</span>${go(n)}</div>`;
+  };
+  const one = (n, d, ln) => {
+    if (n.errLine) ln = n.errLine;
+    if (n.type === "error") return errRow(n);
+    if (n.kids) {
+      const arr = n.type === "array";
+      const icon = arr ? ICON_ARRAY : ICON_MAP;
+      const sum = n.lines ? t("treeLines", n.kids.length) : arr ? `[${n.kids.length}]` : `{${n.kids.length}}`;
+      return `<details class="tj"${d < openDepth || n.hasErr ? " open" : ""}><summary${dataOf(n)} title="${esc(t(arr ? "treeArray" : "treeMap", n.kids.length))}">${ICON_CHEVRON}${icon}${keyHtml(n)}<span class="tj-sum">${sum}</span>${go(n)}</summary>` +
+        `<div class="tj-kids">${n.kids.map(c => one(c, d + 1, ln)).join("")}${n.err && !n.errAfter ? errBox(n, ln) : ""}</div></details>${n.err && n.errAfter ? errBox(n, ln) : ""}`;
+    }
+    const tx = n.text.length > 300 ? n.text.slice(0, 300) + "…" : n.text;
+    return `<div class="tj-row"${dataOf(n)}><span class="tj-dot ${valueClass(n)}"></span>${keyHtml(n)}<span class="tj-v ${valueClass(n)}">${esc(tx)}</span>${go(n)}</div>${n.err ? errBox(n, ln) : ""}`;
+  };
+  return `<div class="tj-root">${one(root, 0)}</div>`;
+}
+
+// 줄(항목)의 정보 → hlItem
+const itemOf = el => ({ id: +el.dataset.id, line: +el.dataset.line, col: +el.dataset.col, ec: +el.dataset.ec });
+
+// 클릭: 오른쪽 숫자 → 소스 보기로 바꿔 그 줄로, 그 밖의 항목 → 그 항목 강조 (같은 항목을 또 누르면 해제)
+$("code").addEventListener("click", e => {
+  const eg = e.target.closest(".tj-ego");   // 오류 줄의 숫자: 소스 보기로 바꿔 오류 줄로 (고른 항목 없음)
+  if (eg) {
+    e.preventDefault();
+    hlLine = +eg.dataset.n; hlItem = null;
+    setJsonTree(false);
+    if (cur) openFile(cur, { line: hlLine });
+    return;
+  }
+  const a = e.target.closest(".tj-go");
+  if (a) {
+    e.preventDefault();
+    hlLine = +a.dataset.n;
+    hlItem = itemOf(a.closest("[data-line]"));
+    setJsonTree(false);
+    if (cur) openFile(cur, { line: hlLine });
+    return;
+  }
+  const row = e.target.closest(".tj-root [data-line]");
+  if (!row || String(getSelection()).length) return;   // 글자를 끌어 고른 뒤에는 바꾸지 않음
+  const it = itemOf(row);
+  if (hlItem && hlItem.id === it.id && hlLine === it.line) { hlLine = 0; hlItem = null; }
+  else { hlLine = it.line; hlItem = it; }
+  markTreeLines(hlLine);
+  setHash();
+});
+
+// 표시한 줄(L)에 해당하는 항목: 그 줄의 항목, 없으면(주석, 빈 줄, `{` `[` `}` `]`만 있는 줄 등) 줄 번호가 가장 가까운 항목 (같은 거리면 뒤쪽).
+// 같은 줄에 항목이 여럿이면 가장 바깥 항목. 항목이 없으면 null
+function treeTarget(L) {
+  const all = [...$("code").querySelectorAll(".tj-root [data-line]")];
+  if (!all.length || !L) return null;
+  let prev = null, next = null;   // L 이하에서 가장 큰 줄, L 이상에서 가장 작은 줄
+  for (const x of all) {
+    const n = +x.dataset.line;
+    if (n <= L) prev = n;
+    if (n >= L) { next = n; break; }
+  }
+  const line = prev === null ? next : next === null ? prev : (L - prev < next - L ? prev : next);
+  return { line, el: all.find(x => +x.dataset.line === line) };
+}
+
+// 표시한 줄 L의 항목 강조: 한 줄에 항목이 여럿이면 고른 항목(없으면 가장 바깥 첫 항목)을 진하게(hl), 나머지는 연하게(hl2).
+// 줄에 항목이 없으면 가장 가까운 항목에 같은 방식으로 강조 (표시한 줄 hlLine 자체는 바꾸지 않아서, 소스 보기로 돌아가면 처음 줄 그대로)
+function markTreeLines(L) {
+  for (const x of $("code").querySelectorAll(".tj-root .hl, .tj-root .hl2")) x.classList.remove("hl", "hl2");
+  const tg = treeTarget(L);
+  if (!tg) return null;
+  const same = [...$("code").querySelectorAll(".tj-root [data-line]")].filter(x => +x.dataset.line === tg.line);
+  const strong = (hlItem && hlItem.line === tg.line && same.find(x => +x.dataset.id === hlItem.id)) || same[0];
+  for (const x of same) x.classList.add(x === strong ? "hl" : "hl2");
+  return tg;
+}
+
+// 표시한 줄로 이동 + 가까운 항목 강조. 접혀 있으면 위쪽 묶음을 펼친다 (줄이 0이면 맨 위)
+function scrollTreeToLine(L) {
+  const tg = markTreeLines(L);
+  if (!tg) { $("code").scrollTop = 0; return; }
+  const best = tg.el;
+  let d = (best.tagName === "SUMMARY" ? best.parentElement.parentElement : best.parentElement).closest("details");
+  while (d) { d.open = true; d = d.parentElement.closest("details"); }
+  best.scrollIntoView({ block: "center" });
+}
+
+// 소스 보기 ↔ 계층 보기: 두 단추를 다 보이고, 누른 쪽으로 바꿈
+function setJsonTree(on) {
+  jsonTree = on;
+  try { localStorage.setItem("sv-json-tree:" + KEY, on ? "1" : "0"); } catch (e) {}
+}
+$("treeSrc").onclick = () => { setJsonTree(false); if (cur) openFile(cur, { line: hlLine }); };   // 표시한 줄로 이동
+$("treeTree").onclick = () => { setJsonTree(true); if (cur) openFile(cur); };
+
+// 소스 보기: 고른 항목(hlItem)의 글자 범위를 sel-item 클래스로 더 진하게 (첫 줄만, 칸은 UTF-16 단위, ec가 -1이면 줄 끝까지)
+function markItemRange(tokens, it) {
+  const out = [];
+  let ln = 1, col = 0;
+  for (const [cls, text, tip] of tokens) {
+    let piece = "", on = false;
+    const flush = () => { if (piece) out.push([on ? (cls ? cls + " " : "") + "sel-item" : cls, piece, tip]); piece = ""; };
+    for (const ch of text) {
+      if (ch === "\n") { flush(); out.push([null, "\n"]); ln++; col = 0; on = false; continue; }
+      const now = ln === it.line && col >= it.col && (it.ec < 0 || col < it.ec);
+      if (now !== on) { flush(); on = now; }
+      piece += ch; col += ch.length;
+    }
+    flush();
+  }
+  return out;
+}
 // ======================= 시작 =======================
 /// 주소의 #경로, #경로:L12, #경로#제목 → { path, line, hash }
 function savedTarget() {
@@ -3060,8 +3587,14 @@ function drawStatic() {
   $("navSize").title = t("navSizeTip");
   const md = cur && isMd(cur);
   $("mdMode").hidden = !md;
+  const jl = cur && (langOf(cur) === "json" || langOf(cur) === "json5");
+  $("treeMode").hidden = !jl;
+  if (jl) {   // 소스 보기 | 계층 보기: 지금 보는 쪽이 눌린 모양
+    $("treeSrc").textContent = t("treeSrc"); $("treeSrc").title = t("treeSrcTip"); $("treeSrc").setAttribute("aria-pressed", String(!treeShown));
+    $("treeTree").textContent = t("treeTree"); $("treeTree").title = t("treeTreeTip"); $("treeTree").setAttribute("aria-pressed", String(treeShown));
+  }
   const ui = cur && langOf(cur) === "ui";
-  const diagOk = ui || (cur && isTomlFile(cur));   // 오류 설명 켜기/끄기: .ui와 toml
+  const diagOk = ui || (cur && (isTomlFile(cur) || isJsonFile(cur)));   // 오류 설명 켜기/끄기: .ui, toml, json
   $("diagBtn").hidden = !diagOk;
   if (diagOk) { $("diagBtn").textContent = showDiag ? t("diagOff") : t("diagOn"); $("diagBtn").title = t("diagTip"); }
   $("pvBtn").hidden = !ui;
@@ -3111,6 +3644,7 @@ addEventListener("drop", async e => {
 // v: bg 배경, fg 글자, muted 흐린 글자, line 선, panel 코드·버튼 배경, code 인라인 코드 글자,
 //    link 링크, th 표 머리, accent 강조, side 목록 배경, sel 목록·줄 선택
 // s: 문법 색 — 키워드, 타입, 문자열, 주석, 숫자·상수, 전처리·속성, 함수·매크로
+// safe: (선택) 오류 빨강과 헷갈리지 않는 색 — "--hk2 --hp2" 순서. 키워드(hk)·속성(hp)이 빨강 계열인 테마만 정함. 없으면 hk·hp 그대로
 // "", light, dark는 위 CSS에 있음 (""는 시스템 설정을 따라 밝게/어둡게)
 const SERIF = 'Georgia, "Batang", "바탕", "Malgun Gothic", serif';
 const GH_FONT = '-apple-system, "Segoe UI", "Noto Sans", "Malgun Gothic", Helvetica, Arial, sans-serif';
@@ -3119,13 +3653,13 @@ const THEMES = [
   { id: "light", ko: "Claude 밝게", en: "Claude Light" },
   { id: "github", ko: "GitHub", en: "GitHub", hrule: 1, font: GH_FONT,
     v: "#ffffff #1f2328 #59636e #d1d9e0 #f6f8fa #1f2328 #0969da #f6f8fa #0969da #f6f8fa #e7ecf0",
-    s: "#cf222e #953800 #0a3069 #59636e #0550ae #cf222e #8250df" },
+    s: "#cf222e #953800 #0a3069 #59636e #0550ae #cf222e #8250df", safe: "#1a7f37 #8250df" },
   { id: "solarized-light", ko: "Solarized 밝게", en: "Solarized Light",
     v: "#fdf6e3 #586e75 #93a1a1 #e4ddc8 #eee8d5 #d33682 #268bd2 #eee8d5 #cb4b16 #f5efdc #e6dfc8",
     s: "#859900 #b58900 #2aa198 #93a1a1 #d33682 #cb4b16 #268bd2" },
   { id: "gruvbox-light", ko: "Gruvbox 밝게", en: "Gruvbox Light",
     v: "#fbf1c7 #3c3836 #7c6f64 #d5c4a1 #f2e5bc #9d0006 #076678 #ebdbb2 #af3a03 #f2e5bc #ebdbb2",
-    s: "#9d0006 #b57614 #79740e #928374 #8f3f71 #af3a03 #076678" },
+    s: "#9d0006 #b57614 #79740e #928374 #8f3f71 #af3a03 #076678", safe: "#427b58" },
   { id: "catppuccin-latte", ko: "Catppuccin Latte", en: "Catppuccin Latte",
     v: "#eff1f5 #4c4f69 #6c6f85 #ccd0da #e6e9ef #d20f39 #1e66f5 #e6e9ef #8839ef #e6e9ef #dce0e8",
     s: "#8839ef #df8e1d #40a02b #9ca0b0 #fe640b #ea76cb #1e66f5" },
@@ -3142,13 +3676,13 @@ const THEMES = [
   { id: "dark", ko: "Claude 어둡게", en: "Claude Dark", dark: 1 },
   { id: "github-dark", ko: "GitHub 어둡게", en: "GitHub Dark", dark: 1, hrule: 1, font: GH_FONT,
     v: "#0d1117 #e6edf3 #9198a1 #3d444d #151b23 #e6edf3 #4493f8 #151b23 #4493f8 #010409 #1f2630",
-    s: "#ff7b72 #ffa657 #a5d6ff #9198a1 #79c0ff #ff7b72 #d2a8ff" },
+    s: "#ff7b72 #ffa657 #a5d6ff #9198a1 #79c0ff #ff7b72 #d2a8ff", safe: "#56d364 #d2a8ff" },
   { id: "solarized-dark", ko: "Solarized 어둡게", en: "Solarized Dark", dark: 1,
     v: "#002b36 #93a1a1 #6c868d #0d4250 #073642 #d33682 #268bd2 #073642 #cb4b16 #00252e #0a4352",
     s: "#859900 #b58900 #2aa198 #586e75 #d33682 #cb4b16 #268bd2" },
   { id: "gruvbox-dark", ko: "Gruvbox 어둡게", en: "Gruvbox Dark", dark: 1,
     v: "#282828 #ebdbb2 #a89984 #504945 #32302f #fb4934 #83a598 #3c3836 #fe8019 #1d2021 #3c3836",
-    s: "#fb4934 #fabd2f #b8bb26 #928374 #d3869b #fe8019 #83a598" },
+    s: "#fb4934 #fabd2f #b8bb26 #928374 #d3869b #fe8019 #83a598", safe: "#8ec07c" },
   { id: "nord", ko: "Nord", en: "Nord", dark: 1,
     v: "#2e3440 #e5e9f0 #a0a8b7 #434c5e #3b4252 #b48ead #88c0d0 #3b4252 #88c0d0 #292e39 #434c5e",
     s: "#81a1c1 #8fbcbb #a3be8c #616e88 #b48ead #5e81ac #88c0d0" },
@@ -3198,6 +3732,7 @@ function applyTheme(id) {
   if (th.hrule) root.dataset.hrule = ""; else delete root.dataset.hrule;
   if (th.v) th.v.split(" ").forEach((c, k) => root.style.setProperty("--" + VAR_NAMES[k], c));
   if (th.s) th.s.split(" ").forEach((c, k) => root.style.setProperty("--" + HL_NAMES[k], c));
+  if (th.safe) th.safe.split(" ").forEach((c, k) => root.style.setProperty("--" + ["hk2", "hp2"][k], c));
   if (th.font) root.style.setProperty("--font", th.font);
   if (th.v) root.style.setProperty("--err", th.dark ? "#ff6b6b" : "#d03030");
   if (th.v) root.style.setProperty("--warn", th.dark ? "#e8a33d" : "#b06a00");

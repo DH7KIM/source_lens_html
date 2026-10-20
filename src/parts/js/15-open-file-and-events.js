@@ -10,7 +10,7 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   if (changed) expandTo(path);
   cur = path; curMod = f.lastModified;
   logMod = await buildLogMod();
-  if (changed) hlLine = 0;
+  if (changed) { hlLine = 0; hlItem = null; }
   if (line) hlLine = line;
   if (lang === "md") {
     docLang = splitLang(path).lang;
@@ -18,7 +18,24 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
     document.documentElement.lang = docLang;
   }
   const asDoc = lang === "md" && !mdRaw;
-  let lineCount = 0, note = "", check = null, packNote = "";
+  let lineCount = 0, note = "", check = null, packNote = "", treeErr = "", treeHtml = null;
+  // JSON·JSON5 계층 보기: 읽기 오류일 때는 소스 보기. 표시한 줄(hlLine)은 두 보기가 함께 쓴다
+  if (!asDoc && jsonTree && (lang === "json" || lang === "json5") && !text.includes("\u0000")) {
+    try { treeHtml = renderJsonTree(json5Tree(text)); }
+    catch (e) {
+      const jl = jsonLinesOf(text, e);   // JSON Lines(줄마다 값 하나)면 줄마다 항목 하나로, 틀린 줄은 오류 항목
+      if (jl) treeHtml = renderJsonTree(jl, { lines: true, text });
+      else {
+      // 오류가 있어도 오류 직전까지 읽은 부분은 계층으로 보여 주고, 오류 자리에 안내 (읽은 것이 없거나 JSON Lines면 소스 보기)
+      const d = e && e.node ? jsonCheck(text)[0] : null;
+      if (d && d.severity === "error") {
+        Object.assign(d, jsonText(d, "en")); if (uiLang !== "en") d.show = jsonText(d, uiLang);
+        treeHtml = renderJsonTree(e.node, { d, text });
+      } else treeErr = t("treeErr", e.line || 1, e.message);
+      }
+    }
+  }
+  treeShown = treeHtml !== null;
   if (asDoc) {
     art.innerHTML = renderMarkdown(text);
     await loadImages();
@@ -27,6 +44,9 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   } else {
     if (text.includes("\u0000") && enc !== "UTF-16") {
       codeEl.innerHTML = `<div class="msg">${esc(t("binary"))}</div>`;
+    } else if (treeHtml !== null) {
+      codeEl.innerHTML = treeHtml;
+      lineCount = text.split("\n").length - (text.endsWith("\n") ? 1 : 0);
     } else {
       const big = text.length > HL_MAX;
       if (big) note = t("tooBig");
@@ -43,6 +63,7 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
         // 컴파일러 결과 (build.log): 이 파일의 진단이 있으면 같은 방식으로 밑줄 + 진단 줄
         const ds = (await loadBuildLog()).files.get(path);
         const toml = !big && isTomlFile(path);
+        const json = !big && isJsonFile(path);
         let diags = ds && ds.length ? gccFit(ds, text) : [];
         diags = diags.map(d => d.src === "gcc" ? gccApply(d, uiLang) : d);   // GCC 설명은 화면 언어로 (원문은 d.msg)
         if (toml) {   // TOML 문법 검사: 설명은 화면 언어로 (영어 원문은 d.msg)
@@ -50,11 +71,18 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
           for (const d of tds) { Object.assign(d, tomlText(d, "en")); if (uiLang !== "en") d.show = tomlText(d, uiLang); }
           diags = tds.concat(diags).sort((a, b) => a.line - b.line || a.col - b.col);
         }
-        if (toml || diags.length) {
-          check = { diags, gcc: !toml, toml, errorCount: diags.filter(d => d.severity === "error").length, warningCount: diags.filter(d => d.severity === "warning").length };
+        if (json) {   // JSON·JSON5 문법 검사: 첫 오류 하나. 설명은 화면 언어로
+          const jds = jsonCheck(text);
+          for (const d of jds) { Object.assign(d, jsonText(d, "en")); if (uiLang !== "en") d.show = jsonText(d, uiLang); }
+          diags = jds.concat(diags).sort((a, b) => a.line - b.line || a.col - b.col);
+        }
+        if (toml || json || diags.length) {
+          check = { diags, gcc: !toml && !json, toml, json, errorCount: diags.filter(d => d.severity === "error").length, warningCount: diags.filter(d => d.severity === "warning").length };
           if (!big) toks = markUiDiags(toks, diags);
         }
       }
+      // 계층 보기에서 고른 항목의 글자 범위 (JSON·JSON5, 그 줄을 보고 있을 때)
+      if (!big && hlItem && hlItem.line === hlLine && (lang === "json" || lang === "json5")) toks = markItemRange(toks, hlItem);
       const diags = check ? check.diags : [];
       const lines = tokensToLines(toks);
       if (lines.length > 1 && lines[lines.length - 1] === "") lines.pop();
@@ -81,6 +109,11 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   $("name").textContent = projectLabel() + path;
   document.title = path + " - Source Viewer";
   setState([lineCount ? t("lines", lineCount) : "", fmtSize(size), enc, src.kind === "fsa" ? t("auto") : t("noAuto"), note].filter(Boolean).join(" · "));
+  if (treeErr) {   // 계층 보기 오류 (빨강)
+    const b = document.createElement("span");
+    b.className = "bad"; b.textContent = " · " + treeErr;
+    $("state").append(b);
+  }
   if (check && !(check.gcc && !check.errorCount && !check.warningCount)) {   // .ui 검사 결과(또는 컴파일러 결과): 오류(빨강)·경고(주황)·문제 없음
     const b = document.createElement("span");
     const parts = [];
@@ -88,7 +121,7 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
     if (check.warningCount) parts.push(t("uiWarns", check.warningCount));
     b.className = check.errorCount ? "bad" : check.warningCount ? "warn" : "okay";
     b.textContent = " · " + (parts.length ? parts.join(" · ") : t("uiOk"));
-    b.title = check.toml ? t("tomlTip") : check.gcc ? t("gccTip") : t("uiErrsTip", UI_DOC_VERSION);
+    b.title = check.toml ? t("tomlTip") : check.json ? t("jsonTip") : check.gcc ? t("gccTip") : t("uiErrsTip", UI_DOC_VERSION);
     $("state").append(b);
     if (packNote) {   // 언어팩 문제 (빨강)
       const pb = document.createElement("span");
@@ -105,10 +138,23 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
     scrollTo(0, keepScroll ? prevY : 0);
   } else {
     scrollTo(0, 0);
-    if (keepScroll) codeEl.scrollTop = prevY;
+    if (keepScroll) { codeEl.scrollTop = prevY; if (treeShown) markTreeLines(hlLine); }
+    else if (treeShown) { if (!(changed && !hlLine && scrollToFirstError(codeEl, check))) scrollTreeToLine(hlLine); }
     else if (line) { const r = $("L" + line); if (r) r.scrollIntoView({ block: "center" }); }
-    else codeEl.scrollTop = 0;
+    else if (!(changed && scrollToFirstError(codeEl, check))) codeEl.scrollTop = 0;
   }
+}
+
+// 파일을 처음 열 때 첫 오류 위치로 이동 (소스 보기: 오류 줄, 계층 보기: 오류 안내 항목). 오류가 없으면 false.
+// 가로로는 움직이지 않게 inline: "start" (긴 줄이 있어도 왼쪽 끝에서 시작)
+function scrollToFirstError(codeEl, check) {
+  let el = null;
+  if (treeShown) el = codeEl.querySelector(".tj-err");
+  else { const d = check && check.diags.find(x => x.severity === "error"); if (d) el = $("L" + d.line); }
+  if (!el) return false;
+  for (let d = el.closest("details"); d; d = d.parentElement.closest("details")) d.open = true;
+  el.scrollIntoView({ block: "center", inline: "start" });
+  return true;
 }
 
 /// 진단 2줄: "   ^^^^ error[E003]: 메시지" / "        help: 추천" (경고는 warning[W103], 주황)
@@ -129,14 +175,20 @@ function setHash(anchor = "") {
   history.replaceState(null, "", "#" + encodeURI(cur) + (hlLine && !$("code").hidden ? ":L" + hlLine : anchor ? "#" + anchor : ""));
 }
 
-// 줄 번호 클릭 → 그 줄 표시 (주소에 남김)
+// 줄 클릭 → 그 줄 표시 (주소에 남김). 줄 번호뿐 아니라 글자 부분을 눌러도 되고, 같은 줄을 또 누르면 해제.
+// 글자를 끌어서 고른 뒤에는 줄 선택을 바꾸지 않는다 (복사하려는 것이므로)
 $("code").addEventListener("click", e => {
-  const no = e.target.closest(".no");
-  if (!no) return;
+  const r = e.target.closest(".r");
+  if (!r || r.classList.contains("dg")) return;
+  const no = r.querySelector(".no");
+  if (!no || !no.dataset.n) return;
+  if (!e.target.closest(".no") && String(getSelection()).length) return;
   const n = +no.dataset.n;
-  for (const r of $("code").querySelectorAll(".r.hl")) r.classList.remove("hl");
+  for (const x of $("code").querySelectorAll(".r.hl")) x.classList.remove("hl");
+  for (const x of $("code").querySelectorAll(".sel-item")) x.classList.remove("sel-item");
+  hlItem = null;   // 줄만 고름 (계층 보기에서는 그 줄의 첫 항목이 진하게)
   if (hlLine === n) hlLine = 0;
-  else { hlLine = n; no.parentElement.classList.add("hl"); }
+  else { hlLine = n; r.classList.add("hl"); }
   setHash(); markPreview();
 });
 
@@ -174,7 +226,7 @@ setInterval(async () => {
 addEventListener("focus", async () => { if (src && src.kind === "fsa") { try { await refreshList(); } catch (e) {} } });
 
 // .md 문서 보기 ↔ 원문 보기
-// .ui·toml 오류 설명 켜기 ↔ 끄기 (밑줄과 풍선 도움말은 늘 있음)
+// .ui·toml·json 오류 설명 켜기 ↔ 끄기 (밑줄과 풍선 도움말은 늘 있음)
 $("diagBtn").onclick = () => {
   showDiag = !showDiag;
   try { localStorage.setItem("sv-diag:" + KEY, showDiag ? "1" : "0"); } catch (e) {}

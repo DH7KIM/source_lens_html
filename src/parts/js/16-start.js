@@ -55,8 +55,14 @@ function drawStatic() {
   $("navSize").title = t("navSizeTip");
   const md = cur && isMd(cur);
   $("mdMode").hidden = !md;
+  const jl = cur && (langOf(cur) === "json" || langOf(cur) === "json5");
+  $("treeMode").hidden = !jl;
+  if (jl) {   // 소스 보기 | 계층 보기: 지금 보는 쪽이 눌린 모양
+    $("treeSrc").textContent = t("treeSrc"); $("treeSrc").title = t("treeSrcTip"); $("treeSrc").setAttribute("aria-pressed", String(!treeShown));
+    $("treeTree").textContent = t("treeTree"); $("treeTree").title = t("treeTreeTip"); $("treeTree").setAttribute("aria-pressed", String(treeShown));
+  }
   const ui = cur && langOf(cur) === "ui";
-  const diagOk = ui || (cur && isTomlFile(cur));   // 오류 설명 켜기/끄기: .ui와 toml
+  const diagOk = ui || (cur && (isTomlFile(cur) || isJsonFile(cur)));   // 오류 설명 켜기/끄기: .ui, toml, json
   $("diagBtn").hidden = !diagOk;
   if (diagOk) { $("diagBtn").textContent = showDiag ? t("diagOff") : t("diagOn"); $("diagBtn").title = t("diagTip"); }
   $("pvBtn").hidden = !ui;

@@ -48,11 +48,11 @@ function drawLangs() {
     b.textContent = LANG_NAMES[l] || l;
     b.title = t("langTip");
     b.className = l === docLang ? "on" : "";
-    b.onclick = async () => {
+    b.onclick = () => {
       docLang = l;
       if (UI[l]) uiLang = l;
       if (cur && isMd(cur)) openFile(pathFor(keyOf(cur), l));
-      else if (cur && (langOf(cur) === "ui" || isTomlFile(cur) || (await loadBuildLog()).files.has(cur))) openFile(cur, { keepScroll: true });   // 진단 설명도 그 언어로
+      else if (cur) openFile(cur, { keepScroll: true });   // 다시 열어서 상태 줄·진단 설명·계층 보기 안내도 그 언어로 (.ui, JSON, TOML 등)
       else { drawNav(); drawLangs(); drawStatic(); drawPreview(); }
     };
     box.append(b);
