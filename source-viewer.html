@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.28.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.29.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -385,7 +385,7 @@ const UI = {
     treeLines: "JSON Lines (줄마다 값 하나) {0}줄",
     langTip: "문서(.md)를 이 언어로 봅니다",
     noTip: "클릭: 이 줄 표시 (주소에 줄 번호가 남아 다음에 바로 열림)",
-    navSizeTip: "끌어서 폭 조절 / 두 번 클릭하면 이름에 맞춤",
+    navSizeTip: "끌어서 폭 조절 / 두 번 클릭하면 기본 폭",
     dirTip: "클릭: 폴더 접기 / 펼치기",
     theme: "테마 (글자·문법 색)", light: "밝은 테마", dark: "어두운 테마",
     pvOn: "배치 보기", pvOff: "배치 숨기기", pvTip: ".ui 파일의 배치(요소 위치)를 아래 칸에 그리거나 숨깁니다.",
@@ -455,7 +455,7 @@ const UI = {
     treeLines: "JSON Lines (one value per line), {0} {0|line|lines}",
     langTip: "Show documents (.md) in this language",
     noTip: "Click: mark this line (the line number stays in the address)",
-    navSizeTip: "Drag to resize / double-click to fit",
+    navSizeTip: "Drag to resize / double-click for default width",
     dirTip: "Click: collapse / expand the folder",
     theme: "Theme (text and syntax colors)", light: "Light themes", dark: "Dark themes",
     pvOn: "Show layout", pvOff: "Hide layout", pvTip: "Draw the layout (element positions) of this .ui file in the lower pane, or hide it.",
@@ -2631,27 +2631,14 @@ function drawNav() {
   nav.hidden = false;
   $("navSize").hidden = false;
   nav.scrollTop = top;
-  if (!navWidthSaved) fitNav();
 }
 
-// ---------- 목록 폭 (끌어서 조절, 두 번 클릭 = 이름에 맞춤, 브라우저에 기억) ----------
+// ---------- 목록 폭 (끌어서 조절, 두 번 클릭 = 기본 폭으로 되돌림, 브라우저에 기억). 폭은 계산하지 않음: 파일이 많으면 줄마다 크기를 재는 데 오래 걸려서 ----------
 let navWidthSaved = false;
 function setNavWidth(px, save) {
   const w = Math.round(Math.min(Math.max(px, 140), innerWidth * 0.6));
   document.body.style.setProperty("--nav-w", w + "px"); // <html>의 style은 테마가 바꾸므로 body에
   if (save) { navWidthSaved = true; try { localStorage.setItem("sv-nav-w:" + KEY, String(w)); } catch (e) {} }
-}
-function fitNav() {
-  let max = 0;
-  for (const a of $("nav").querySelectorAll("a, .dir")) {
-    a.style.width = "max-content";
-    max = Math.max(max, a.getBoundingClientRect().width);
-    a.style.width = "";
-  }
-  const nav = $("nav"), cs = getComputedStyle(nav);
-  const extra = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) + parseFloat(cs.borderRightWidth)
-              + (nav.offsetWidth - nav.clientWidth - parseFloat(cs.borderRightWidth));
-  if (max) setNavWidth(Math.ceil(max + extra + 2), false);
 }
 try { const w = +localStorage.getItem("sv-nav-w:" + KEY); if (w > 0) { navWidthSaved = true; setNavWidth(w, false); } } catch (e) {}
 $("navSize").addEventListener("pointerdown", e => {
@@ -2670,7 +2657,7 @@ $("navSize").addEventListener("pointerdown", e => {
 $("navSize").addEventListener("dblclick", () => {
   navWidthSaved = false;
   try { localStorage.removeItem("sv-nav-w:" + KEY); } catch (e) {}
-  fitNav();
+  document.body.style.removeProperty("--nav-w");   // 기본 폭(CSS의 230px)으로
 });
 
 function drawLangs() {

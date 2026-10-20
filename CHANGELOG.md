@@ -2,6 +2,14 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.29.0 (2026-10-20)
+
+### source-viewer.html
+
+- **File list width is no longer calculated**: the list uses a fixed default width (230px) and you drag the edge to change it. Double-clicking the edge now goes back to the default width (it used to fit the longest name). Fitting measured every row, which made opening a file take seconds with thousands of files: redrawing the list took 2.25 s for 1,500 files and now takes 0.13 s.
+- Not changed: `docs-viewer.html` still has the old width fitting.
+- Branch `nav-width`.
+
 ## v0.28.0 (2026-10-20)
 
 ### source-viewer.html

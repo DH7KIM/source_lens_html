@@ -1,21 +1,9 @@
-// ---------- 목록 폭 (끌어서 조절, 두 번 클릭 = 이름에 맞춤, 브라우저에 기억) ----------
+// ---------- 목록 폭 (끌어서 조절, 두 번 클릭 = 기본 폭으로 되돌림, 브라우저에 기억). 폭은 계산하지 않음: 파일이 많으면 줄마다 크기를 재는 데 오래 걸려서 ----------
 let navWidthSaved = false;
 function setNavWidth(px, save) {
   const w = Math.round(Math.min(Math.max(px, 140), innerWidth * 0.6));
   document.body.style.setProperty("--nav-w", w + "px"); // <html>의 style은 테마가 바꾸므로 body에
   if (save) { navWidthSaved = true; try { localStorage.setItem("sv-nav-w:" + KEY, String(w)); } catch (e) {} }
-}
-function fitNav() {
-  let max = 0;
-  for (const a of $("nav").querySelectorAll("a, .dir")) {
-    a.style.width = "max-content";
-    max = Math.max(max, a.getBoundingClientRect().width);
-    a.style.width = "";
-  }
-  const nav = $("nav"), cs = getComputedStyle(nav);
-  const extra = parseFloat(cs.paddingLeft) + parseFloat(cs.paddingRight) + parseFloat(cs.borderRightWidth)
-              + (nav.offsetWidth - nav.clientWidth - parseFloat(cs.borderRightWidth));
-  if (max) setNavWidth(Math.ceil(max + extra + 2), false);
 }
 try { const w = +localStorage.getItem("sv-nav-w:" + KEY); if (w > 0) { navWidthSaved = true; setNavWidth(w, false); } } catch (e) {}
 $("navSize").addEventListener("pointerdown", e => {
@@ -34,7 +22,7 @@ $("navSize").addEventListener("pointerdown", e => {
 $("navSize").addEventListener("dblclick", () => {
   navWidthSaved = false;
   try { localStorage.removeItem("sv-nav-w:" + KEY); } catch (e) {}
-  fitNav();
+  document.body.style.removeProperty("--nav-w");   // 기본 폭(CSS의 230px)으로
 });
 
 function drawLangs() {

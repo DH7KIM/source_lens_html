@@ -88,6 +88,5 @@ function drawNav() {
   nav.hidden = false;
   $("navSize").hidden = false;
   nav.scrollTop = top;
-  if (!navWidthSaved) fitNav();
 }
 
