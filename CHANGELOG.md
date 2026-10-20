@@ -2,6 +2,15 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.20.0 (2026-10-20)
+
+### source-viewer.html
+
+- Switching the screen language now redraws an open TOML file right away, like `.ui` (before, the file had to be clicked again to get the new language).
+  - The "Hide details" choice and the scroll position are kept.
+  - Compiler result files (`build.log`, `cargo.json`) are not changed in this version.
+- Version comment at the top v0.20.0.
+
 ## v0.19.0 (2026-10-13)
 
 ### source-viewer.html

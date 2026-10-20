@@ -2,6 +2,15 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.20.0 (2026-10-20)
+
+### source-viewer.html
+
+- 화면 언어를 바꾸면 열려 있는 toml 파일도 `.ui`처럼 바로 다시 그림 (전에는 파일을 한 번 더 클릭해야 새 언어로 바뀜).
+  - `오류 설명 끄기/켜기` 선택과 스크롤 위치는 그대로 유지됨.
+  - 컴파일러 결과 파일(`build.log`·`cargo.json`)은 이번에 바꾸지 않음.
+- 맨 위 버전 주석 v0.20.0.
+
 ## v0.19.0 (2026-10-13)
 
 ### source-viewer.html
