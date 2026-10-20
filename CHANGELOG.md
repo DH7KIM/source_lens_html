@@ -2,6 +2,13 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.32.0 (2026-10-20)
+
+### source-viewer.html
+
+- **File count in front of the path**: `upload folder (55 files) / samples/test.ko.md`, or `name v0.28.0 folder (55 files) / ...` when the folder has a project version. The number is the files in the list (supported types only; skipped folders and levels beyond the chosen one are not counted). It follows reading the folder again and changing the subfolder level. The tooltip explains this.
+- Branch `file-count`.
+
 ## v0.31.0 (2026-10-20)
 
 ### source-viewer.html

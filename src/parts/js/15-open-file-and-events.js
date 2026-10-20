@@ -106,7 +106,7 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
     art.hidden = true; codeEl.hidden = false;
   }
   $("start").hidden = true; $("fileBar").hidden = false; document.body.classList.add("has-bar");
-  $("name").textContent = projectLabel() + path;
+  drawName();
   document.title = path + " - Source Viewer";
   setState([lineCount ? t("lines", lineCount) : "", fmtSize(size), enc, src.kind === "fsa" ? t("auto") : t("noAuto"), note].filter(Boolean).join(" · "));
   if (treeErr) {   // 계층 보기 오류 (빨강)

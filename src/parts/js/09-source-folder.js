@@ -104,7 +104,13 @@ async function readProjectVersion(paths) {
   }
   return "";
 }
-const projectLabel = () => src.name ? src.name + (projectVersion ? " " + projectVersion : "") + " / " : "";
+// 경로 앞: "이름 v0.28.0 폴더 (55개 파일) / ". 파일 수는 목록에 올라온 파일(지원하는 형식) 개수
+const projectLabel = () => src.name ? t("projectLabel", src.name + (projectVersion ? " " + projectVersion : ""), fileSet.size.toLocaleString()) : "";
+function drawName() {
+  if (!cur || !src) return;
+  $("name").textContent = projectLabel() + cur;
+  $("name").title = t("projectLabelTip", fileSet.size.toLocaleString());
+}
 
 // 폴더를 읽는 동안 "폴더 읽는 중… 파일 N개 · 3.2초 [취소]"를 보임 (0.4초가 지나야 나타남: 빨리 끝나면 깜빡이지 않게)
 let reading = null;   // 읽는 중이면 { cancel() }
@@ -142,7 +148,7 @@ async function refreshList(show = false) {
       entries.get(key).md[splitLang(p).lang] = p;
     } else entries.set(key, { path: p });
   }
-  drawNav(); drawLangs();
+  drawNav(); drawLangs(); drawName();
   return paths.length;
 }
 
