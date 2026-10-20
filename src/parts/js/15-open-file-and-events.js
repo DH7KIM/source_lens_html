@@ -18,7 +18,7 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
     document.documentElement.lang = docLang;
   }
   const asDoc = lang === "md" && !mdRaw;
-  let lineCount = 0, note = "", check = null, packNote = "", treeErr = "", treeHtml = null;
+  let lineCount = 0, note = "", check = null, treeErr = "", treeHtml = null;
   // JSON·JSON5 계층 보기: 읽기 오류일 때는 소스 보기. 표시한 줄(hlLine)은 두 보기가 함께 쓴다
   if (!asDoc && jsonTree && (lang === "json" || lang === "json5") && !text.includes("\u0000")) {
     try {
@@ -58,8 +58,7 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
       if (lang === "ui") {
         check = uiCheck.check(bytes);
         // 화면 언어의 번역 표가 있으면 진단 줄·풍선은 번역 (ui-check 출력·d.msg는 영어 그대로)
-        const { table, note: pn } = await uiTable(uiLang);
-        packNote = pn;
+        const table = UI_MSG[uiLang] || null;
         if (table) for (const d of check.diags) d.show = uiCheck.localize(d, table);
         if (!big) toks = markUiDiags(toks, check.diags);
       } else if (lang !== "plain") {
@@ -126,11 +125,6 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
     b.textContent = " · " + (parts.length ? parts.join(" · ") : t("uiOk"));
     b.title = check.toml ? t("tomlTip") : check.json ? t("jsonTip") : check.gcc ? t("gccTip") : t("uiErrsTip", UI_DOC_VERSION);
     $("state").append(b);
-    if (packNote) {   // 언어팩 문제 (빨강)
-      const pb = document.createElement("span");
-      pb.className = "bad"; pb.textContent = " · " + packNote;
-      $("state").append(pb);
-    }
   }
   pvCheck = lang === "ui" && check ? check : null;
   selectNav(expanded); drawLangs(); drawStatic(); drawPreview();

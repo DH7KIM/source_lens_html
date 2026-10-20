@@ -1,5 +1,5 @@
 // ---------- JSON5 트리 읽기 (계층 보기용, 줄 위치를 기록) ----------
-// json5Parse와 같은 문법을 읽되, 값 대신 노드 트리를 만든다. 읽기만 하고 고치지는 않는다.
+// JSON5 문법을 읽되, 값 대신 노드 트리를 만든다. 읽기만 하고 고치지는 않는다.
 // 노드: { type, key, line, kids | text }
 //   type: object | array | string | number | boolean | null
 //   key : 객체 멤버는 이름(문자열), 배열 원소는 번호(숫자), 뿌리는 null

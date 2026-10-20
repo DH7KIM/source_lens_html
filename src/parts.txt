@@ -5,7 +5,6 @@ parts/02-body.html
 parts/js/01-strings.js
 parts/js/02-file-kinds.js
 parts/js/03-highlight.js
-parts/js/04-json5.js
 parts/js/04a-json5-tree.js
 parts/js/04b-json-lines.js
 parts/js/05-ui-messages.js
@@ -15,7 +14,6 @@ parts/js/08-markdown.js
 parts/js/09-source-folder.js
 parts/js/10-tree-list.js
 parts/js/11-list-width-and-helpers.js
-parts/js/12-language-pack.js
 parts/js/13-compiler-output.js
 parts/js/14-toml-check.js
 parts/js/14a-json-check.js

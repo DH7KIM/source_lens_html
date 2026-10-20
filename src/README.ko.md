@@ -47,7 +47,6 @@ tools/merge-parts src source-viewer.merged.html --check source-viewer.html
 | `parts/js/01-strings.js` | 화면 문자열 |
 | `parts/js/02-file-kinds.js` | 파일 종류 |
 | `parts/js/03-highlight.js` | 문법 색칠 |
-| `parts/js/04-json5.js` | JSON5 읽기 (언어팩용) |
 | `parts/js/05-ui-messages.js` | `.ui` 오류·경고 설명 번역 |
 | `parts/js/06-ui-check.js` | `.ui` 검사기 |
 | `parts/js/07-ui-highlight.js` | `.ui` 색칠 |
@@ -55,7 +54,6 @@ tools/merge-parts src source-viewer.merged.html --check source-viewer.html
 | `parts/js/09-source-folder.js` | 소스 폴더 (FSA 또는 파일 목록) |
 | `parts/js/10-tree-list.js` | 트리 목록 |
 | `parts/js/11-list-width-and-helpers.js` | 목록 폭, 읽기 도우미 |
-| `parts/js/12-language-pack.js` | 언어팩 |
 | `parts/js/13-compiler-output.js` | 컴파일러 결과 (`build.log`, `cargo.json`) |
 | `parts/js/14-toml-check.js` | TOML 검사 |
 | `parts/js/15-open-file-and-events.js` | 파일 열기, 이벤트 |

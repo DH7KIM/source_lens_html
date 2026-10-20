@@ -2,6 +2,15 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.34.0 (2026-10-21)
+
+### source-viewer.html
+
+- **Removed reading language packs from the folder**: the feature (v0.14.0) that read `language/<language>/ui-check.json5` from the opened folder and put it before the built-in translation is gone. `.ui` error descriptions now use only the built-in table (`UI_MSG`). Also removed: the folder language-pack reader (`12-language-pack.js`), the small JSON5 reader only it used (`04-json5.js`), and the red status-line notices ("cannot read language pack", "translations ignored") with their texts. A new language is now added in the source (`.js`); the next version splits the files per language.
+- Nothing changes on screen: `.ui` error descriptions are the same as before in Korean (with the English original) and English (checked on screen).
+- Removed the sample `tests/samples/project/language/ko/ui-check.json5` (`main.json5` stays as the JSON5 coloring sample).
+- Branch `lang-pack-remove`.
+
 ## v0.33.0 (2026-10-21)
 
 ### source-viewer.html

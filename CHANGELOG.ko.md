@@ -2,6 +2,15 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.34.0 (2026-10-21)
+
+### source-viewer.html
+
+- **폴더에서 언어팩 읽기를 없앰**: 연 폴더의 `language/<언어>/ui-check.json5`를 읽어 내장 번역보다 우선하던 기능(v0.14.0)을 뺐음. `.ui` 오류 설명은 내장 표(`UI_MSG`)만 씀. 같이 없앤 것: 폴더 언어팩 읽기 코드(`12-language-pack.js`), 그것만 쓰던 JSON5 읽기 함수(`04-json5.js`), 상태 줄의 "언어팩 읽기 실패·번역 무시" 빨간 알림과 그 문구. 이제 새 언어는 소스(`.js`)에 넣음 (다음 버전에서 언어별 파일로 나눔).
+- 화면에 보이는 것은 그대로: `.ui` 오류 설명은 한국어(+영어 원문)·영어 모두 전과 같음 (화면으로 확인).
+- 샘플 `tests/samples/project/language/ko/ui-check.json5`를 지움 (`main.json5`는 JSON5 색칠 예제라서 남김).
+- 갈래 `lang-pack-remove`.
+
 ## v0.33.0 (2026-10-21)
 
 ### source-viewer.html

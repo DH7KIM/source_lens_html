@@ -47,7 +47,6 @@ The exit code is 0 when done (and equal), 1 when the check finds a difference, 2
 | `parts/js/01-strings.js` | screen texts |
 | `parts/js/02-file-kinds.js` | file kinds |
 | `parts/js/03-highlight.js` | syntax colors |
-| `parts/js/04-json5.js` | JSON5 reader (for language packs) |
 | `parts/js/05-ui-messages.js` | `.ui` error and warning texts |
 | `parts/js/06-ui-check.js` | `.ui` checker |
 | `parts/js/07-ui-highlight.js` | `.ui` colors |
@@ -55,7 +54,6 @@ The exit code is 0 when done (and equal), 1 when the check finds a difference, 2
 | `parts/js/09-source-folder.js` | source folder (FSA or file list) |
 | `parts/js/10-tree-list.js` | tree list |
 | `parts/js/11-list-width-and-helpers.js` | list width, reading helpers |
-| `parts/js/12-language-pack.js` | language packs |
 | `parts/js/13-compiler-output.js` | compiler output (`build.log`, `cargo.json`) |
 | `parts/js/14-toml-check.js` | TOML check |
 | `parts/js/15-open-file-and-events.js` | open a file, events |
