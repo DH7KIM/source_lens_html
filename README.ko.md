@@ -41,7 +41,7 @@ English: [README.md](README.md)
 
 ## 개발
 
-`source-viewer.html`은 [`src/`](src/README.ko.md)의 조각으로 만듭니다. 조각을 고친 뒤 `python3 tools/merge-parts.py src source-viewer.html`로 합치며, 합친 파일은 직접 고치지 않습니다.
+`source-viewer.html`은 [`src/`](src/README.ko.md)의 조각으로 만듭니다. 조각을 고친 뒤 `tools/merge-parts src source-viewer.html`로 합치며 (작은 C++ 도구, `g++`로 한 번 컴파일, [`src/README.ko.md`](src/README.ko.md) 참고), 합친 파일은 직접 고치지 않습니다.
 
 ## 라이선스
 

@@ -12,19 +12,30 @@ Korean: [README.ko.md](README.ko.md)
 - A new part: add a line to `parts.txt` at the place where it should run, and give it the next free number in the name.
 - `.ui` check, `.ui` colors and the layout preview are still in `06-ui-check.js`, `07-ui-highlight.js` and `18`-`21` for the `.ui` format 1 (guideline 0.9).
 
-## How to join (Python 3)
+## How to join
 
-Run in the `source` folder.
+The joining tool is a small C++ program, [`tools/merge-parts.cpp`](../tools/merge-parts.cpp). It needs only `g++`. Run in the `source` folder.
+
+Build it once (the program is not kept in the repository; on Windows the output is `tools/merge-parts.exe`). On Windows with MinGW add `-static`, otherwise the program needs the GCC DLLs in `PATH` and ends without any message when it cannot find them:
 
 ```text
-python3 tools/merge-parts.py src source-viewer.html
+g++ -std=c++23 -O2 -o tools/merge-parts tools/merge-parts.cpp
+g++ -std=c++23 -O2 -static -o tools/merge-parts tools/merge-parts.cpp   (Windows, MinGW)
+```
+
+Join:
+
+```text
+tools/merge-parts src source-viewer.html
 ```
 
 To check that the joined file equals another file byte for byte (for example after a change that must not change anything):
 
 ```text
-python3 tools/merge-parts.py src source-viewer.merged.html --check source-viewer.html
+tools/merge-parts src source-viewer.merged.html --check source-viewer.html
 ```
+
+The exit code is 0 when done (and equal), 1 when the check finds a difference, 2 on an error (for example a missing part). The tool uses plain `#include` and not C++ modules on purpose: it is one small file, and `import std;` would need an extra build step.
 
 ## Parts
 

@@ -2,6 +2,15 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.22.1 (2026-10-20)
+
+### tools
+
+- The joining tool is now a small C++ program, `tools/merge-parts.cpp`, instead of `tools/merge-parts.py`. Only `g++` is needed (no Python): `g++ -std=c++23 -O2 -o tools/merge-parts tools/merge-parts.cpp` (Windows with MinGW: add `-static`, checked with GCC 16.2.0). The built program is not kept in the repository (`.gitignore`).
+  - Same use as before: `tools/merge-parts src source-viewer.html [--check file]`. The result is byte for byte the same as the Python tool's.
+  - Errors (missing `parts.txt`, missing part, output not writable) are reported with exit code 2.
+- `source-viewer.html` is not changed in this version, so its version comment stays v0.22.0.
+
 ## v0.22.0 (2026-10-20)
 
 ### source-viewer.html

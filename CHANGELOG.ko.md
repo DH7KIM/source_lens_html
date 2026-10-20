@@ -2,6 +2,15 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.22.1 (2026-10-20)
+
+### tools
+
+- 합치는 도구를 `tools/merge-parts.py`에서 작은 C++ 프로그램 `tools/merge-parts.cpp`로 바꿈. `g++`만 있으면 됨 (Python 필요 없음): `g++ -std=c++23 -O2 -o tools/merge-parts tools/merge-parts.cpp` (Windows의 MinGW에서는 `-static`을 붙임, GCC 16.2.0으로 확인). 만든 프로그램은 저장소에 올리지 않음(`.gitignore`).
+  - 쓰는 법은 그대로: `tools/merge-parts src source-viewer.html [--check 파일]`. 결과는 Python 도구와 바이트까지 같음.
+  - 오류(`parts.txt` 없음, 조각 없음, 출력 파일을 못 씀)는 끝날 때 코드 2로 알림.
+- `source-viewer.html`은 이번에 바뀌지 않아서 버전 주석은 v0.22.0 그대로.
+
 ## v0.22.0 (2026-10-20)
 
 ### source-viewer.html

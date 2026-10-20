@@ -12,19 +12,30 @@ English version: [README.md](README.md)
 - 새 조각은 실행돼야 할 자리에 `parts.txt` 줄을 넣고, 이름에는 비어 있는 다음 번호를 붙입니다.
 - `.ui` 검사·색칠·배치 미리보기는 아직 `.ui` 형식 1(문서 0.9) 기준으로 `06-ui-check.js`, `07-ui-highlight.js`, `18`~`21`에 있습니다.
 
-## 합치는 법 (Python 3)
+## 합치는 법
 
-`source` 폴더에서 실행합니다.
+합치는 도구는 작은 C++ 프로그램 [`tools/merge-parts.cpp`](../tools/merge-parts.cpp)입니다. `g++`만 있으면 됩니다. `source` 폴더에서 실행합니다.
+
+한 번 컴파일합니다 (만든 프로그램은 저장소에 올리지 않습니다. Windows에서는 `tools/merge-parts.exe`가 만들어집니다). Windows의 MinGW에서는 `-static`을 붙입니다. 안 붙이면 GCC의 DLL이 `PATH`에 있어야 하고, 못 찾으면 아무 메시지 없이 끝납니다:
 
 ```text
-python3 tools/merge-parts.py src source-viewer.html
+g++ -std=c++23 -O2 -o tools/merge-parts tools/merge-parts.cpp
+g++ -std=c++23 -O2 -static -o tools/merge-parts tools/merge-parts.cpp   (Windows, MinGW)
+```
+
+합치기:
+
+```text
+tools/merge-parts src source-viewer.html
 ```
 
 합친 파일이 다른 파일과 바이트까지 같은지 확인하려면 (예: 아무것도 바뀌면 안 되는 고침 뒤):
 
 ```text
-python3 tools/merge-parts.py src source-viewer.merged.html --check source-viewer.html
+tools/merge-parts src source-viewer.merged.html --check source-viewer.html
 ```
+
+끝날 때 코드는 0 = 끝남(비교하면 같음), 1 = 비교해서 다름, 2 = 오류(예: 조각이 없음)입니다. 이 도구는 일부러 C++ 모듈이 아니라 `#include`를 씁니다. 작은 파일 하나라서, `import std;`로 하면 준비 단계가 늘어나기 때문입니다.
 
 ## 조각
 

@@ -41,7 +41,7 @@ The `.ui` check must give exactly the same output as `tests/ui/error/*.expected`
 
 ## Development
 
-`source-viewer.html` is built from the parts in [`src/`](src/README.md). Edit the parts and join them with `python3 tools/merge-parts.py src source-viewer.html`; do not edit the joined file by hand.
+`source-viewer.html` is built from the parts in [`src/`](src/README.md). Edit the parts and join them with `tools/merge-parts src source-viewer.html` (a small C++ tool, build it once with `g++`; see [`src/README.md`](src/README.md)); do not edit the joined file by hand.
 
 ## License
 
