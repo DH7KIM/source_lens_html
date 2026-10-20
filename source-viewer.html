@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.37.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.37.1  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -70,6 +70,12 @@
   #langs::picker(select) {
     display: grid; grid-template-columns: auto auto auto; column-gap: 14px; align-content: start;
     background: var(--panel); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 4px;
+  }
+  /* 목록이 닫힌 상자를 덮지 않고 바로 아래에 열리게 위치를 직접 지정 (Chrome·Edge에서 겹침 확인, v0.37.1) */
+  #langs { anchor-name: --lang-box; }
+  #langs::picker(select) {
+    position-anchor: --lang-box; position-area: block-end span-inline-end;
+    inset: auto; margin: 4px 0 0; position-try-fallbacks: flip-block, flip-inline;
   }
   #langs option { display: grid; grid-template-columns: subgrid; grid-column: 1 / -1; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
   #langs option:hover { background: var(--sel); }

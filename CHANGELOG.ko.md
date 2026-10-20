@@ -2,6 +2,13 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.37.1 (2026-10-21)
+
+### source-viewer.html
+
+- **언어 목록이 닫힌 상자 바로 아래에 열림**: 사용자의 Edge·Chrome에서 목록이 닫힌 상자 위로 겹쳐 열려 상자를 가렸음. CSS 앵커 위치 지정(`anchor-name`, `position-anchor`, `position-area: block-end span-inline-end`, 자리가 모자라면 뒤집힘)으로 위치를 직접 정함. 시험용 Chromium 141에서는 원래 겹치지 않아 거기서는 그대로 아래에 열리는 것(퇴보 없음)만 확인했고, Edge·Chrome 확인은 사용자 몫.
+- 갈래 `lang-list-position`.
+
 ## v0.37.0 (2026-10-21)
 
 ### source-viewer.html

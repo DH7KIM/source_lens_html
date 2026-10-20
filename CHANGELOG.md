@@ -2,6 +2,13 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.37.1 (2026-10-21)
+
+### source-viewer.html
+
+- **The language list opens right below the closed box**: in the user's Edge and Chrome the list opened over the closed box and hid it. The position is now set explicitly with CSS anchor positioning (`anchor-name`, `position-anchor`, `position-area: block-end span-inline-end`, flips if there is no room). It was not reproducible in the test Chromium 141, so the fix is confirmed there only (no regression); confirmation in Edge and Chrome is up to the user.
+- Branch `lang-list-position`.
+
 ## v0.37.0 (2026-10-21)
 
 ### source-viewer.html
