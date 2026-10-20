@@ -5,7 +5,7 @@ const PV_SIZES = ["640x480", "800x600", "1024x768", "1280x720"], PV_SCALES = [10
 const PV_FONT = '"Segoe UI", system-ui, sans-serif';
 let pvCtx = null;
 function setPaneH(px, save) {
-  const max = Math.max(80, innerHeight - (document.querySelector("header").offsetHeight) - 80);
+  const max = Math.max(80, innerHeight - (document.querySelector("header").offsetHeight) - $("fileBar").offsetHeight - 80);
   pvSet.paneH = Math.round(Math.min(max, Math.max(80, px)));
   document.body.style.setProperty("--pv-h", pvSet.paneH + "px");
   if (save) savePv();

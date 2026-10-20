@@ -2,6 +2,14 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.24.0 (2026-10-20)
+
+### source-viewer.html
+
+- **Button bar**: the buttons that depend on the open file (`Source` / `Tree`, the error-details toggle, the Markdown mode and the layout preview) moved from the top header to a fixed bar right above the content. Language, theme and folder stay in the header. The bar stays when a file with no such buttons is open, so the content does not jump, and it is hidden on the start screen. Layout only; nothing else changed.
+- Fixed an empty box left behind by the hidden `Source | Tree` switch.
+- Branch `toolbar-layout`.
+
 ## v0.23.0 (2026-10-20)
 
 ### source-viewer.html

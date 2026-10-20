@@ -89,6 +89,11 @@
   nav a .dot.toml, nav a .dot.json, nav a .dot.json5 { background: var(--hp2); } nav a .dot.bat, nav a .dot.hash { background: var(--hk2); }
   nav a .dot.ui { background: var(--ht); } nav a .dot.uilog { background: var(--hc); }
   main { flex: 1; min-width: 0; }
+  /* 단추 줄: 파일마다 달라지는 단추(보기 전환·오류 설명·마크다운 모드·미리보기). 파일을 열면 늘 보이고 높이 고정 */
+  body { --bar: 0px; }
+  body.has-bar { --bar: 41px; }
+  #fileBar { position: sticky; top: var(--hdr, 49px); z-index: 1; height: 41px; display: flex; gap: 8px; align-items: center; padding: 0 16px; background: var(--bg); border-bottom: 1px solid var(--line); }
+  #fileBar[hidden] { display: none; }
   article, .start { max-width: 820px; margin: 0 auto; padding: 24px 24px 80px; }
   .start { margin-top: 8vh; text-align: center; color: var(--muted); }
   .start .box { border: 2px dashed var(--line); border-radius: 16px; padding: 40px 16px; }
@@ -97,7 +102,7 @@
   body.dragging .start .box { border-color: var(--accent); }
 
   /* 소스 보기: 자기 영역 안에서 스크롤, 줄 번호는 왼쪽에 고정 */
-  .code { position: sticky; top: var(--hdr, 49px); height: calc(100vh - var(--hdr, 49px)); overflow: auto; font: 13.5px/1.6 var(--mono); }
+  .code { position: sticky; top: calc(var(--hdr, 49px) + var(--bar)); height: calc(100vh - var(--hdr, 49px) - var(--bar)); overflow: auto; font: 13.5px/1.6 var(--mono); }
   .code .lines { display: inline-block; min-width: 100%; padding: 8px 0 40px; }
   .code .r { display: flex; }
   .code .no {
@@ -135,7 +140,7 @@
   .code .r.dg.dn .x, .code .r.dg.dn .dm { color: var(--muted); }
 
   /* .ui 배치 미리보기: 위(소스) / 경계 / 아래(배치). 아래 칸 높이 = --pv-h */
-  body.pv-on .code { height: calc(100vh - var(--hdr, 49px) - var(--pv-h, 300px) - 6px); }
+  body.pv-on .code { height: calc(100vh - var(--hdr, 49px) - var(--bar) - var(--pv-h, 300px) - 6px); }
   #pvSize { height: 6px; cursor: row-resize; background: var(--line); }
   #pvSize:hover, body.resizing-v #pvSize { background: var(--accent); opacity: 0.6; }
   body.resizing-v { cursor: row-resize; user-select: none; }
@@ -189,7 +194,7 @@
   .pv-pop .mi > .pv-pop { display: none; left: 100%; top: -4px; } .pv-pop .mi:hover > .pv-pop { display: block; }
 
   /* 소스 보기 | 계층 보기 단추 (눌린 쪽은 강조색 + 굵은 글자, 색만으로 구분하지 않음) */
-  .mode-seg { display: inline-flex; } .mode-seg button { border-radius: 0; margin: 0; }
+  .mode-seg { display: inline-flex; } .mode-seg[hidden] { display: none; } .mode-seg button { border-radius: 0; margin: 0; }
   .mode-seg button:first-child { border-radius: 8px 0 0 8px; } .mode-seg button:last-child { border-radius: 0 8px 8px 0; border-left: 0; }
   .mode-seg button[aria-pressed="true"] { background: var(--accent); color: var(--bg); font-weight: 700; }
   /* JSON·JSON5 계층 보기 (.code 안에 그림). 객체·배열 아이콘, 접기·펼치기, 오른쪽 끝은 소스 줄 번호 */
@@ -245,11 +250,12 @@
     #navSize { display: none; }
     article, .start { padding: 16px 16px 60px; }
     .code, body.pv-on .code { position: static; height: auto; }
+    #fileBar { position: static; height: auto; min-height: 41px; flex-wrap: wrap; padding: 6px 16px; }
     #pv { height: 60vh; }
   }
 
   /* 마크다운 본문 */
-  .md h1, .md h2, .md h3, .md h4, .md h5, .md h6 { line-height: 1.35; margin: 1.6em 0 0.6em; font-weight: 650; scroll-margin-top: 60px; }
+  .md h1, .md h2, .md h3, .md h4, .md h5, .md h6 { line-height: 1.35; margin: 1.6em 0 0.6em; font-weight: 650; scroll-margin-top: calc(var(--hdr, 49px) + var(--bar) + 11px); }
   .md h1 { font-size: 1.75em; } .md h2 { font-size: 1.4em; } .md h3 { font-size: 1.15em; } .md h4 { font-size: 1em; }
   :root[data-hrule] .md h1, :root[data-hrule] .md h2 { border-bottom: 1px solid var(--line); padding-bottom: 0.3em; }
   .md > :first-child { margin-top: 0; }

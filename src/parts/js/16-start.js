@@ -39,7 +39,7 @@ const hasFsa = !!window.showDirectoryPicker;
 let savedDir = null;
 
 function showStart(kind) {
-  $("start").hidden = false; $("out").hidden = true; $("code").hidden = true;
+  $("start").hidden = false; $("out").hidden = true; $("code").hidden = true; $("fileBar").hidden = true; document.body.classList.remove("has-bar");
   pvCheck = null; drawPreview();
   $("pick").hidden = !hasFsa; $("pickFiles").hidden = hasFsa;
   $("regrant").hidden = kind !== "regrant";
