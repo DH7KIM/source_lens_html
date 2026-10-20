@@ -35,11 +35,21 @@ let pvDoc = null, pvOpen = 0;   // 미리보기: 그린 문서, 보기 모드에
 const savePv = () => { try { localStorage.setItem("sv-preview:" + KEY, JSON.stringify(pvSet)); } catch (e) {} };
 let pvCheck = null;      // 지금 .ui 파일의 검사 결과 (배치 미리보기용)
 
-async function scanHandle(dir, prefix = "", depth = 0, out = []) {
+// ctx(선택): { count: 지금까지 본 파일 수, signal: 취소 신호, lastYield: 마지막으로 쉰 시각 }. 취소하면 AbortError를 던짐
+async function scanHandle(dir, prefix = "", depth = 0, out = [], ctx = null) {
   for await (const [name, h] of dir.entries()) {
+    if (ctx) {
+      if (ctx.signal.aborted) throw new DOMException("cancelled", "AbortError");
+      // 항목이 쉬지 않고 이어서 나오면 화면(취소 단추·시간 표시)이 멈추므로, 30ms마다 잠깐 쉬어 줌
+      if (performance.now() - ctx.lastYield > 30) { await new Promise(r => setTimeout(r)); ctx.lastYield = performance.now(); }
+      if (ctx.signal.aborted) throw new DOMException("cancelled", "AbortError");
+    }
     if (h.kind === "directory") {
-      if (depth < depthLimit() && !SKIP_DIRS.has(name) && !name.startsWith(".")) await scanHandle(h, prefix + name + "/", depth + 1, out);
-    } else if (langOf(name)) out.push(prefix + name);
+      if (depth < depthLimit() && !SKIP_DIRS.has(name) && !name.startsWith(".")) await scanHandle(h, prefix + name + "/", depth + 1, out, ctx);
+    } else {
+      if (ctx) ctx.count++;
+      if (langOf(name)) out.push(prefix + name);
+    }
   }
   return out;
 }
@@ -51,7 +61,7 @@ async function getHandleFile(dir, path) {
 }
 
 function useHandle(dir) {
-  src = { kind: "fsa", name: dir.name, list: () => scanHandle(dir), get: p => getHandleFile(dir, p) };
+  src = { kind: "fsa", name: dir.name, list: ctx => scanHandle(dir, "", 0, [], ctx), get: p => getHandleFile(dir, p) };
 }
 
 function useFiles(fileList) {
@@ -96,8 +106,32 @@ async function readProjectVersion(paths) {
 }
 const projectLabel = () => src.name ? src.name + (projectVersion ? " " + projectVersion : "") + " / " : "";
 
-async function refreshList() {
-  const paths = (await src.list()).sort();
+// 폴더를 읽는 동안 "폴더 읽는 중… 파일 N개 · 3.2초 [취소]"를 보임 (0.4초가 지나야 나타남: 빨리 끝나면 깜빡이지 않게)
+let reading = null;   // 읽는 중이면 { cancel() }
+async function listWithProgress() {
+  const ctl = new AbortController();
+  const ctx = { count: 0, signal: ctl.signal, lastYield: performance.now() };
+  const t0 = performance.now();
+  const busyIds = ["folder", "depth", "pick", "pickFiles", "regrant"];   // 읽는 중에는 다른 폴더·단계를 고르지 못하게
+  reading = { cancel: () => ctl.abort() };
+  for (const id of busyIds) $(id).disabled = true;
+  const tick = () => {
+    const ms = performance.now() - t0;
+    $("reading").hidden = ms < 400;
+    $("readingText").textContent = t("reading", ctx.count.toLocaleString(), (ms / 1000).toFixed(1));
+  };
+  const timer = setInterval(tick, 200);
+  try { return await src.list(ctx); }
+  finally {
+    clearInterval(timer); reading = null;
+    $("reading").hidden = true;
+    for (const id of busyIds) $(id).disabled = false;
+  }
+}
+
+// show: 사용자가 연 읽기(진행 표시·취소 있음). 창 포커스 때 조용히 다시 읽을 때는 false
+async function refreshList(show = false) {
+  const paths = ((show && src.kind === "fsa" ? await listWithProgress() : await src.list())).sort();
   projectVersion = await readProjectVersion(paths);
   fileSet = new Set(paths);
   entries = new Map();

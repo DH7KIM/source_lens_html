@@ -8,7 +8,7 @@ new ResizeObserver(() => document.body.style.setProperty("--hdr", document.query
     savedDir = await loadDir();
     if (savedDir) {
       try {
-        if ((await savedDir.queryPermission({ mode: "read" })) === "granted") { useHandle(savedDir); await startWith(savedTarget()); return; }
+        if ((await savedDir.queryPermission({ mode: "read" })) === "granted") { await openHandle(savedDir, false); return; }
       } catch (e) {}
       showStart("regrant"); return;
     }

@@ -223,7 +223,7 @@ setInterval(async () => {
     if (f.lastModified !== curMod || (await buildLogMod()) !== logMod) openFile(cur, { keepScroll: true });
   } catch (e) {}
 }, 1000);
-addEventListener("focus", async () => { if (src && src.kind === "fsa") { try { await refreshList(); } catch (e) {} } });
+addEventListener("focus", async () => { if (src && src.kind === "fsa" && !reading) { try { await refreshList(); } catch (e) {} } });
 
 // .md 문서 보기 ↔ 원문 보기
 // .ui·toml·json 오류 설명 켜기 ↔ 끄기 (밑줄과 풍선 도움말은 늘 있음)

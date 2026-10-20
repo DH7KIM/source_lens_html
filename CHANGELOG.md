@@ -2,6 +2,16 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.28.0 (2026-10-20)
+
+### source-viewer.html
+
+- **Reading indicator and cancel**: while a folder is being read (File System Access), the header shows `Reading folder... N files · 3.2 s` with a `Cancel` button. It appears only after 0.4 s, so quick reads do not flicker. Choosing another folder or level is disabled while reading.
+- **Cancel goes back to the previous list**: the folder, the list and the open file stay as they were; a cancelled level change restores the old level. A new folder is saved only after reading finishes.
+- Not for the `webkitdirectory` way (the browser hands over the whole list at once). The quiet re-read on window focus has no indicator and is skipped while a read is running.
+- The scan now pauses for a moment every 30 ms, so the page (Cancel button, elapsed time) keeps responding even with tens of thousands of files. Without it the page froze while reading a very large folder.
+- Branch `folder-reading`.
+
 ## v0.27.0 (2026-10-20)
 
 ### source-viewer.html

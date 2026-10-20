@@ -10,12 +10,28 @@ function savedTarget() {
   try { return { path: localStorage.getItem("sv-last:" + KEY) }; } catch (e) { return { path: null }; }
 }
 
-async function startWith(target) {
-  const n = await refreshList();
-  if (!n) { showStart("noFiles"); return; }
+// 목록을 읽고 파일을 엶. 읽는 도중 취소하면 undo()로 읽기 전 상태로 돌려놓고 false (목록·열어 둔 파일은 그대로)
+async function startWith(target, undo = () => {}) {
+  let n;
+  try { n = await refreshList(true); }
+  catch (e) {
+    if (e && e.name === "AbortError") { undo(); if (!src) showStart(savedDir ? "regrant" : "new"); return false; }
+    throw e;
+  }
+  if (!n) { showStart("noFiles"); return true; }
   $("folder").hidden = false; $("depth").hidden = false;
   if (target && target.path && fileSet.has(target.path)) openFile(target.path, { line: target.line || 0, hash: target.hash || "" });
   else openFile(pathFor(orderedKeys()[0], docLang));
+  return true;
+}
+
+// 폴더 핸들을 열고 읽음. 취소하면 열기 전 상태(폴더·저장된 핸들)로 돌아감. 읽기가 끝난 뒤에만 핸들을 저장
+async function openHandle(h, save) {
+  const before = { src, savedDir };
+  savedDir = h; useHandle(h);
+  const ok = await startWith(savedTarget(), () => { src = before.src; savedDir = before.savedDir; });
+  if (ok && save) await saveDir(h);
+  return ok;
 }
 
 function db() {
@@ -50,6 +66,7 @@ function showStart(kind) {
 
 // 화면 언어에 따라 바뀌는 고정 글자
 function drawStatic() {
+  $("readCancel").textContent = t("readCancel"); $("readCancel").title = t("readCancelTip");
   $("pick").textContent = t("pick"); $("regrant").textContent = t("regrant"); $("pickFiles").textContent = t("pickFiles");
   $("folder").textContent = t("folder"); $("folder").title = t("folderTip");
   const ds = $("depth"); ds.innerHTML = "";   // 하위 폴더 단계 선택 (폴더 전체에 적용되는 설정이라 머리 막대에 둠)
@@ -90,7 +107,7 @@ async function pickFolder() {
   if (hasFsa) {
     try {
       const h = await showDirectoryPicker({ id: "source-viewer", mode: "read" });
-      savedDir = h; useHandle(h); await saveDir(h); await startWith(savedTarget());
+      await openHandle(h, true);
     } catch (e) {}
   } else {
     $("dirInput").click();
@@ -100,15 +117,21 @@ $("pick").onclick = pickFolder;
 $("pickFiles").onclick = pickFolder;
 $("folder").onclick = pickFolder;
 $("depth").onchange = async () => {   // 단계를 바꾸면 기억하고 목록을 다시 읽음 (열어 둔 파일이 아직 있으면 그대로)
+  const prevDepth = maxDepth;
   maxDepth = +$("depth").value;
   try { localStorage.setItem("sv-depth:" + KEY, String(maxDepth)); } catch (e) {}
   drawStatic();
-  if (src) await startWith({ path: cur });
+  if (src) await startWith({ path: cur }, () => {   // 읽다가 취소하면 단계도 전으로
+    maxDepth = prevDepth;
+    try { localStorage.setItem("sv-depth:" + KEY, String(maxDepth)); } catch (e) {}
+    drawStatic();
+  });
 };
+$("readCancel").onclick = () => { if (reading) reading.cancel(); };
 $("dirInput").onchange = async () => { if ($("dirInput").files.length) { useFiles($("dirInput").files); await startWith(savedTarget()); } };
 $("regrant").onclick = async () => {
   try {
-    if ((await savedDir.requestPermission({ mode: "read" })) === "granted") { useHandle(savedDir); await startWith(savedTarget()); }
+    if ((await savedDir.requestPermission({ mode: "read" })) === "granted") await openHandle(savedDir, false);
   } catch (e) { showStart("new"); }
 };
 
@@ -121,7 +144,7 @@ addEventListener("drop", async e => {
   if (item && item.getAsFileSystemHandle) {
     try {
       const h = await item.getAsFileSystemHandle();
-      if (h && h.kind === "directory") { savedDir = h; useHandle(h); await saveDir(h); await startWith(savedTarget()); }
+      if (h && h.kind === "directory") await openHandle(h, true);
     } catch (er) {}
   }
 });
