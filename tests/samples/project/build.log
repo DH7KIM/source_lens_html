@@ -10,3 +10,18 @@ modules/ui.cppm:10:17: note: 'MAX_W' declared here
 modules/ui.cppm:13:37: warning: conversion to 'int' from 'float' may change the value [-Wfloat-conversion]
 old.cpp:2:5: warning: 'main' is normally a non-static function [-Wmain]
 other/missing.cpp:1:1: error: this file is not in the project
+src/messages.cpp:2:25: warning: unused parameter 'unused_p' [-Wunused-parameter]
+src/messages.cpp:3:7: warning: unused variable 'unusedv' [-Wunused-variable]
+src/messages.cpp:4:11: error: 'count' was not declared in this scope; did you mean 'cout'?
+src/messages.cpp:5:3: error: 'Foo' does not name a type
+src/messages.cpp:6:11: error: invalid conversion from 'const char*' to 'int' [-fpermissive]
+src/messages.cpp:7:19: warning: comparison of integer expressions of different signedness: 'int' and 'std::vector<int>::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+src/messages.cpp:8:3: error: assignment of read-only parameter 'n'
+src/messages.cpp:10:11: warning: no return statement in function returning non-void [-Wreturn-type]
+src/messages.cpp:11:15: warning: 'z' is used uninitialized [-Wuninitialized]
+src/messages.cpp:12:10: error: expected ';' before 'int'
+src/messages.cpp:14:48: error: passing 'const S' as 'this' argument discards qualifiers [-fpermissive]
+src/messages.cpp:15:9: error: no matching function for call to 'pow(int)'
+src/messages.cpp:15:9: note: candidate: 'double pow(double, double)'
+src/messages.cpp:16:9: error: 'zork' was not declared in this scope
+src/messages.cpp:16:9: error: 'zork' redeclared as different kind of entity

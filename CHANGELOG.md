@@ -2,6 +2,18 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.21.0 (2026-10-20)
+
+### source-viewer.html
+
+- GCC compiler messages (`build.log`) now get an explanation in the screen language. For 17 common messages (undeclared names, missing `;`, missing include file, no matching function, `const` problems, unused variable/parameter, sign compare, missing return, uninitialized variable) the Korean screen shows the translated message and a `help:` line, with the English original in the tooltip. The English screen shows the original plus an English `help:` line. Other messages stay as they are.
+  - `did you mean 'x'?` from GCC is shown as a `help:` line.
+  - Switching the screen language redraws an open file that has compiler messages.
+  - Needs English compiler output (`LANG=C`), because the explanations match the English text.
+  - Not in this version: `cargo.json` (Rust), language pack files for these messages, linker errors (`undefined reference`), the "Hide details" button for compiler results.
+- Sample: `src/messages.cpp` and more lines in `build.log`.
+- Version comment at the top v0.21.0.
+
 ## v0.20.0 (2026-10-20)
 
 ### source-viewer.html

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.20.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.21.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -2345,11 +2345,11 @@ function drawLangs() {
     b.textContent = LANG_NAMES[l] || l;
     b.title = t("langTip");
     b.className = l === docLang ? "on" : "";
-    b.onclick = () => {
+    b.onclick = async () => {
       docLang = l;
       if (UI[l]) uiLang = l;
       if (cur && isMd(cur)) openFile(pathFor(keyOf(cur), l));
-      else if (cur && (langOf(cur) === "ui" || isTomlFile(cur))) openFile(cur, { keepScroll: true });   // 진단 설명도 그 언어로
+      else if (cur && (langOf(cur) === "ui" || isTomlFile(cur) || (await loadBuildLog()).files.has(cur))) openFile(cur, { keepScroll: true });   // 진단 설명도 그 언어로
       else { drawNav(); drawLangs(); drawStatic(); drawPreview(); }
     };
     box.append(b);
@@ -2457,9 +2457,54 @@ function parseGccLog(text, paths) {
     if (seen.has(key)) continue;   // 같은 헤더에서 여러 번 나온 것은 한 번만
     seen.add(key);
     if (!files.has(path)) files.set(path, []);
-    files.get(path).push({ line: +m[2], col: +m[3] || 1, length: 0, severity, code, msg, help: "" });
+    files.get(path).push({ line: +m[2], col: +m[3] || 1, length: 0, severity, code, msg, help: "", src: "gcc" });
   }
   return files;
+}
+// GCC 메시지 설명 표: 패턴 → 한국어 [메시지, help], 영어 help. $1·$2는 패턴에서 잡은 낱말.
+// 영어 화면은 원문 + 영어 help, 그 밖의 화면 언어는 번역(+ 풍선에 영어 원문). 표에 없는 메시지는 원문 그대로.
+// (컴파일러는 LANG=C 영어 출력이어야 맞음. 앞으로 한 번에 몇 개씩 늘림)
+const GCC_MSG = [
+  { re: /^'(.+)' was not declared in this scope/, ko: ["'$1'이(가) 이 범위에서 선언되지 않았습니다", "철자, 위쪽에 선언이 있는지, #include·import를 확인하세요"], en: "check the spelling, that it is declared above, and the #include / import" },
+  { re: /^'(.+)' has not been declared/, ko: ["'$1'이(가) 선언되지 않았습니다", "철자, 위쪽에 선언이 있는지, #include·import를 확인하세요"], en: "check the spelling, that it is declared above, and the #include / import" },
+  { re: /^'(.+)' does not name a type/, ko: ["'$1'은(는) 타입 이름이 아닙니다", "타입 철자와 #include·import를 확인하고, 바로 앞 문장 끝에 ';'가 빠졌는지도 보세요"], en: "check the type's spelling and the #include / import, and whether the previous statement is missing a ';'" },
+  { re: /^expected '(.+?)' before '(.+?)'/, ko: ["'$2' 앞에 '$1'이(가) 필요합니다", "가리킨 줄이 아니라 바로 앞 줄 끝에 '$1'이(가) 빠졌는지 확인하세요"], en: "the '$1' is often missing at the end of the line before the one shown" },
+  { re: /^expected '(.+?)' at end of input/, ko: ["파일 끝에 '$1'이(가) 필요합니다", "열고 닫는 괄호나 ';' 짝이 맞는지 확인하세요"], en: "check that every bracket and ';' is paired" },
+  { re: /^(.+): No such file or directory$/, ko: ["$1: 파일이나 폴더가 없습니다", "파일 이름·경로의 철자와 포함 폴더(-I) 옵션을 확인하세요"], en: "check the file name, the path and the include folder (-I) option" },
+  { re: /^no matching function for call to '(.+)'/, ko: ["'$1' 호출에 맞는 함수가 없습니다", "아래 note: candidate 줄에서 후보 함수의 인자 개수·타입과 비교해 보세요"], en: "compare the arguments with the candidates in the note: lines below" },
+  { re: /^invalid conversion from '(.+?)' to '(.+?)'/, ko: ["'$1'을(를) '$2'(으)로 바꿀 수 없습니다", "타입이 맞는지 보고, 정말 필요하면 static_cast 같은 명시적 변환을 쓰세요"], en: "check that the types match; use an explicit cast such as static_cast only if you mean it" },
+  { re: /^passing '(.+?)' as 'this' argument discards qualifiers/, ko: ["'$1' 객체로 const가 아닌 멤버 함수를 불렀습니다", "그 함수 선언 끝에 const를 붙이거나, 객체를 const로 두지 마세요"], en: "add const to the end of that member function's declaration, or do not make the object const" },
+  { re: /^assignment of read-only (?:variable|parameter) '(.+)'/, ko: ["const인 '$1'에 값을 대입할 수 없습니다", "const를 빼거나 다른 변수를 쓰세요"], en: "remove const or use another variable" },
+  { re: /^assignment of member '(.+)' in read-only object/, ko: ["const 객체의 멤버 '$1'에 값을 대입할 수 없습니다", "객체의 const를 빼거나 멤버 함수를 const가 아닌 것으로 부르세요"], en: "remove const from the object, or use a non-const path" },
+  { re: /^unused variable '(.+)'/, ko: ["변수 '$1'을(를) 쓰지 않았습니다", "필요 없으면 지우고, 일부러 두는 것이면 [[maybe_unused]]를 붙이세요"], en: "remove it, or add [[maybe_unused]] if it is on purpose" },
+  { re: /^unused parameter '(.+)'/, ko: ["매개변수 '$1'을(를) 쓰지 않았습니다", "이름만 지우거나 [[maybe_unused]]를 붙이세요"], en: "remove the name, or add [[maybe_unused]]" },
+  { re: /^comparison of integer expressions of different signedness: '(.+?)' and '(.+?)'/, ko: ["부호가 다른 정수 '$1'과(와) '$2'을(를) 비교합니다", "한쪽을 다른 쪽 타입에 맞추세요 (예: 반복 변수를 size_t로)"], en: "use the same type on both sides (for example size_t for the loop variable)" },
+  { re: /^no return statement in function returning non-void/, ko: ["값을 돌려줘야 하는 함수인데 return이 없습니다", "모든 경로에서 값을 return 하세요"], en: "return a value on every path" },
+  { re: /^'(.+)' is used uninitialized/, ko: ["'$1'을(를) 초기화하지 않고 썼습니다", "선언할 때 초기값을 넣으세요 (예: int x = 0;)"], en: "give it an initial value where it is declared (for example int x = 0;)" },
+  { re: /^'(.+)' may be used uninitialized/, ko: ["'$1'이(가) 초기화되지 않은 채 쓰일 수 있습니다", "선언할 때 초기값을 넣거나 모든 경로에서 값을 정하세요"], en: "give it an initial value, or set it on every path" },
+];
+// 한 진단의 설명 (원본은 건드리지 않고 복사해서 돌려줌). 화면 언어가 영어가 아니면 번역(d.show)
+function gccApply(d, L) {
+  const norm = d.msg.replace(/[‘’]/g, "'");
+  const hint = norm.match(/;\s*did you mean '([^']+)'\?\s*$/);   // GCC가 준 힌트는 help 줄로
+  const base = hint ? norm.slice(0, hint.index) : norm;
+  const hintText = l => hint ? (l === "ko" ? `GCC가 '${hint[1]}'을(를) 제안합니다` : `GCC suggests '${hint[1]}'`) : "";
+  const fill = (str, m) => str.replace(/\$(\d)/g, (_, i) => m[+i] ?? "");
+  let e = null, m = null;
+  for (const x of GCC_MSG) if ((m = base.match(x.re))) { e = x; break; }
+  const join = (a, b) => [a, b].filter(Boolean).join(" · ");
+  const out = Object.assign({}, d);
+  if (!e) {
+    if (!hint) return out;
+    out.msg = hint ? base : d.msg;
+    out.help = hintText("en");
+    if (L !== "en") out.show = { msg: base, help: hintText(L) };
+    return out;
+  }
+  out.msg = hint ? base : d.msg;
+  out.help = join(fill(e.en, m), hintText("en"));
+  if (L !== "en") out.show = { msg: fill(e.ko[0], m), help: join(fill(e.ko[1], m), hintText(L)) };
+  return out;
 }
 // Rust (cargo build --message-format=json > cargo.json): 줄마다 JSON, compiler-message만 읽음
 function parseCargoJson(text, paths) {
@@ -2815,6 +2860,7 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
         const ds = (await loadBuildLog()).files.get(path);
         const toml = !big && isTomlFile(path);
         let diags = ds && ds.length ? gccFit(ds, text) : [];
+        diags = diags.map(d => d.src === "gcc" ? gccApply(d, uiLang) : d);   // GCC 설명은 화면 언어로 (원문은 d.msg)
         if (toml) {   // TOML 문법 검사: 설명은 화면 언어로 (영어 원문은 d.msg)
           const tds = tomlCheck(text);
           for (const d of tds) { Object.assign(d, tomlText(d, "en")); if (uiLang !== "en") d.show = tomlText(d, uiLang); }
