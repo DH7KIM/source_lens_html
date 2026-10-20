@@ -2,6 +2,13 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.27.0 (2026-10-20)
+
+### source-viewer.html
+
+- **머리 막대와 단추 줄 높이를 같게**: 두 줄이 하나의 높이 변수(`--row`, 49px)를 함께 쓰고 안의 내용을 가운데 맞춰, 위아래 여백이 같아짐. 전에는 머리 막대가 약 52px, 단추 줄이 41px이고 여백이 좁았음.
+- 갈래 `toolbar-height`.
+
 ## v0.26.0 (2026-10-20)
 
 ### source-viewer.html

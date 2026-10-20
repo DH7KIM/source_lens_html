@@ -2,6 +2,13 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.27.0 (2026-10-20)
+
+### source-viewer.html
+
+- **Same height for the header bar and the button row**: both rows now use one shared height (`--row`, 49px) with their contents centered, so the top and bottom spacing match. Before, the header was about 52px and the button row 41px with tighter spacing.
+- Branch `toolbar-height`.
+
 ## v0.26.0 (2026-10-20)
 
 ### source-viewer.html
