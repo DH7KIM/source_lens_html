@@ -2,6 +2,14 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.37.0 (2026-10-21)
+
+### source-viewer.html
+
+- **언어 목록 상자의 항목을 열로 맞춤**: 항목이 `화면 언어로 번역한 이름 | 그 언어 자신의 이름 | 코드`로 간격이 맞게 보임 (예: `일본어  日本語  ja`, 영어 화면에서는 `Japanese  日本語  ja`). 화면 언어와 같은 줄은 자기 이름 칸을 비움. 닫힌 상태에서는 고른 언어의 이름만 보임. 번역한 이름은 `01-strings-ko.js`·`01-strings-en.js`의 `langName_<코드>` 키 (없으면 그 언어 자신의 이름).
+- 새 Chrome·Edge(135 이상)의 목록 상자 꾸미기(`appearance: base-select`)를 씀. 다른 브라우저에서는 열 없이 이름만 나오는 기본 목록이고 동작은 같음.
+- 갈래 `lang-columns`.
+
 ## v0.36.0 (2026-10-21)
 
 ### source-viewer.html

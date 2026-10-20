@@ -25,6 +25,8 @@ UI.ko = {
   treeLines: "JSON Lines (줄마다 값 하나) {0}줄",
   langTip: "화면과 문서를 이 언어로 봅니다",
   docFallback: "\"{0}\" 문서가 없어 \"{1}\" 문서를 보여 줍니다",
+  "langName_ko": "한국어", "langName_en": "영어", "langName_ja": "일본어", "langName_zh-cn": "중국어(간체)", "langName_zh-tw": "중국어(번체)",
+  "langName_fr": "프랑스어", "langName_de": "독일어", "langName_it": "이탈리아어", "langName_es": "스페인어", langName_zh: "중국어",
   noTip: "클릭: 이 줄 표시 (주소에 줄 번호가 남아 다음에 바로 열림)",
   navSizeTip: "끌어서 폭 조절 / 두 번 클릭하면 기본 폭",
   dirTip: "클릭: 폴더 접기 / 펼치기",

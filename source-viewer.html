@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.36.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.37.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -65,6 +65,19 @@
     border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; cursor: pointer;
   }
   button:hover, select:hover { border-color: var(--muted); }
+  /* 언어 목록 상자: 새 Chrome·Edge에서는 항목을 이름 | 자기 이름 | 코드 열로 맞춤 (다른 브라우저는 이름만 나오는 기본 목록) */
+  #langs, #langs::picker(select) { appearance: base-select; }
+  #langs::picker(select) {
+    display: grid; grid-template-columns: auto auto auto; column-gap: 14px; align-content: start;
+    background: var(--panel); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 4px;
+  }
+  #langs option { display: grid; grid-template-columns: subgrid; grid-column: 1 / -1; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
+  #langs option:hover { background: var(--sel); }
+  #langs option:checked { font-weight: 700; color: var(--accent); }
+  #langs option::checkmark { display: none; }
+  #langs .lo { color: var(--muted); }
+  #langs .lc { color: var(--muted); font-family: ui-monospace, Consolas, monospace; }
+  #langs selectedcontent .lo, #langs selectedcontent .lc { display: none; }
   button.on { border-color: var(--accent); color: var(--accent); }
   .wrap { display: flex; align-items: flex-start; }
   nav {
@@ -311,7 +324,7 @@
   <span class="name" id="name">Source Viewer</span>
   <span class="state" id="state"></span>
   <span class="state" id="reading" hidden><span id="readingText"></span> <button id="readCancel"></button></span>
-  <select id="langs"></select>
+  <select id="langs"><button><selectedcontent></selectedcontent></button></select>
   <select id="theme"></select>
   <select id="depth" hidden></select>
   <button id="folder" hidden></button>
@@ -395,6 +408,8 @@ UI.ko = {
   treeLines: "JSON Lines (줄마다 값 하나) {0}줄",
   langTip: "화면과 문서를 이 언어로 봅니다",
   docFallback: "\"{0}\" 문서가 없어 \"{1}\" 문서를 보여 줍니다",
+  "langName_ko": "한국어", "langName_en": "영어", "langName_ja": "일본어", "langName_zh-cn": "중국어(간체)", "langName_zh-tw": "중국어(번체)",
+  "langName_fr": "프랑스어", "langName_de": "독일어", "langName_it": "이탈리아어", "langName_es": "스페인어", langName_zh: "중국어",
   noTip: "클릭: 이 줄 표시 (주소에 줄 번호가 남아 다음에 바로 열림)",
   navSizeTip: "끌어서 폭 조절 / 두 번 클릭하면 기본 폭",
   dirTip: "클릭: 폴더 접기 / 펼치기",
@@ -481,6 +496,8 @@ UI.en = {
   treeLines: "JSON Lines (one value per line), {0} {0|line|lines}",
   langTip: "Show the screen and documents in this language",
   docFallback: "No \"{0}\" document; showing the \"{1}\" document",
+  "langName_ko": "Korean", "langName_en": "English", "langName_ja": "Japanese", "langName_zh-cn": "Chinese (Simplified)", "langName_zh-tw": "Chinese (Traditional)",
+  "langName_fr": "French", "langName_de": "German", "langName_it": "Italian", "langName_es": "Spanish", langName_zh: "Chinese",
   noTip: "Click: mark this line (the line number stays in the address)",
   navSizeTip: "Drag to resize / double-click for default width",
   dirTip: "Click: collapse / expand the folder",
@@ -2653,16 +2670,27 @@ $("navSize").addEventListener("dblclick", () => {
 });
 
 // 언어 목록 상자: 내장 화면 언어(UI)와 연 폴더의 문서 언어(이름.<코드>.md)를 합쳐 항상 모두 보여 줌. 고르면 문서·화면 언어가 같이 바뀜
+// 항목 = 화면 언어로 번역한 이름 | 그 언어 자신의 이름(같으면 비움) | 코드. 새 Chrome·Edge(appearance: base-select)에서는 열로 맞춰 보이고, 다른 브라우저는 이름만 나오는 기본 목록
+function langNames(l) {
+  const k = "langName_" + l, own = LANG_NAMES[l] || l;
+  const main = (UI[uiLang] && UI[uiLang][k]) || UI.en[k] || own;
+  return { main, own: own === main ? "" : own };
+}
 function drawLangs() {
   const all = new Set(Object.keys(UI));
   for (const e of entries.values()) if (e.md) for (const l of Object.keys(e.md)) all.add(l);
   const known = Object.keys(LANG_NAMES);   // 이름 표의 순서가 목록 순서, 표에 없는 코드는 그 뒤에 코드 순
   const pos = l => known.indexOf(l) < 0 ? 1e3 : known.indexOf(l);
   const box = $("langs");
-  box.innerHTML = "";
+  box.querySelectorAll("option").forEach(o => o.remove());   // 닫힌 상태를 그리는 <button><selectedcontent>는 HTML에 한 번만 두고 항목만 다시 만듦 (새로 만들면 비어 버림)
+  const columns = !!(window.CSS && CSS.supports("appearance", "base-select"));   // 새 Chrome·Edge: 항목 안을 열로 꾸밈
   for (const l of [...all].sort((a, b) => pos(a) - pos(b) || a.localeCompare(b))) {
-    const o = document.createElement("option");
-    o.value = l; o.textContent = LANG_NAMES[l] || l;
+    const nm = langNames(l), o = document.createElement("option");
+    o.value = l;
+    if (!columns) o.textContent = nm.main;   // 열을 못 쓰는 브라우저는 이름만
+    else for (const [cls, txt] of [["ln", nm.main], ["lo", nm.own], ["lc", l]]) {
+      const sp = document.createElement("span"); sp.className = cls; sp.textContent = txt; o.appendChild(sp);
+    }
     box.appendChild(o);
   }
   box.value = docLang; box.title = t("langTip");

@@ -2,6 +2,14 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.37.0 (2026-10-21)
+
+### source-viewer.html
+
+- **Items of the language list box are lined up in columns**: each item shows `name in the screen language | the language's own name | code` with even spacing (for example `일본어  日本語  ja`, and `Japanese  日本語  ja` on an English screen). The own-name cell is left empty on the line of the screen language. The closed box shows only the name of the chosen language. The translated names are the `langName_<code>` keys in `01-strings-ko.js` and `01-strings-en.js` (the language's own name is used when a key is missing).
+- It uses the styling of select boxes in new Chrome and Edge (135 or later, `appearance: base-select`). Other browsers show a plain list with names only; it works the same.
+- Branch `lang-columns`.
+
 ## v0.36.0 (2026-10-21)
 
 ### source-viewer.html

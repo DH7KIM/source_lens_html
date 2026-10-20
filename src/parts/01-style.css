@@ -45,6 +45,19 @@
     border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; cursor: pointer;
   }
   button:hover, select:hover { border-color: var(--muted); }
+  /* 언어 목록 상자: 새 Chrome·Edge에서는 항목을 이름 | 자기 이름 | 코드 열로 맞춤 (다른 브라우저는 이름만 나오는 기본 목록) */
+  #langs, #langs::picker(select) { appearance: base-select; }
+  #langs::picker(select) {
+    display: grid; grid-template-columns: auto auto auto; column-gap: 14px; align-content: start;
+    background: var(--panel); color: var(--fg); border: 1px solid var(--line); border-radius: 8px; padding: 4px;
+  }
+  #langs option { display: grid; grid-template-columns: subgrid; grid-column: 1 / -1; padding: 4px 10px; border-radius: 6px; cursor: pointer; }
+  #langs option:hover { background: var(--sel); }
+  #langs option:checked { font-weight: 700; color: var(--accent); }
+  #langs option::checkmark { display: none; }
+  #langs .lo { color: var(--muted); }
+  #langs .lc { color: var(--muted); font-family: ui-monospace, Consolas, monospace; }
+  #langs selectedcontent .lo, #langs selectedcontent .lc { display: none; }
   button.on { border-color: var(--accent); color: var(--accent); }
   .wrap { display: flex; align-items: flex-start; }
   nav {
