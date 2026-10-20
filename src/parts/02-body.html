@@ -1,0 +1,48 @@
+</style>
+</head>
+<body>
+<header>
+  <span class="name" id="name">Source Viewer</span>
+  <span class="state" id="state"></span>
+  <button id="mdMode" hidden></button>
+  <button id="diagBtn" hidden></button>
+  <button id="pvBtn" hidden></button>
+  <span id="langs"></span>
+  <select id="theme"></select>
+  <button id="folder" hidden></button>
+</header>
+<div class="wrap">
+  <nav id="nav" hidden></nav>
+  <div id="navSize" hidden></div>
+  <main>
+    <div class="start" id="start">
+      <div class="box">
+        <p id="startMsg"></p>
+        <p>
+          <button id="pick" hidden></button>
+          <button id="regrant" hidden></button>
+          <button id="pickFiles" hidden></button>
+        </p>
+        <p class="note" id="startNote"></p>
+      </div>
+    </div>
+    <article class="md" id="out" hidden></article>
+    <div class="code" id="code" hidden></div>
+    <div id="pvSize" hidden></div>
+    <div id="pv" hidden>
+      <div class="pv-bar">
+        <span class="pv-mode"><button id="pvModeL" data-m="layout"></button><button id="pvModeV" data-m="view"></button></span>
+        <select id="pvWin"></select>
+        <label id="pvWL"><span id="pvWT"></span><input type="number" id="pvW" min="1" max="10000"></label>
+        <label id="pvHL"><span id="pvHT"></span><input type="number" id="pvH" min="1" max="10000"></label>
+        <select id="pvScale"></select>
+        <span id="pvNote"></span>
+      </div>
+      <div class="pv-stage" id="pvStage"></div>
+    </div>
+  </main>
+</div>
+<div class="pv-tooltip" id="pvTooltip" role="tooltip" hidden></div>
+<input type="file" id="dirInput" webkitdirectory multiple hidden>
+<script>
+"use strict";

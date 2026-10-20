@@ -2,6 +2,15 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.22.0 (2026-10-20)
+
+### source-viewer.html
+
+- 소스를 `src/`의 조각 26개로 나눠 두고(설명: [`src/README.ko.md`](src/README.ko.md)) `tools/merge-parts.py`로 `source-viewer.html`에 합침. 사용자가 받는 것은 지금처럼 파일 하나.
+  - 동작 변화 없음: 합친 파일은 v0.21.0과 버전 주석만 다름.
+  - 합친 파일이 아니라 조각을 고침.
+- 맨 위 버전 주석 v0.22.0.
+
 ## v0.21.0 (2026-10-20)
 
 ### source-viewer.html

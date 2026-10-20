@@ -39,6 +39,10 @@ English: [README.md](README.md)
 `tests/samples/`에 예제 폴더(`project`, `docs`)가 있습니다. 뷰어를 열고 그중 하나를 고르면 모든 파일 종류, 트리, `.ui` 오류 표시를 확인할 수 있습니다.
 `.ui` 검사 결과는 `tile_font_editor_cpp`의 `tests/ui/error/*.expected`와 글자 하나까지 같아야 합니다.
 
+## 개발
+
+`source-viewer.html`은 [`src/`](src/README.ko.md)의 조각으로 만듭니다. 조각을 고친 뒤 `python3 tools/merge-parts.py src source-viewer.html`로 합치며, 합친 파일은 직접 고치지 않습니다.
+
 ## 라이선스
 
 MIT License, KIM DONG HAN. [LICENSE](LICENSE)를 보세요.

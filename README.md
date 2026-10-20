@@ -39,6 +39,10 @@ Skipped folders: `obj`, `gcm.cache`, `.git`, `target`, `node_modules`, `bin`, `b
 `tests/samples/` holds example folders (`project`, `docs`). Open a viewer and choose one of them to check every file type, the tree and the `.ui` errors.
 The `.ui` check must give exactly the same output as `tests/ui/error/*.expected` in `tile_font_editor_cpp`.
 
+## Development
+
+`source-viewer.html` is built from the parts in [`src/`](src/README.md). Edit the parts and join them with `python3 tools/merge-parts.py src source-viewer.html`; do not edit the joined file by hand.
+
 ## License
 
 MIT License, KIM DONG HAN. See [LICENSE](LICENSE).

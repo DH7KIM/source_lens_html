@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Source Viewer</title>
+<!--
+  Source Viewer v0.22.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
+  - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
+  - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
+  - 목록은 트리 구조(가지 연결선 ├ └): 폴더를 눌러 접기·펼치기 (브라우저에 기억). 접힌 폴더 안에 지금 파일이 있으면 강조색.
+  - 문법 색칠 + 줄 번호 (C++, Rust, TOML, JSON, BAT, 셸/YAML/Makefile). 줄 번호는 복사할 때 딸려 오지 않는다.
+  - .ui (UI 레이아웃 형식 1, ui-guideline 문서 0.9): 색칠 + 전체 검사(E001~E016, W101·W103·W104).
+    옛 이름(tip, check, item 등)도 읽고 경고 W104로 새 이름을 알려 준다.
+    오류는 빨간 밑줄, 경고는 주황 밑줄. 줄 아래에 코드·설명·추천(help)을 표시 (끄고 켤 수 있음). .ui.log도 색칠.
+  - .md는 문서로 보기 / 원문 보기 전환. 한국어(이름.ko.md) / 영어(이름.md) 전환.
+  - 파일을 고쳐서 저장하면 1초 안에 화면이 바뀐다. UTF-8이 아니면 EUC-KR(CP949)·UTF-16으로 읽는다.
+-->
+<style>

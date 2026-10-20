@@ -2,6 +2,15 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.22.0 (2026-10-20)
+
+### source-viewer.html
+
+- The source is now kept as 26 parts in `src/` (see [`src/README.md`](src/README.md)) and joined into `source-viewer.html` with `tools/merge-parts.py`. Users still get and copy one file.
+  - No change in behavior: the joined file differs from v0.21.0 only in the version comment.
+  - Edit the parts, not the joined file.
+- Version comment at the top v0.22.0.
+
 ## v0.21.0 (2026-10-20)
 
 ### source-viewer.html

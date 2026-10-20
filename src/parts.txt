@@ -1,0 +1,27 @@
+# 합치는 순서 (위에서 아래로 이어 붙임). 줄이 # 으로 시작하면 설명.
+parts/00-head.html
+parts/01-style.css
+parts/02-body.html
+parts/js/01-strings.js
+parts/js/02-file-kinds.js
+parts/js/03-highlight.js
+parts/js/04-json5.js
+parts/js/05-ui-messages.js
+parts/js/06-ui-check.js
+parts/js/07-ui-highlight.js
+parts/js/08-markdown.js
+parts/js/09-source-folder.js
+parts/js/10-tree-list.js
+parts/js/11-list-width-and-helpers.js
+parts/js/12-language-pack.js
+parts/js/13-compiler-output.js
+parts/js/14-toml-check.js
+parts/js/15-open-file-and-events.js
+parts/js/16-start.js
+parts/js/17-themes.js
+parts/js/18-ui-preview.js
+parts/js/19-preview-menu.js
+parts/js/20-preview-tooltip.js
+parts/js/21-preview-events.js
+parts/js/22-boot.js
+parts/99-tail.html
