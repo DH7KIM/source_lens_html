@@ -2,6 +2,14 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.38.0 (2026-10-21)
+
+### source-viewer.html
+
+- **The language box shows each language's own name with its code**: `한국어 (ko)`, `English (en)`, `日本語 (ja)`, `Français (fr)`, `中文(简体) (zh-cn)`. The names are no longer translated into the screen language, so a language can be found even when the screen language cannot be read.
+- The `langName_<code>` keys are removed from the screen texts; the names come from `LANG_NAMES` only.
+- Branch `lang-own-names`.
+
 ## v0.37.2 (2026-10-21)
 
 ### source-viewer.html

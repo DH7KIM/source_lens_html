@@ -25,8 +25,6 @@ UI.en = {
   treeLines: "JSON Lines (one value per line), {0} {0|line|lines}",
   langTip: "Show the screen and documents in this language",
   docFallback: "No \"{0}\" document; showing the \"{1}\" document",
-  "langName_ko": "Korean", "langName_en": "English", "langName_ja": "Japanese", "langName_zh-cn": "Chinese (Simplified)", "langName_zh-tw": "Chinese (Traditional)",
-  "langName_fr": "French", "langName_de": "German", "langName_it": "Italian", "langName_es": "Spanish", langName_zh: "Chinese",
   noTip: "Click: mark this line (the line number stays in the address)",
   navSizeTip: "Drag to resize / double-click for default width",
   dirTip: "Click: collapse / expand the folder",

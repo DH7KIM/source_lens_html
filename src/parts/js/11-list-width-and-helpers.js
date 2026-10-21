@@ -26,10 +26,9 @@ $("navSize").addEventListener("dblclick", () => {
 });
 
 // 언어 목록 상자: 내장 화면 언어(UI)와 연 폴더의 문서 언어(이름.<코드>.md)를 합쳐 항상 모두 보여 줌. 고르면 문서·화면 언어가 같이 바뀜
-// 항목 = 화면 언어로 번역한 이름 (일반 선택 상자, 테마·하위 단계 상자와 같은 모양과 동작)
+// 항목 = 그 언어 자신의 이름 (코드), 예: 한국어 (ko), 日本語 (ja) (일반 선택 상자, 테마·하위 단계 상자와 같은 모양과 동작)
 function langName(l) {
-  const k = "langName_" + l;
-  return (UI[uiLang] && UI[uiLang][k]) || UI.en[k] || LANG_NAMES[l] || l;
+  return (LANG_NAMES[l] || l) + " (" + l + ")";
 }
 function drawLangs() {
   const all = new Set(Object.keys(UI));

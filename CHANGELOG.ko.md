@@ -2,6 +2,14 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.38.0 (2026-10-21)
+
+### source-viewer.html
+
+- **언어 상자에 각 언어 자신의 이름과 코드가 나옴**: `한국어 (ko)`, `English (en)`, `日本語 (ja)`, `Français (fr)`, `中文(简体) (zh-cn)`. 화면 언어로 번역하지 않으므로 화면 언어를 읽지 못해도 자기 언어를 찾을 수 있음.
+- 화면 글자에서 `langName_<코드>` 키를 지움. 이름은 `LANG_NAMES`에서만 가져옴.
+- 갈래 `lang-own-names`.
+
 ## v0.37.2 (2026-10-21)
 
 ### source-viewer.html
