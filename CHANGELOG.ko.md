@@ -2,6 +2,14 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.41.0 (2026-10-21)
+
+### source-viewer.html
+
+- **일본어(`ja`) 화면 글자 추가** (`01-strings-ja.js`, 160개). 초안은 Claude가 번역했고 원어민 확인 전. 언어 상자에 `日本語 (ja)`가 나오고, 브라우저 언어가 일본어면 시작 때 자동으로 선택됨.
+- `.ui` 오류 설명 표(`05-ui-messages.js`)는 한국어뿐이라 일본어 화면에서도 영어 원문이 보임 (TODO).
+- 갈래 `lang-ja`.
+
 ## v0.40.0 (2026-10-21)
 
 ### source-viewer.html

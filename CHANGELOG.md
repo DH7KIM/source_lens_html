@@ -2,6 +2,14 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.41.0 (2026-10-21)
+
+### source-viewer.html
+
+- **Added Japanese (`ja`) screen strings** (`01-strings-ja.js`, 160 keys). Draft translated by Claude, not yet checked by a native speaker. The language box now shows `日本語 (ja)`, and it is picked automatically when the browser language is Japanese.
+- The `.ui` error description table (`05-ui-messages.js`) is Korean only, so those messages stay in English on the Japanese screen (TODO).
+- Branch `lang-ja`.
+
 ## v0.40.0 (2026-10-21)
 
 ### source-viewer.html
