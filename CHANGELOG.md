@@ -2,6 +2,14 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.45.0 (2026-10-21)
+
+### source-viewer.html
+
+- **Added German (`de`) screen strings** (`01-strings-de.js`, 160 keys). Draft translated by Claude, not yet checked by a native speaker. It is picked automatically when the browser language is `de-DE`, `de-AT`, `de-CH` and the like. Uses „ “ quotes and the formal "Sie".
+- Theme names and `.ui` error descriptions are still not translated (TODO).
+- Branch `lang-de`.
+
 ## v0.44.0 (2026-10-21)
 
 ### source-viewer.html

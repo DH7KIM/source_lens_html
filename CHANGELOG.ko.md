@@ -2,6 +2,14 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.45.0 (2026-10-21)
+
+### source-viewer.html
+
+- **독일어(`de`) 화면 글자 추가** (`01-strings-de.js`, 160개). 초안은 Claude가 번역했고 원어민 확인 전. 브라우저 언어가 `de-DE`·`de-AT`·`de-CH` 등이면 시작 때 자동으로 선택됨. 따옴표는 „ “, 높임말(Sie) 사용.
+- 테마 이름과 `.ui` 오류 설명은 전처럼 번역되지 않음 (TODO).
+- 갈래 `lang-de`.
+
 ## v0.44.0 (2026-10-21)
 
 ### source-viewer.html
