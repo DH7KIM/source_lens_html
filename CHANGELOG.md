@@ -2,6 +2,14 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.43.0 (2026-10-21)
+
+### source-viewer.html
+
+- **Added Traditional Chinese (`zh-tw`) screen strings** (`01-strings-zh-tw.js`, 160 keys). Not a character conversion of the Simplified table: translated separately with Taiwan terms (資料夾, 檔案, 原始碼, 版面配置, …). Draft translated by Claude, not yet checked by a native speaker. It is picked automatically when the browser language is `zh-TW`, `zh-HK`, `zh-MO` or `zh-Hant`.
+- Theme names and `.ui` error descriptions are still not translated (TODO).
+- Branch `lang-zh-tw`.
+
 ## v0.42.0 (2026-10-21)
 
 ### source-viewer.html

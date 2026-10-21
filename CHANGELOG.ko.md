@@ -2,6 +2,14 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.43.0 (2026-10-21)
+
+### source-viewer.html
+
+- **중국어 번체(`zh-tw`) 화면 글자 추가** (`01-strings-zh-tw.js`, 160개). 간체를 글자만 바꾼 것이 아니라 대만식 용어(資料夾·檔案·原始碼·版面配置 등)로 따로 번역함. 초안은 Claude가 번역했고 원어민 확인 전. 브라우저 언어가 `zh-TW`·`zh-HK`·`zh-MO`·`zh-Hant`면 시작 때 자동으로 선택됨.
+- 테마 이름과 `.ui` 오류 설명은 전처럼 번역되지 않음 (TODO).
+- 갈래 `lang-zh-tw`.
+
 ## v0.42.0 (2026-10-21)
 
 ### source-viewer.html
