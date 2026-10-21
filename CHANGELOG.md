@@ -2,6 +2,14 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.42.0 (2026-10-21)
+
+### source-viewer.html
+
+- **Added Simplified Chinese (`zh-cn`) screen strings** (`01-strings-zh-cn.js`, 160 keys). Draft translated by Claude, not yet checked by a native speaker. The language box now shows `中文(简体) (zh-cn)`, and it is picked automatically when the browser language is `zh-CN` and similar. (`zh-TW` and `zh-HK` stay English until a `zh-tw` table exists.)
+- Theme names and `.ui` error descriptions are still not translated (TODO).
+- Branch `lang-zh-cn`.
+
 ## v0.41.0 (2026-10-21)
 
 ### source-viewer.html

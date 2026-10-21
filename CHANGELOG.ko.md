@@ -2,6 +2,14 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.42.0 (2026-10-21)
+
+### source-viewer.html
+
+- **중국어 간체(`zh-cn`) 화면 글자 추가** (`01-strings-zh-cn.js`, 160개). 초안은 Claude가 번역했고 원어민 확인 전. 언어 상자에 `中文(简体) (zh-cn)`가 나오고, 브라우저 언어가 `zh-CN` 등이면 시작 때 자동으로 선택됨. (`zh-TW`·`zh-HK`는 `zh-tw` 표가 아직 없어 영어로 보임)
+- 테마 이름과 `.ui` 오류 설명은 전처럼 번역되지 않음 (TODO).
+- 갈래 `lang-zh-cn`.
+
 ## v0.41.0 (2026-10-21)
 
 ### source-viewer.html
