@@ -9,7 +9,11 @@ let entries = new Map(); // 목록 키 → { md: { lang: path } } 또는 { path 
 let cur = null;          // 지금 보는 파일 경로
 let curMod = 0;          // 지금 파일의 수정 시각 (자동 새로 고침)
 let logMod = "";         // 소스를 그릴 때 본 컴파일러 결과 파일들의 수정 시각
-uiLang = pickUiLang();   // 브라우저 언어로 화면 언어 고르기 (언어 표는 앞 조각에서 모두 읽힘)
+// 시작 언어: 언어 상자에서 직접 고른 값(sv-lang, 폴더와 상관없이 하나)이 있으면 그것, 없으면 브라우저 언어 (언어 표는 앞 조각에서 모두 읽힘)
+let savedLang = null;
+try { savedLang = localStorage.getItem("sv-lang"); } catch (e) {}
+if (savedLang && !UI[savedLang]) savedLang = null;   // 화면 글자 표가 있는 언어만 기억 (없으면 시작 화면의 언어 상자가 비어 보임)
+uiLang = savedLang || pickUiLang();
 let docLang = uiLang;    // 고른 문서 언어
 let mdRaw = false;       // .md를 원문으로 볼지
 let hlLine = 0;          // 표시한 줄

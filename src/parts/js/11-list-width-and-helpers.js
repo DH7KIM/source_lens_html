@@ -43,7 +43,7 @@ function drawLangs() {
     box.appendChild(o);
   }
   box.value = docLang; box.title = t("langTip");
-  box.onchange = () => setLanguage(box.value);
+  box.onchange = () => { try { localStorage.setItem("sv-lang", box.value); } catch (e) {} setLanguage(box.value); };   // 직접 고른 때만 기억
 }
 function setLanguage(l) {
   docLang = l;

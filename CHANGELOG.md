@@ -2,6 +2,14 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.40.0 (2026-10-21)
+
+### source-viewer.html
+
+- **The language chosen in the language box is remembered** (browser storage key `sv-lang`, one value for all folders, like the theme). At start it is used before the browser language. It is saved only when the language is picked in the box, and only languages with a screen text table are used (a document-only language, or an unknown value, is ignored). When the storage is blocked the viewer works as before.
+- There is no "back to automatic" item yet (TODO).
+- Branch `lang-remember`.
+
 ## v0.39.0 (2026-10-21)
 
 ### source-viewer.html
