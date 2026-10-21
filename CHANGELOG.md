@@ -2,6 +2,13 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.39.0 (2026-10-21)
+
+### source-viewer.html
+
+- **The screen language at start follows the browser's preferred languages**: the list is read from the front and the first language that has a screen text table is used (`zh-TW`, `zh-HK` and `zh-Hant` map to `zh-tw`, any other `zh` to `zh-cn`; `ja-JP` becomes `ja`), otherwise `en`. Languages added later work without changing the rule. The chosen language is still not remembered.
+- Branch `lang-auto-select`.
+
 ## v0.38.0 (2026-10-21)
 
 ### source-viewer.html

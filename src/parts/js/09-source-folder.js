@@ -9,6 +9,7 @@ let entries = new Map(); // 목록 키 → { md: { lang: path } } 또는 { path 
 let cur = null;          // 지금 보는 파일 경로
 let curMod = 0;          // 지금 파일의 수정 시각 (자동 새로 고침)
 let logMod = "";         // 소스를 그릴 때 본 컴파일러 결과 파일들의 수정 시각
+uiLang = pickUiLang();   // 브라우저 언어로 화면 언어 고르기 (언어 표는 앞 조각에서 모두 읽힘)
 let docLang = uiLang;    // 고른 문서 언어
 let mdRaw = false;       // .md를 원문으로 볼지
 let hlLine = 0;          // 표시한 줄

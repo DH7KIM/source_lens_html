@@ -2,6 +2,13 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.39.0 (2026-10-21)
+
+### source-viewer.html
+
+- **시작 때 화면 언어를 브라우저 선호 언어 목록으로 고름**: 목록을 앞에서부터 보고 화면 글자 표가 있는 첫 언어를 씀 (`zh-TW`·`zh-HK`·`zh-Hant`는 `zh-tw`, 그 밖의 `zh`는 `zh-cn`, `ja-JP`는 `ja`), 없으면 `en`. 나중에 언어가 늘어도 규칙을 고칠 필요 없음. 고른 언어는 아직 기억하지 않음.
+- 갈래 `lang-auto-select`.
+
 ## v0.38.0 (2026-10-21)
 
 ### source-viewer.html
