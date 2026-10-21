@@ -2,6 +2,15 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.44.0 (2026-10-21)
+
+### source-viewer.html
+
+- **프랑스어(`fr`) 화면 글자 추가** (`01-strings-fr.js`, 160개). 초안은 Claude가 번역했고 원어민 확인 전. 브라우저 언어가 `fr-FR`·`fr-CA` 등이면 시작 때 자동으로 선택됨. 따옴표는 « », 쌍점 앞은 띄어 씀.
+- 알려진 한계: 복수 형식은 수가 1일 때만 단수라서, 프랑스어에서 단수인 0은 "0 fichiers"로 나옴 (TODO).
+- 테마 이름과 `.ui` 오류 설명은 전처럼 번역되지 않음 (TODO).
+- 갈래 `lang-fr`.
+
 ## v0.43.0 (2026-10-21)
 
 ### source-viewer.html

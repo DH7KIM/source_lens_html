@@ -2,6 +2,15 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.44.0 (2026-10-21)
+
+### source-viewer.html
+
+- **Added French (`fr`) screen strings** (`01-strings-fr.js`, 160 keys). Draft translated by Claude, not yet checked by a native speaker. It is picked automatically when the browser language is `fr-FR`, `fr-CA` and the like. Uses « » quotes and a space before colons.
+- Known limit: plural forms are singular only when the number is 1, so 0, which is singular in French, shows as "0 fichiers" (TODO).
+- Theme names and `.ui` error descriptions are still not translated (TODO).
+- Branch `lang-fr`.
+
 ## v0.43.0 (2026-10-21)
 
 ### source-viewer.html

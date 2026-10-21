@@ -8,6 +8,7 @@ parts/js/01-strings-en.js
 parts/js/01-strings-ja.js
 parts/js/01-strings-zh-cn.js
 parts/js/01-strings-zh-tw.js
+parts/js/01-strings-fr.js
 parts/js/02-file-kinds.js
 parts/js/03-highlight.js
 parts/js/04a-json5-tree.js
