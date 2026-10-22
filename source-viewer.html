@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.52.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.53.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -435,6 +435,7 @@ UI.ko = {
   notFound: "없는 파일: {0}", notFile: "\"{0}\"는 이 폴더의 소스 파일이 아니라 열 수 없습니다",
   binary: "글자 파일이 아니라 보여 줄 수 없습니다.", tooBig: "파일이 커서 색칠 없이 보여 줍니다.",
   lines: "{0}줄",
+  emptyFile: "빈 파일",
   reading: "폴더 읽는 중… 파일 {0}개 · {1}초", readCancel: "취소", readCancelTip: "폴더 읽기를 멈추고 읽기 전 상태로 돌아갑니다",
   folder: "폴더 바꾸기", folderTip: "다른 소스 폴더를 고릅니다",
   depthN: "하위 {0}단계", depthAll: "하위 제한 없음", depthTip: "읽을 하위 폴더 단계를 고릅니다. 바꾸면 목록을 다시 읽습니다.", depthTipAll: "하위 폴더를 끝까지 읽습니다. 폴더가 많으면 오래 걸릴 수 있습니다.",
@@ -562,6 +563,7 @@ UI.en = {
   notFound: "Not found: {0}", notFile: "\"{0}\" is not a source file in this folder",
   binary: "This is not a text file.", tooBig: "Large file: shown without colors.",
   lines: "{0} {0|line|lines}",
+  emptyFile: "Empty file",
   reading: "Reading folder… {0} {0|file|files} · {1} s", readCancel: "Cancel", readCancelTip: "Stop reading the folder and go back to the previous state",
   folder: "Change folder", folderTip: "Choose another source folder",
   depthN: "{0} subfolder levels", depthAll: "All subfolder levels", depthTip: "Choose how many levels of subfolders to read. Changing it reads the list again.", depthTipAll: "Read every subfolder. This can take a long time for big folders.",
@@ -689,6 +691,7 @@ UI.ja = {
   notFound: "ファイルが見つかりません: {0}", notFile: "「{0}」はこのフォルダのソースファイルではありません",
   binary: "テキストファイルではないため表示できません。", tooBig: "ファイルが大きいため、色分けなしで表示します。",
   lines: "{0}行",
+  emptyFile: "空のファイル",
   reading: "フォルダを読み込み中… {0}ファイル · {1}秒", readCancel: "キャンセル", readCancelTip: "フォルダの読み込みを中止して、前の状態に戻ります",
   folder: "フォルダを変更", folderTip: "別のソースフォルダを選択します",
   depthN: "サブフォルダ {0} 階層", depthAll: "すべてのサブフォルダ", depthTip: "読み込むサブフォルダの階層数を選びます。変更すると一覧を読み込み直します。", depthTipAll: "すべてのサブフォルダを読み込みます。大きなフォルダでは時間がかかることがあります。",
@@ -816,6 +819,7 @@ UI["zh-cn"] = {
   notFound: "找不到文件: {0}", notFile: "“{0}”不是此文件夹中的源文件",
   binary: "这不是文本文件,无法显示。", tooBig: "文件较大: 不使用颜色显示。",
   lines: "{0} 行",
+  emptyFile: "空文件",
   reading: "正在读取文件夹… {0} 个文件 · {1} 秒", readCancel: "取消", readCancelTip: "停止读取文件夹,并返回之前的状态",
   folder: "更改文件夹", folderTip: "选择其他源文件夹",
   depthN: "子文件夹 {0} 层", depthAll: "所有子文件夹", depthTip: "选择要读取的子文件夹层数。更改后会重新读取列表。", depthTipAll: "读取所有子文件夹。文件夹很大时可能需要较长时间。",
@@ -943,6 +947,7 @@ UI["zh-tw"] = {
   notFound: "找不到檔案: {0}", notFile: "「{0}」不是此資料夾中的原始碼檔案",
   binary: "這不是文字檔,無法顯示。", tooBig: "檔案較大: 不使用顏色顯示。",
   lines: "{0} 行",
+  emptyFile: "空白檔案",
   reading: "正在讀取資料夾… {0} 個檔案 · {1} 秒", readCancel: "取消", readCancelTip: "停止讀取資料夾,並回到先前的狀態",
   folder: "變更資料夾", folderTip: "選擇其他原始碼資料夾",
   depthN: "子資料夾 {0} 層", depthAll: "所有子資料夾", depthTip: "選擇要讀取的子資料夾層數。變更後會重新讀取清單。", depthTipAll: "讀取所有子資料夾。資料夾很大時可能需要較長時間。",
@@ -1071,6 +1076,7 @@ UI.fr = {
   notFound: "Introuvable : {0}", notFile: "« {0} » n'est pas un fichier source de ce dossier",
   binary: "Ce n'est pas un fichier texte.", tooBig: "Fichier volumineux : affiché sans couleurs.",
   lines: "{0} {0|ligne|lignes}",
+  emptyFile: "Fichier vide",
   reading: "Lecture du dossier… {0} {0|fichier|fichiers} · {1} s", readCancel: "Annuler", readCancelTip: "Arrêter la lecture du dossier et revenir à l'état précédent",
   folder: "Changer de dossier", folderTip: "Choisir un autre dossier source",
   depthN: "{0} niveaux de sous-dossiers", depthAll: "Tous les niveaux de sous-dossiers", depthTip: "Choisissez combien de niveaux de sous-dossiers lire. Un changement relit la liste.", depthTipAll: "Lire tous les sous-dossiers. Cela peut être long pour les gros dossiers.",
@@ -1198,6 +1204,7 @@ UI.de = {
   notFound: "Nicht gefunden: {0}", notFile: "„{0}“ ist keine Quelldatei in diesem Ordner",
   binary: "Dies ist keine Textdatei.", tooBig: "Große Datei: Anzeige ohne Farben.",
   lines: "{0} {0|Zeile|Zeilen}",
+  emptyFile: "Leere Datei",
   reading: "Ordner wird gelesen… {0} {0|Datei|Dateien} · {1} s", readCancel: "Abbrechen", readCancelTip: "Das Lesen des Ordners beenden und zum vorherigen Zustand zurückkehren",
   folder: "Ordner wechseln", folderTip: "Einen anderen Quellordner auswählen",
   depthN: "{0} Unterordner-Ebenen", depthAll: "Alle Unterordner-Ebenen", depthTip: "Wählen Sie, wie viele Ebenen von Unterordnern gelesen werden. Eine Änderung liest die Liste neu ein.", depthTipAll: "Alle Unterordner lesen. Bei großen Ordnern kann das lange dauern.",
@@ -1325,6 +1332,7 @@ UI.it = {
   notFound: "Non trovato: {0}", notFile: "“{0}” non è un file sorgente di questa cartella",
   binary: "Questo non è un file di testo.", tooBig: "File grande: mostrato senza colori.",
   lines: "{0} {0|riga|righe}",
+  emptyFile: "File vuoto",
   reading: "Lettura della cartella… {0} {0|file|file} · {1} s", readCancel: "Annulla", readCancelTip: "Interrompe la lettura della cartella e torna allo stato precedente",
   folder: "Cambia cartella", folderTip: "Scegli un'altra cartella sorgente",
   depthN: "{0} livelli di sottocartelle", depthAll: "Tutti i livelli di sottocartelle", depthTip: "Scegli quanti livelli di sottocartelle leggere. Se lo cambi, l'elenco viene riletto.", depthTipAll: "Legge tutte le sottocartelle. Con cartelle grandi può richiedere molto tempo.",
@@ -4269,7 +4277,7 @@ async function openFile(path, { hash = "", line = 0, keepScroll = false } = {}) 
   $("start").hidden = true; $("fileBar").hidden = false; document.body.classList.add("has-bar");
   drawName();
   document.title = path + " - Source Viewer";
-  setState([lineCount ? t("lines", lineCount) : "", fmtSize(size), enc, src.kind === "fsa" ? t("auto") : t("noAuto"), note, docNote].filter(Boolean).join(" · "));
+  setState([size === 0 ? t("emptyFile") : lineCount ? t("lines", lineCount) : "", fmtSize(size), enc, src.kind === "fsa" ? t("auto") : t("noAuto"), note, docNote].filter(Boolean).join(" · "));
   if (treeErr) {   // 계층 보기 오류 (빨강)
     const b = document.createElement("span");
     b.className = "bad"; b.textContent = " · " + treeErr;

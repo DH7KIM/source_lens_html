@@ -10,6 +10,7 @@ UI.ko = {
   notFound: "없는 파일: {0}", notFile: "\"{0}\"는 이 폴더의 소스 파일이 아니라 열 수 없습니다",
   binary: "글자 파일이 아니라 보여 줄 수 없습니다.", tooBig: "파일이 커서 색칠 없이 보여 줍니다.",
   lines: "{0}줄",
+  emptyFile: "빈 파일",
   reading: "폴더 읽는 중… 파일 {0}개 · {1}초", readCancel: "취소", readCancelTip: "폴더 읽기를 멈추고 읽기 전 상태로 돌아갑니다",
   folder: "폴더 바꾸기", folderTip: "다른 소스 폴더를 고릅니다",
   depthN: "하위 {0}단계", depthAll: "하위 제한 없음", depthTip: "읽을 하위 폴더 단계를 고릅니다. 바꾸면 목록을 다시 읽습니다.", depthTipAll: "하위 폴더를 끝까지 읽습니다. 폴더가 많으면 오래 걸릴 수 있습니다.",

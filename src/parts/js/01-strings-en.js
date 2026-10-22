@@ -10,6 +10,7 @@ UI.en = {
   notFound: "Not found: {0}", notFile: "\"{0}\" is not a source file in this folder",
   binary: "This is not a text file.", tooBig: "Large file: shown without colors.",
   lines: "{0} {0|line|lines}",
+  emptyFile: "Empty file",
   reading: "Reading folder… {0} {0|file|files} · {1} s", readCancel: "Cancel", readCancelTip: "Stop reading the folder and go back to the previous state",
   folder: "Change folder", folderTip: "Choose another source folder",
   depthN: "{0} subfolder levels", depthAll: "All subfolder levels", depthTip: "Choose how many levels of subfolders to read. Changing it reads the list again.", depthTipAll: "Read every subfolder. This can take a long time for big folders.",

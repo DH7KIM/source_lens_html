@@ -10,6 +10,7 @@ UI.de = {
   notFound: "Nicht gefunden: {0}", notFile: "„{0}“ ist keine Quelldatei in diesem Ordner",
   binary: "Dies ist keine Textdatei.", tooBig: "Große Datei: Anzeige ohne Farben.",
   lines: "{0} {0|Zeile|Zeilen}",
+  emptyFile: "Leere Datei",
   reading: "Ordner wird gelesen… {0} {0|Datei|Dateien} · {1} s", readCancel: "Abbrechen", readCancelTip: "Das Lesen des Ordners beenden und zum vorherigen Zustand zurückkehren",
   folder: "Ordner wechseln", folderTip: "Einen anderen Quellordner auswählen",
   depthN: "{0} Unterordner-Ebenen", depthAll: "Alle Unterordner-Ebenen", depthTip: "Wählen Sie, wie viele Ebenen von Unterordnern gelesen werden. Eine Änderung liest die Liste neu ein.", depthTipAll: "Alle Unterordner lesen. Bei großen Ordnern kann das lange dauern.",

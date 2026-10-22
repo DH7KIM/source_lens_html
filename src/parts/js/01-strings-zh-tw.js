@@ -10,6 +10,7 @@ UI["zh-tw"] = {
   notFound: "找不到檔案: {0}", notFile: "「{0}」不是此資料夾中的原始碼檔案",
   binary: "這不是文字檔,無法顯示。", tooBig: "檔案較大: 不使用顏色顯示。",
   lines: "{0} 行",
+  emptyFile: "空白檔案",
   reading: "正在讀取資料夾… {0} 個檔案 · {1} 秒", readCancel: "取消", readCancelTip: "停止讀取資料夾,並回到先前的狀態",
   folder: "變更資料夾", folderTip: "選擇其他原始碼資料夾",
   depthN: "子資料夾 {0} 層", depthAll: "所有子資料夾", depthTip: "選擇要讀取的子資料夾層數。變更後會重新讀取清單。", depthTipAll: "讀取所有子資料夾。資料夾很大時可能需要較長時間。",

@@ -10,6 +10,7 @@ UI.it = {
   notFound: "Non trovato: {0}", notFile: "“{0}” non è un file sorgente di questa cartella",
   binary: "Questo non è un file di testo.", tooBig: "File grande: mostrato senza colori.",
   lines: "{0} {0|riga|righe}",
+  emptyFile: "File vuoto",
   reading: "Lettura della cartella… {0} {0|file|file} · {1} s", readCancel: "Annulla", readCancelTip: "Interrompe la lettura della cartella e torna allo stato precedente",
   folder: "Cambia cartella", folderTip: "Scegli un'altra cartella sorgente",
   depthN: "{0} livelli di sottocartelle", depthAll: "Tutti i livelli di sottocartelle", depthTip: "Scegli quanti livelli di sottocartelle leggere. Se lo cambi, l'elenco viene riletto.", depthTipAll: "Legge tutte le sottocartelle. Con cartelle grandi può richiedere molto tempo.",

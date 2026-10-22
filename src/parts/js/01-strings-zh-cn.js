@@ -10,6 +10,7 @@ UI["zh-cn"] = {
   notFound: "找不到文件: {0}", notFile: "“{0}”不是此文件夹中的源文件",
   binary: "这不是文本文件,无法显示。", tooBig: "文件较大: 不使用颜色显示。",
   lines: "{0} 行",
+  emptyFile: "空文件",
   reading: "正在读取文件夹… {0} 个文件 · {1} 秒", readCancel: "取消", readCancelTip: "停止读取文件夹,并返回之前的状态",
   folder: "更改文件夹", folderTip: "选择其他源文件夹",
   depthN: "子文件夹 {0} 层", depthAll: "所有子文件夹", depthTip: "选择要读取的子文件夹层数。更改后会重新读取列表。", depthTipAll: "读取所有子文件夹。文件夹很大时可能需要较长时间。",

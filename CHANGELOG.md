@@ -2,6 +2,15 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.53.0 (2026-10-22)
+
+### source-viewer.html
+
+- **A file of 0 bytes now shows `Empty file` in the status line instead of a line count** (for example `Empty file · 0 B · UTF-8`). Before, it showed `1 line · 0 B`, which made it look as if the file had one line. Only 0 bytes counts: files with just spaces or blank lines (`1 line · 2 B` and so on) still show the line count.
+- Added one screen string, `emptyFile`, to all 8 languages (214 keys each): `빈 파일`, `Empty file`, `空のファイル`, `空文件`, `空白檔案`, `Fichier vide`, `Leere Datei`, `File vuoto`. Draft translated by Claude, not yet checked by native speakers.
+- Tested: 0-byte `.txt` and `.md`, a 2-line `.txt`, a `.txt` with only spaces, and a `.json` containing `[]`, each opened in all 8 languages. No errors.
+- Branch `empty-file`.
+
 ## v0.52.0 (2026-10-22)
 
 ### source-viewer.html

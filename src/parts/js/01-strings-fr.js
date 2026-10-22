@@ -11,6 +11,7 @@ UI.fr = {
   notFound: "Introuvable : {0}", notFile: "« {0} » n'est pas un fichier source de ce dossier",
   binary: "Ce n'est pas un fichier texte.", tooBig: "Fichier volumineux : affiché sans couleurs.",
   lines: "{0} {0|ligne|lignes}",
+  emptyFile: "Fichier vide",
   reading: "Lecture du dossier… {0} {0|fichier|fichiers} · {1} s", readCancel: "Annuler", readCancelTip: "Arrêter la lecture du dossier et revenir à l'état précédent",
   folder: "Changer de dossier", folderTip: "Choisir un autre dossier source",
   depthN: "{0} niveaux de sous-dossiers", depthAll: "Tous les niveaux de sous-dossiers", depthTip: "Choisissez combien de niveaux de sous-dossiers lire. Un changement relit la liste.", depthTipAll: "Lire tous les sous-dossiers. Cela peut être long pour les gros dossiers.",
