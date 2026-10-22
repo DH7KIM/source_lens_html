@@ -8,7 +8,7 @@ applyLigatures();
 
 // 화면 언어에 따라 바뀌는 고정 글자. drawStatic()에서 부름
 function drawSettingsStatic() {
-  $("settingsBtn").title = t("settingsTip"); $("settingsBtn").setAttribute("aria-label", t("settingsTitle"));
+  $("settingsBtn").title = t("settingsTitle"); $("settingsBtn").setAttribute("aria-label", t("settingsTitle"));   // 글자 없는 단추라 풍선은 이름만 (Windows처럼)
   $("settingsTitle").textContent = t("settingsTitle");
   $("fontLigName").textContent = t("fontLigatures"); $("fontLigDesc").textContent = t("fontLigaturesDesc");
   $("settingsClose").textContent = t("typesClose"); $("settingsClose").title = t("typesCloseTip");

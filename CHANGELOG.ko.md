@@ -2,6 +2,15 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.69.0 (2026-10-23)
+
+### source-viewer.html
+
+- **톱니(설정) 단추의 풍선을 `설정 창을 엽니다`에서 `설정`으로 줄임** (Windows처럼, 글자가 없는 단추라 풍선은 이름만). `aria-label`도 같은 `설정`. 10개 언어(`설정`·`Settings`·`設定`·`设置`·`設定`·`Paramètres`·`Einstellungen`·`Impostazioni`·`Ajustes`·`Configurações`). 번역 키 `settingsTip`을 없애고 `settingsTitle`을 같이 씀(키 개수 229 → 228개, 10개 언어 모두 같음).
+- 글자가 있는 단추(`언어`·`지원 파일 형식`·`폴더 바꾸기`)의 풍선은 그대로 둠: 풍선이 글자를 되풀이하게 되고, 풍선으로 역할을 설명한다는 UI 원칙과 맞지 않기 때문.
+- 시험: 10개 언어에서 풍선·`aria-label`·창 제목이 같은 이름이고 비지 않음, 톱니를 누르면 설정 창이 열림, 오류 없음.
+- 파일 용량이 139바이트 줄어듦 (413,195 → 413,056바이트).
+
 ## v0.68.0 (2026-10-23)
 
 ### source-viewer.html

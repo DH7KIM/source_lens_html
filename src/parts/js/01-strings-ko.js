@@ -96,7 +96,7 @@ UI.ko = {
   langTitle: "언어 선택", langFilterHint: "언어 이름·코드로 찾기 (예: pt)", langFilterTip: "입력한 문자로 시작하는 언어 이름·코드만 보여 줍니다. 지금 화면 언어로 된 이름과 그 언어 자신의 이름 모두 찾을 수 있습니다", langNone: "“{0}”: 찾는 언어가 없습니다",
   langColName: "이름", langColOwn: "원래 이름", langColCode: "코드", langCurrent: "지금 쓰는 언어",
   // 설정 창 (v0.63.0 글꼴 설정으로 시작, v0.64.0에서 `설정`으로 이름을 바꾸고 테마를 옮김)
-  settingsTitle: "설정", settingsTip: "설정 창을 엽니다", fontLigatures: "합자",
+  settingsTitle: "설정", fontLigatures: "합자",
   fontLigaturesDesc: "`!=`·`->`·`=>` 같은 기호를 이어서 한 모양으로 그립니다. 끄면 소스를 글자 그대로 봅니다 (기본: 끔). 합자를 지원하는 글꼴(예: Cascadia Code)에서만 달라 보입니다",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "설명", typesColDescTip: "어떤 파일인지 설명합니다",

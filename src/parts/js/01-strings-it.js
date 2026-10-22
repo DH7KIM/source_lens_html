@@ -96,7 +96,7 @@ UI.it = {
   langTitle: "Scegli la lingua", langFilterHint: "Filtra per nome o codice della lingua (es. pt)", langFilterTip: "Mostra solo le lingue il cui nome o codice inizia con il testo digitato. Si cerca sia il nome nella lingua attuale dello schermo sia il nome nella lingua stessa", langNone: "“{0}”: lingua non trovata",
   langColName: "Nome", langColOwn: "Nome originale", langColCode: "Codice", langCurrent: "Lingua attuale",
   // 설정 창 (v0.63.0 글꼴 설정으로 시작, v0.64.0에서 `설정`으로 이름을 바꾸고 테마를 옮김)
-  settingsTitle: "Impostazioni", settingsTip: "Apri la finestra delle impostazioni", fontLigatures: "Legature",
+  settingsTitle: "Impostazioni", fontLigatures: "Legature",
   fontLigaturesDesc: "Disegna simboli come `!=`, `->` e `=>` uniti in un'unica forma. Disattivate, il sorgente è mostrato esattamente come scritto (predefinito: disattivate). Cambiano aspetto solo i caratteri che supportano le legature, come Cascadia Code",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Descrizione", typesColDescTip: "Che tipo di file è",

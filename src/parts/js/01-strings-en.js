@@ -96,7 +96,7 @@ UI.en = {
   langTitle: "Choose language", langFilterHint: "Filter by language name or code (e.g. pt)", langFilterTip: "Shows only the languages whose name or code starts with the text you type. Both the name in the current screen language and the language's own name are searched", langNone: "“{0}”: language not found",
   langColName: "Name", langColOwn: "Original name", langColCode: "Code", langCurrent: "Current language",
   // 설정 창 (v0.63.0 글꼴 설정으로 시작, v0.64.0에서 `설정`으로 이름을 바꾸고 테마를 옮김)
-  settingsTitle: "Settings", settingsTip: "Open the settings window", fontLigatures: "Ligatures",
+  settingsTitle: "Settings", fontLigatures: "Ligatures",
   fontLigaturesDesc: "Draws symbols such as `!=`, `->` and `=>` joined into one shape. Off shows the source exactly as written (default: off). Only fonts that support ligatures, such as Cascadia Code, look different",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Description", typesColDescTip: "What kind of file it is",

@@ -2,6 +2,15 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.69.0 (2026-10-23)
+
+### source-viewer.html
+
+- **Shortened the tooltip of the gear (settings) button from `Open the settings window` to `Settings`** (like Windows: the button has no text, so the tooltip is only the name). The `aria-label` is the same `Settings`. 10 languages (`설정`, `Settings`, `設定`, `设置`, `設定`, `Paramètres`, `Einstellungen`, `Impostazioni`, `Ajustes`, `Configurações`). The translation key `settingsTip` is removed and `settingsTitle` is used for both (the number of keys 229 -> 228, the same in all 10 languages).
+- The tooltips of the buttons that have text (`Language`, `Supported file types`, `Change folder`) are left as they are: the tooltip would only repeat the text, which does not fit the UI rule of explaining the role in a tooltip.
+- Tested: in all 10 languages the tooltip, the `aria-label` and the window title are the same name and not empty, clicking the gear opens the settings window, no errors.
+- The file size shrank by 139 bytes (413,195 -> 413,056 bytes).
+
 ## v0.68.0 (2026-10-23)
 
 ### source-viewer.html
