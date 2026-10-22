@@ -82,4 +82,6 @@ Screen texts live in one file per language, so a new language is one new file:
 
 6. The language box lists every language that has a screen text table or a document (`name.<code>.md`) in the opened folder, in the order of `LANG_NAMES`; each item is shown as `own name (code)`, for example `한국어 (ko)`; the names there are written in each language itself.
 
+Right-to-left languages (Arabic, …) need more than a translation file: the screen layout (button order, list position, …) must be supported separately. This is not supported yet; anyone who needs it is welcome to add it together with the translation.
+
 Limits for now: at start the screen language is the one chosen in the language box if there is one (remembered in the browser, only for languages with a screen text table), otherwise it is picked automatically as the first language in the browser's preferred-language list that has a screen text table (`zh-TW`, `zh-HK` and `zh-Hant` map to `zh-tw`, any other `zh` to `zh-cn`, otherwise `en`), and a document-only language is not remembered. The `.ui` error descriptions (`05-ui-messages.js`) are a separate table and have Korean only.

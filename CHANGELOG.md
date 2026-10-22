@@ -2,6 +2,15 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.46.0 (2026-10-21)
+
+### source-viewer.html
+
+- **Added Italian (`it`) screen strings** (`01-strings-it.js`, 160 keys). Draft translated by Claude, not yet checked by a native speaker. It is picked automatically when the browser language is `it-IT`, `it-CH` and the like. Uses “ ” quotes and the imperative (Scegli …).
+- Theme names and `.ui` error descriptions are still not translated (TODO).
+- Added a note to `src/README`: right-to-left languages (Arabic, …) need screen layout support in addition to a translation file.
+- Branch `lang-it`.
+
 ## v0.45.0 (2026-10-21)
 
 ### source-viewer.html
