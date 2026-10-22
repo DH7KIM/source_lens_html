@@ -2,6 +2,14 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.48.0 (2026-10-22)
+
+### source-viewer.html
+
+- **`FILE_TYPES`에 문법 검사기 칸 `check` 추가** (`02-file-kinds.js`): `.ui`는 `ui`, `.toml`·`Cargo.lock`은 `toml`, JSON 계열(`.json`·`.jsonc`·`.jsonl`·`.ndjson`·`.json5`)은 `json`, 나머지는 비움. `.ini`·`.cfg`·`.editorconfig`는 색칠은 TOML로 하지만 TOML이 아니라서 검사하지 않으므로 비워 둠. `지원 파일 형식` 화면이 이 칸을 읽어 "검사기 있음/없음"을 그림 (다음 버전).
+- 동작은 달라지지 않음. 표의 `check`와 실제 검사 판별(`isTomlFile`·`isJsonFile`·`.ui`)이 모든 확장자·파일 이름(53개)에서 일치하는지 시험함.
+- 갈래 `check-column`.
+
 ## v0.47.0 (2026-10-22)
 
 ### source-viewer.html

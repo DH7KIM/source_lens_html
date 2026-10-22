@@ -4,6 +4,7 @@
 //   lang  = 색칠·검사 방식: cpp, rust, toml, json, json5, bat, hash(# 주석: 셸·PowerShell·YAML·Makefile·.gitignore), md, ui, uilog, plain
 //   exts  = 확장자 (점 없이, 소문자)
 //   names = 확장자 없는 파일 이름 (소문자)
+//   check = 문법 검사기: ui, toml, json (없으면 검사기 없음). INI 계열은 lang이 toml이어도 검사하지 않아서 비워 둠
 // LANG_BY_EXT·LANG_BY_NAME은 이 표에서 만든다. 새 종류는 이 표에 한 줄만 더한다.
 // 이름은 ".ui.log"처럼 끝이 겹치는 것은 langOf()가 먼저 따로 본다 (exts의 "ui.log"는 표 보기용).
 const FILE_TYPES = [
@@ -13,14 +14,14 @@ const FILE_TYPES = [
   { name: "C/C++ header",       lang: "cpp",   exts: ["h"] },
   { name: "Windows resource",   lang: "cpp",   exts: ["rc"] },
   { name: "Rust",               lang: "rust",  exts: ["rs"] },
-  { name: "TOML",               lang: "toml",  exts: ["toml"] },
-  { name: "Cargo lock",         lang: "toml",  names: ["cargo.lock"] },
+  { name: "TOML",               lang: "toml",  check: "toml", exts: ["toml"] },
+  { name: "Cargo lock",         lang: "toml",  check: "toml", names: ["cargo.lock"] },
   { name: "INI",                lang: "toml",  exts: ["ini", "cfg"] },
   { name: "EditorConfig",       lang: "toml",  exts: ["editorconfig"] },
-  { name: "JSON",               lang: "json",  exts: ["json"] },
-  { name: "JSON with comments", lang: "json",  exts: ["jsonc"] },
-  { name: "JSON Lines",         lang: "json",  exts: ["jsonl", "ndjson"] },
-  { name: "JSON5",              lang: "json5", exts: ["json5"] },
+  { name: "JSON",               lang: "json",  check: "json", exts: ["json"] },
+  { name: "JSON with comments", lang: "json",  check: "json", exts: ["jsonc"] },
+  { name: "JSON Lines",         lang: "json",  check: "json", exts: ["jsonl", "ndjson"] },
+  { name: "JSON5",              lang: "json5", check: "json", exts: ["json5"] },
   { name: "Batch",              lang: "bat",   exts: ["bat", "cmd"] },
   { name: "Shell",              lang: "hash",  exts: ["sh"] },
   { name: "PowerShell",         lang: "hash",  exts: ["ps1", "psm1"] },
@@ -33,7 +34,7 @@ const FILE_TYPES = [
   { name: "Markdown",           lang: "md",    exts: ["md"] },
   { name: "Text",               lang: "plain", exts: ["txt"] },
   { name: "Log",                lang: "plain", exts: ["log"] },
-  { name: "UI layout",          lang: "ui",    exts: ["ui"] },
+  { name: "UI layout",          lang: "ui",    check: "ui",   exts: ["ui"] },
   { name: "UI log",             lang: "uilog", exts: ["ui.log"] },
   { name: "XML",                lang: "plain", exts: ["xml"] },
   { name: "Manifest",           lang: "plain", exts: ["manifest"] },

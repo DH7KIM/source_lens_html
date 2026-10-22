@@ -20,6 +20,7 @@
 - [x] 경로에 프로젝트 버전 표시: `source_lens_html v0.13.0 / source/...`. 버전은 연 폴더 CHANGELOG.md(없으면 CHANGELOG.ko.md) 첫 `## vX.Y.Z`, 없으면 이름만. 두 뷰어 모두 — 2026.10.13 (v0.13.0)
 - [x] json5 언어팩 읽기: 연 폴더 `language/<화면 언어>/ui-check.json5`의 `"ui-check"` 섹션이 내장 `UI_MSG`보다 우선. 없거나 빈 글인 메시지는 내장 번역, `{}` 개수가 다르면 무시(상태 줄 빨강), 문법 오류면 내장 번역(상태 줄 빨강, 줄 번호). 작은 JSON5 읽기 함수 `json5Parse` — 2026.10.13 (v0.14.0)
 - [x] **파일 종류 기준 표 `FILE_TYPES`** (`지원 파일 형식` 1단계): 확장자·파일 이름마다 언어 이름(`name`)과 색칠 방식(`lang`)을 한 표에 모으고, `LANG_BY_EXT`·`LANG_BY_NAME`은 이 표에서 만듦. 동작은 그대로 — 2026.10.22 (v0.47.0, 갈래 `info-table`)
+- [x] **`FILE_TYPES`에 문법 검사기 칸 `check`** (`지원 파일 형식` 1.5단계): `ui`·`toml`·`json`, INI 계열은 비움. 동작은 그대로 — 2026.10.22 (v0.48.0, 갈래 `check-column`)
 - [x] 컴파일러 결과 보기 (GCC): 연 폴더 맨 위 `build.log`의 `파일:줄:칸: error/warning/note`를 소스 줄에 밑줄 + 진단 줄로 표시, 폴더·파일을 열 때 읽음, 예제 `tests/samples/project/build.log` — 2026.10.13 (v0.15.0)
 
 ## 다음 버전 (순서대로)

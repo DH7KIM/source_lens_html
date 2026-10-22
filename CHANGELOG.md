@@ -2,6 +2,14 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.48.0 (2026-10-22)
+
+### source-viewer.html
+
+- **Added the syntax checker column `check` to `FILE_TYPES`** (`02-file-kinds.js`): `ui` for `.ui`, `toml` for `.toml` and `Cargo.lock`, `json` for the JSON family (`.json`, `.jsonc`, `.jsonl`, `.ndjson`, `.json5`), empty for everything else. `.ini`, `.cfg` and `.editorconfig` are highlighted as TOML but are not TOML, so they are not checked and stay empty. The `Supported file types` screen will read this column to show whether a checker exists (next version).
+- Behavior is unchanged. Checked that `check` matches the real checker selection (`isTomlFile`, `isJsonFile`, `.ui`) for every extension and file name (53 paths).
+- Branch `check-column`.
+
 ## v0.47.0 (2026-10-22)
 
 ### source-viewer.html
