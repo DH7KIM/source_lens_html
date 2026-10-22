@@ -83,4 +83,9 @@ UI.it = {
   syntaxTip_json: "Controlla come JSON rigoroso. Commenti, virgole finali, apici singoli e chiavi senza virgolette sono errori",
   syntaxTip_json5: "Legge come JSON5. Più di un valore viene segnalato come errore invece di essere trattato come JSON Lines",
   syntaxTip_lines: "Legge ogni riga come un valore JSON rigoroso. Ogni riga errata viene segnalata",
+  // 지원 파일 형식 (v0.49.0)
+  types: "Tipi di file supportati", typesTip: "Mostra in una tabella i tipi di file che questo visualizzatore può aprire",
+  typesColExt: "Estensione · Nome file", typesColExtTip: "Estensioni (*.cpp) e nomi di file (Makefile) che compaiono nell'elenco", typesColLang: "Linguaggio", typesColLangTip: "Il linguaggio o il formato del file", typesColColor: "Evidenziazione della sintassi", typesColColorTip: "Indica se il testo sorgente è colorato in base alla sintassi",
+  typesColCheck: "Controllo della sintassi", typesColCheckTip: "Indica se esiste un controllo che trova gli errori di sintassi e li segnala sulle righe sorgente",
+  typesYes: "Sì", typesNo: "No", typesNote: "I file con estensioni che non sono in questa tabella non compaiono nell'elenco.", typesClose: "Chiudi", typesCloseTip: "Chiude questa finestra",
 };

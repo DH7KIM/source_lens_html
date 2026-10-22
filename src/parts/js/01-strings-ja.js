@@ -83,4 +83,9 @@ UI.ja = {
   syntaxTip_json: "厳密な JSON としてチェックします。コメント・末尾のカンマ・単一引用符・引用符なしのキーはエラーになります",
   syntaxTip_json5: "JSON5 として読みます。値が複数ある場合は、JSON Lines として扱わずエラーにします",
   syntaxTip_lines: "各行を厳密な JSON の値として読みます。正しくない行はすべて報告します",
+  // 지원 파일 형식 (v0.49.0)
+  types: "対応ファイル形式", typesTip: "このビューアで開けるファイル形式を表で確認します",
+  typesColExt: "拡張子・ファイル名", typesColExtTip: "一覧に表示される拡張子（*.cpp）とファイル名（Makefile）です", typesColLang: "言語", typesColLangTip: "ファイルの言語・形式です", typesColColor: "シンタックスハイライト", typesColColorTip: "ソースの文字を構文に合わせて色分けして表示するかどうかです",
+  typesColCheck: "構文チェック", typesColCheckTip: "構文エラーを見つけてソースの行に表示するチェック機能があるかどうかです",
+  typesYes: "あり", typesNo: "なし", typesNote: "この表にない拡張子のファイルは、一覧に表示されません。", typesClose: "閉じる", typesCloseTip: "このウィンドウを閉じます",
 };

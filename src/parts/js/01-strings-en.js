@@ -83,4 +83,9 @@ UI.en = {
   syntaxTip_json: "Check as strict JSON. Comments, trailing commas, single quotes and unquoted keys are errors",
   syntaxTip_json5: "Read as JSON5. More than one value is reported as an error instead of being treated as JSON Lines",
   syntaxTip_lines: "Read each line as one strict JSON value. Every bad line is reported",
+  // 지원 파일 형식 (v0.49.0)
+  types: "Supported file types", typesTip: "See which file types this viewer can open",
+  typesColExt: "Extension · File name", typesColExtTip: "Extensions (*.cpp) and file names (Makefile) that appear in the list", typesColLang: "Language", typesColLangTip: "The language or format of the file", typesColColor: "Syntax highlighting", typesColColorTip: "Whether the source text is colored by syntax",
+  typesColCheck: "Syntax checker", typesColCheckTip: "Whether a checker finds syntax errors and marks them on the source lines",
+  typesYes: "Yes", typesNo: "No", typesNote: "Files with extensions that are not in this table do not appear in the list.", typesClose: "Close", typesCloseTip: "Close this window",
 };

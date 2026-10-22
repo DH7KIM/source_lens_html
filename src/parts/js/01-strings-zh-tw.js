@@ -83,4 +83,9 @@ UI["zh-tw"] = {
   syntaxTip_json: "依嚴格的 JSON 檢查。註解、結尾逗號、單引號和不帶引號的鍵都會報錯",
   syntaxTip_json5: "依 JSON5 讀取。如果有多個值,會報錯,而不是當作 JSON Lines",
   syntaxTip_lines: "將每一行當作一個嚴格的 JSON 值讀取。每個錯誤行都會被回報",
+  // 지원 파일 형식 (v0.49.0)
+  types: "支援的檔案格式", typesTip: "以表格檢視本檢視器可開啟的檔案格式",
+  typesColExt: "副檔名 · 檔案名稱", typesColExtTip: "清單中會出現的副檔名(*.cpp)與檔案名稱(Makefile)", typesColLang: "語言", typesColLangTip: "檔案所屬的語言或格式", typesColColor: "語法醒目提示", typesColColorTip: "是否依語法為原始碼文字上色",
+  typesColCheck: "語法檢查器", typesColCheckTip: "是否有能找出語法錯誤並標在原始碼行上的檢查器",
+  typesYes: "有", typesNo: "無", typesNote: "副檔名不在此表中的檔案不會出現在清單中。", typesClose: "關閉", typesCloseTip: "關閉此視窗",
 };

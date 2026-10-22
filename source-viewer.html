@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.48.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.49.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -221,6 +221,19 @@
   /* 소스 보기 | 계층 보기 단추 (눌린 쪽은 강조색 + 굵은 글자, 색만으로 구분하지 않음) */
   .mode-seg { display: inline-flex; } .mode-seg[hidden] { display: none; } .mode-seg button { border-radius: 0; margin: 0; }
   .mode-seg button:first-child { border-radius: 8px 0 0 8px; } .mode-seg button:last-child { border-radius: 0 8px 8px 0; border-left: 0; }
+  /* 지원 파일 형식 창 (<dialog>, 열면 뒤 화면은 눌리지 않음) */
+  dialog { color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 0; width: min(920px, 94vw); max-height: 84vh; }
+  dialog[open] { display: flex; flex-direction: column; }
+  dialog::backdrop { background: rgba(0, 0, 0, .45); }
+  .dlg-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 16px; border-bottom: 1px solid var(--line); font-weight: 600; }
+  .dlg-body { overflow: auto; padding: 0 16px 16px; }
+  .types-table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 1.5; }
+  .types-table th, .types-table td { text-align: left; padding: 4px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .types-table thead th { position: sticky; top: 0; background: var(--bg); cursor: help; z-index: 1; }
+  .types-table td code { font-family: var(--mono); font-size: 13px; margin-right: 8px; white-space: nowrap; }
+  .types-table .mark { white-space: nowrap; cursor: help; }
+  .types-table .no { color: var(--muted); }
+  .types-note { color: var(--muted); font-size: 13px; margin: 12px 0 0; }
   .mode-seg button[aria-pressed="true"] { background: var(--accent); color: var(--bg); font-weight: 700; }
   /* JSON·JSON5 계층 보기 (.code 안에 그림). 객체·배열 아이콘, 접기·펼치기, 오른쪽 끝은 소스 줄 번호 */
   .tj-root { padding: 8px 12px 40px; font: 13.5px/1.6 var(--mono); }
@@ -313,6 +326,7 @@
   <span class="state" id="reading" hidden><span id="readingText"></span> <button id="readCancel"></button></span>
   <select id="langs"></select>
   <select id="theme"></select>
+  <button id="typesBtn"></button>
   <select id="depth" hidden></select>
   <button id="folder" hidden></button>
 </header>
@@ -356,6 +370,10 @@
   </main>
 </div>
 <div class="pv-tooltip" id="pvTooltip" role="tooltip" hidden></div>
+<dialog id="typesDlg" aria-labelledby="typesTitle">
+  <div class="dlg-head"><span id="typesTitle"></span><button id="typesClose"></button></div>
+  <div class="dlg-body" id="typesBody"></div>
+</dialog>
 <input type="file" id="dirInput" webkitdirectory multiple hidden>
 <script>
 "use strict";
@@ -467,6 +485,11 @@ UI.ko = {
   syntaxTip_json: "엄격한 JSON으로 검사합니다. 주석, 끝 쉼표, 작은따옴표, 따옴표 없는 키 등은 오류입니다",
   syntaxTip_json5: "JSON5로 읽습니다. 값이 여러 개 있으면 JSON Lines로 알아보지 않고 오류로 알립니다",
   syntaxTip_lines: "줄마다 엄격한 JSON 값 하나로 읽습니다. 틀린 줄을 모두 알립니다",
+  // 지원 파일 형식 (v0.49.0)
+  types: "지원 파일 형식", typesTip: "이 프로그램이 열 수 있는 파일 형식을 표로 봅니다",
+  typesColExt: "확장자 · 파일 이름", typesColExtTip: "목록에 나타나는 확장자(*.cpp)와 파일 이름(Makefile)입니다", typesColLang: "언어", typesColLangTip: "파일이 어떤 언어·형식인지 보여 줍니다", typesColColor: "색칠", typesColColorTip: "소스 글자를 문법에 따라 색칠해서 보여 주는지 나타냅니다",
+  typesColCheck: "문법 검사기", typesColCheckTip: "문법 오류를 찾아 소스 줄에 표시하는 검사기가 있는지 나타냅니다",
+  typesYes: "있음", typesNo: "없음", typesNote: "이 표에 없는 확장자의 파일은 목록에 나타나지 않습니다.", typesClose: "닫기", typesCloseTip: "이 창을 닫습니다",
 };
 // ======================= 화면 문자열: 영어 (UI.en) =======================
 // 원문. 다른 언어에 없는 글자는 이 표의 것이 보인다.
@@ -553,6 +576,11 @@ UI.en = {
   syntaxTip_json: "Check as strict JSON. Comments, trailing commas, single quotes and unquoted keys are errors",
   syntaxTip_json5: "Read as JSON5. More than one value is reported as an error instead of being treated as JSON Lines",
   syntaxTip_lines: "Read each line as one strict JSON value. Every bad line is reported",
+  // 지원 파일 형식 (v0.49.0)
+  types: "Supported file types", typesTip: "See which file types this viewer can open",
+  typesColExt: "Extension · File name", typesColExtTip: "Extensions (*.cpp) and file names (Makefile) that appear in the list", typesColLang: "Language", typesColLangTip: "The language or format of the file", typesColColor: "Syntax highlighting", typesColColorTip: "Whether the source text is colored by syntax",
+  typesColCheck: "Syntax checker", typesColCheckTip: "Whether a checker finds syntax errors and marks them on the source lines",
+  typesYes: "Yes", typesNo: "No", typesNote: "Files with extensions that are not in this table do not appear in the list.", typesClose: "Close", typesCloseTip: "Close this window",
 };
 // ======================= 화면 문자열: 일본어 (UI.ja) =======================
 // 초안은 Claude가 번역함. 원어민 확인 전. 없는 글자는 영어(UI.en)로 보인다. 키와 {0} {1} 자리, {0|단수|복수} 형식은 그대로 둔다.
@@ -639,6 +667,11 @@ UI.ja = {
   syntaxTip_json: "厳密な JSON としてチェックします。コメント・末尾のカンマ・単一引用符・引用符なしのキーはエラーになります",
   syntaxTip_json5: "JSON5 として読みます。値が複数ある場合は、JSON Lines として扱わずエラーにします",
   syntaxTip_lines: "各行を厳密な JSON の値として読みます。正しくない行はすべて報告します",
+  // 지원 파일 형식 (v0.49.0)
+  types: "対応ファイル形式", typesTip: "このビューアで開けるファイル形式を表で確認します",
+  typesColExt: "拡張子・ファイル名", typesColExtTip: "一覧に表示される拡張子（*.cpp）とファイル名（Makefile）です", typesColLang: "言語", typesColLangTip: "ファイルの言語・形式です", typesColColor: "シンタックスハイライト", typesColColorTip: "ソースの文字を構文に合わせて色分けして表示するかどうかです",
+  typesColCheck: "構文チェック", typesColCheckTip: "構文エラーを見つけてソースの行に表示するチェック機能があるかどうかです",
+  typesYes: "あり", typesNo: "なし", typesNote: "この表にない拡張子のファイルは、一覧に表示されません。", typesClose: "閉じる", typesCloseTip: "このウィンドウを閉じます",
 };
 // ======================= 화면 문자열: 중국어 간체 (UI["zh-cn"]) =======================
 // 초안은 Claude가 번역함. 원어민 확인 전. 없는 글자는 영어(UI.en)로 보인다. 키와 {0} {1} 자리, {0|단수|복수} 형식은 그대로 둔다.
@@ -725,6 +758,11 @@ UI["zh-cn"] = {
   syntaxTip_json: "按严格的 JSON 检查。注释、末尾逗号、单引号和不带引号的键都会报错",
   syntaxTip_json5: "按 JSON5 读取。如果有多个值,会报错,而不是当作 JSON Lines",
   syntaxTip_lines: "将每一行作为一个严格的 JSON 值读取。每个错误行都会被报告",
+  // 지원 파일 형식 (v0.49.0)
+  types: "支持的文件格式", typesTip: "以表格查看本查看器可以打开的文件格式",
+  typesColExt: "扩展名 · 文件名", typesColExtTip: "列表中会出现的扩展名(*.cpp)和文件名(Makefile)", typesColLang: "语言", typesColLangTip: "文件所属的语言或格式", typesColColor: "语法高亮", typesColColorTip: "是否按语法给源码文字着色",
+  typesColCheck: "语法检查器", typesColCheckTip: "是否有能找出语法错误并标在源码行上的检查器",
+  typesYes: "有", typesNo: "无", typesNote: "扩展名不在此表中的文件不会出现在列表中。", typesClose: "关闭", typesCloseTip: "关闭此窗口",
 };
 // ======================= 화면 문자열: 중국어 번체 (UI["zh-tw"]) =======================
 // 초안은 Claude가 대만식 용어로 번역함. 원어민 확인 전. 없는 글자는 영어(UI.en)로 보인다. 키와 {0} {1} 자리, {0|단수|복수} 형식은 그대로 둔다.
@@ -811,6 +849,11 @@ UI["zh-tw"] = {
   syntaxTip_json: "依嚴格的 JSON 檢查。註解、結尾逗號、單引號和不帶引號的鍵都會報錯",
   syntaxTip_json5: "依 JSON5 讀取。如果有多個值,會報錯,而不是當作 JSON Lines",
   syntaxTip_lines: "將每一行當作一個嚴格的 JSON 值讀取。每個錯誤行都會被回報",
+  // 지원 파일 형식 (v0.49.0)
+  types: "支援的檔案格式", typesTip: "以表格檢視本檢視器可開啟的檔案格式",
+  typesColExt: "副檔名 · 檔案名稱", typesColExtTip: "清單中會出現的副檔名(*.cpp)與檔案名稱(Makefile)", typesColLang: "語言", typesColLangTip: "檔案所屬的語言或格式", typesColColor: "語法醒目提示", typesColColorTip: "是否依語法為原始碼文字上色",
+  typesColCheck: "語法檢查器", typesColCheckTip: "是否有能找出語法錯誤並標在原始碼行上的檢查器",
+  typesYes: "有", typesNo: "無", typesNote: "副檔名不在此表中的檔案不會出現在清單中。", typesClose: "關閉", typesCloseTip: "關閉此視窗",
 };
 // ======================= 화면 문자열: 프랑스어 (UI.fr) =======================
 // 초안은 Claude가 번역함. 원어민 확인 전. 없는 글자는 영어(UI.en)로 보인다. 키와 {0} {1} 자리, {0|단수|복수} 형식은 그대로 둔다.
@@ -898,6 +941,11 @@ UI.fr = {
   syntaxTip_json: "Vérifier comme du JSON strict. Les commentaires, virgules finales, apostrophes et clés sans guillemets sont des erreurs",
   syntaxTip_json5: "Lire comme du JSON5. Plus d'une valeur est signalé comme une erreur au lieu d'être traité comme du JSON Lines",
   syntaxTip_lines: "Lire chaque ligne comme une valeur JSON stricte. Chaque ligne incorrecte est signalée",
+  // 지원 파일 형식 (v0.49.0)
+  types: "Types de fichiers pris en charge", typesTip: "Voir dans un tableau les types de fichiers que ce lecteur peut ouvrir",
+  typesColExt: "Extension · Nom de fichier", typesColExtTip: "Extensions (*.cpp) et noms de fichiers (Makefile) qui apparaissent dans la liste", typesColLang: "Langage", typesColLangTip: "Le langage ou le format du fichier", typesColColor: "Coloration syntaxique", typesColColorTip: "Indique si le texte source est coloré selon la syntaxe",
+  typesColCheck: "Vérificateur de syntaxe", typesColCheckTip: "Indique s'il existe un vérificateur qui trouve les erreurs de syntaxe et les signale sur les lignes source",
+  typesYes: "Oui", typesNo: "Non", typesNote: "Les fichiers dont l'extension ne figure pas dans ce tableau n'apparaissent pas dans la liste.", typesClose: "Fermer", typesCloseTip: "Fermer cette fenêtre",
 };
 // ======================= 화면 문자열: 독일어 (UI.de) =======================
 // 초안은 Claude가 번역함. 원어민 확인 전. 없는 글자는 영어(UI.en)로 보인다. 키와 {0} {1} 자리, {0|단수|복수} 형식은 그대로 둔다.
@@ -984,6 +1032,11 @@ UI.de = {
   syntaxTip_json: "Als striktes JSON prüfen. Kommentare, abschließende Kommas, einfache Anführungszeichen und Schlüssel ohne Anführungszeichen sind Fehler",
   syntaxTip_json5: "Als JSON5 lesen. Mehr als ein Wert wird als Fehler gemeldet, statt als JSON Lines behandelt zu werden",
   syntaxTip_lines: "Jede Zeile als einen strikten JSON-Wert lesen. Jede fehlerhafte Zeile wird gemeldet",
+  // 지원 파일 형식 (v0.49.0)
+  types: "Unterstützte Dateitypen", typesTip: "Zeigt in einer Tabelle, welche Dateitypen dieser Viewer öffnen kann",
+  typesColExt: "Endung · Dateiname", typesColExtTip: "Endungen (*.cpp) und Dateinamen (Makefile), die in der Liste erscheinen", typesColLang: "Sprache", typesColLangTip: "Die Sprache oder das Format der Datei", typesColColor: "Syntaxhervorhebung", typesColColorTip: "Ob der Quelltext nach Syntax eingefärbt wird",
+  typesColCheck: "Syntaxprüfung", typesColCheckTip: "Ob eine Prüfung Syntaxfehler findet und in den Quellzeilen markiert",
+  typesYes: "Ja", typesNo: "Nein", typesNote: "Dateien mit Endungen, die nicht in dieser Tabelle stehen, erscheinen nicht in der Liste.", typesClose: "Schließen", typesCloseTip: "Dieses Fenster schließen",
 };
 // ======================= 화면 문자열: 이탈리아어 (UI.it) =======================
 // 초안은 Claude가 번역함. 원어민 확인 전. 없는 글자는 영어(UI.en)로 보인다. 키와 {0} {1} 자리, {0|단수|복수} 형식은 그대로 둔다.
@@ -1070,13 +1123,18 @@ UI.it = {
   syntaxTip_json: "Controlla come JSON rigoroso. Commenti, virgole finali, apici singoli e chiavi senza virgolette sono errori",
   syntaxTip_json5: "Legge come JSON5. Più di un valore viene segnalato come errore invece di essere trattato come JSON Lines",
   syntaxTip_lines: "Legge ogni riga come un valore JSON rigoroso. Ogni riga errata viene segnalata",
+  // 지원 파일 형식 (v0.49.0)
+  types: "Tipi di file supportati", typesTip: "Mostra in una tabella i tipi di file che questo visualizzatore può aprire",
+  typesColExt: "Estensione · Nome file", typesColExtTip: "Estensioni (*.cpp) e nomi di file (Makefile) che compaiono nell'elenco", typesColLang: "Linguaggio", typesColLangTip: "Il linguaggio o il formato del file", typesColColor: "Evidenziazione della sintassi", typesColColorTip: "Indica se il testo sorgente è colorato in base alla sintassi",
+  typesColCheck: "Controllo della sintassi", typesColCheckTip: "Indica se esiste un controllo che trova gli errori di sintassi e li segnala sulle righe sorgente",
+  typesYes: "Sì", typesNo: "No", typesNote: "I file con estensioni che non sono in questa tabella non compaiono nell'elenco.", typesClose: "Chiudi", typesCloseTip: "Chiude questa finestra",
 };
 // ======================= 파일 종류 =======================
 // 기준 표 FILE_TYPES: 지원하는 파일 종류를 여기에만 적는다 (v0.47.0~).
 //   name  = 사람이 읽는 언어·파일 이름 (번역하지 않는 고유 이름)
 //   lang  = 색칠·검사 방식: cpp, rust, toml, json, json5, bat, hash(# 주석: 셸·PowerShell·YAML·Makefile·.gitignore), md, ui, uilog, plain
 //   exts  = 확장자 (점 없이, 소문자)
-//   names = 확장자 없는 파일 이름 (소문자)
+//   names = 확장자 없는 파일 이름 (화면에 보이는 그대로 적고, 맞출 때는 소문자로 바꿔 비교)
 //   check = 문법 검사기: ui, toml, json (없으면 검사기 없음). INI 계열은 lang이 toml이어도 검사하지 않아서 비워 둠
 // LANG_BY_EXT·LANG_BY_NAME은 이 표에서 만든다. 새 종류는 이 표에 한 줄만 더한다.
 // 이름은 ".ui.log"처럼 끝이 겹치는 것은 langOf()가 먼저 따로 본다 (exts의 "ui.log"는 표 보기용).
@@ -1088,7 +1146,7 @@ const FILE_TYPES = [
   { name: "Windows resource",   lang: "cpp",   exts: ["rc"] },
   { name: "Rust",               lang: "rust",  exts: ["rs"] },
   { name: "TOML",               lang: "toml",  check: "toml", exts: ["toml"] },
-  { name: "Cargo lock",         lang: "toml",  check: "toml", names: ["cargo.lock"] },
+  { name: "Cargo lock",         lang: "toml",  check: "toml", names: ["Cargo.lock"] },
   { name: "INI",                lang: "toml",  exts: ["ini", "cfg"] },
   { name: "EditorConfig",       lang: "toml",  exts: ["editorconfig"] },
   { name: "JSON",               lang: "json",  check: "json", exts: ["json"] },
@@ -1099,9 +1157,9 @@ const FILE_TYPES = [
   { name: "Shell",              lang: "hash",  exts: ["sh"] },
   { name: "PowerShell",         lang: "hash",  exts: ["ps1", "psm1"] },
   { name: "YAML",               lang: "hash",  exts: ["yml", "yaml"] },
-  { name: "CMake",              lang: "hash",  exts: ["cmake"], names: ["cmakelists.txt"] },
-  { name: "Makefile",           lang: "hash",  exts: ["mk"], names: ["makefile", "gnumakefile"] },
-  { name: "Dockerfile",         lang: "hash",  names: ["dockerfile"] },
+  { name: "CMake",              lang: "hash",  exts: ["cmake"], names: ["CMakeLists.txt"] },
+  { name: "Makefile",           lang: "hash",  exts: ["mk"], names: ["Makefile", "GNUmakefile"] },
+  { name: "Dockerfile",         lang: "hash",  names: ["Dockerfile"] },
   { name: "Git ignore",         lang: "hash",  exts: ["gitignore"] },
   { name: "Git attributes",     lang: "hash",  exts: ["gitattributes"] },
   { name: "Markdown",           lang: "md",    exts: ["md"] },
@@ -1113,13 +1171,13 @@ const FILE_TYPES = [
   { name: "Manifest",           lang: "plain", exts: ["manifest"] },
   { name: "Module definition",  lang: "plain", exts: ["def"] },
   { name: "Linker script",      lang: "plain", exts: ["ld"] },
-  { name: "License",            lang: "plain", names: ["license", "copying"] },
+  { name: "License",            lang: "plain", names: ["LICENSE", "COPYING"] },
 ];
 const LANG_BY_EXT = {};
 const LANG_BY_NAME = {};
 for (const ft of FILE_TYPES) {
   for (const e of ft.exts || []) if (!e.includes(".")) LANG_BY_EXT[e] = ft.lang;
-  for (const n of ft.names || []) LANG_BY_NAME[n] = ft.lang;
+  for (const n of ft.names || []) LANG_BY_NAME[n.toLowerCase()] = ft.lang;
 }
 function langOf(path) {
   const name = path.slice(path.lastIndexOf("/") + 1).toLowerCase();
@@ -3283,6 +3341,37 @@ const fmtSize = n => n < 1024 ? n + " B" : n < 1048576 ? (n / 1024).toFixed(1) +
 
 function setState(text, err = false) { $("state").textContent = text; $("state").className = "state" + (err ? " err" : ""); }
 
+// ======================= 지원 파일 형식 (머리 막대 단추 + 모달 표 창) =======================
+// FILE_TYPES(02-file-kinds.js)를 읽어 그린다. 표를 따로 두지 않아서 파일 종류를 더하면 이 창도 같이 늘어난다.
+// 열: 확장자·파일 이름 / 언어 / 색칠 / 문법 검사기. (설명 열은 다음 버전)
+const CHECK_NAMES = { ui: ".ui", toml: "TOML", json: "JSON" };   // 문법 검사기 이름 (번역하지 않는 고유 이름)
+// 색칠이 되는지: 색칠 규칙 표(RULES)에 있거나 .ui 전용 색칠이면 됨. md는 문서로 그려서 색칠 열에서는 없음으로 보임
+const hasColors = lang => lang === "ui" || !!RULES[LANG_ALIAS[lang] || lang];
+
+// 화면 언어에 따라 바뀌는 고정 글자 (단추·창 제목·닫기). drawStatic()에서 부름
+function drawTypesStatic() {
+  $("typesBtn").textContent = t("types"); $("typesBtn").title = t("typesTip");
+  $("typesTitle").textContent = t("types");
+  $("typesClose").textContent = t("typesClose"); $("typesClose").title = t("typesCloseTip");
+}
+
+function mark(on, label) {   // ✓ / — 는 색만으로 구분하지 않게 글자(있음·없음)를 풍선으로도 알림
+  return `<td class="mark${on ? "" : " no"}" title="${esc(t(on ? "typesYes" : "typesNo"))}">${on ? "✓" : "—"}${label ? " " + esc(label) : ""}</td>`;
+}
+
+function drawTypesTable() {
+  const th = (key, tipKey) => `<th title="${esc(t(tipKey))}">${esc(t(key))}</th>`;
+  let h = `<table class="types-table"><thead><tr>${th("typesColExt", "typesColExtTip")}${th("typesColLang", "typesColLangTip")}${th("typesColColor", "typesColColorTip")}${th("typesColCheck", "typesColCheckTip")}</tr></thead><tbody>`;
+  for (const ft of FILE_TYPES) {
+    const keys = [...(ft.exts || []).map(e => "*." + e), ...(ft.names || [])];
+    h += `<tr><td>${keys.map(k => `<code>${esc(k)}</code>`).join("")}</td><td>${esc(ft.name)}</td>${mark(hasColors(ft.lang))}${mark(!!ft.check, CHECK_NAMES[ft.check])}</tr>`;
+  }
+  $("typesBody").innerHTML = h + `</tbody></table><p class="types-note">${esc(t("typesNote"))}</p>`;
+}
+
+$("typesBtn").onclick = () => { drawTypesTable(); $("typesDlg").showModal(); };
+$("typesClose").onclick = () => $("typesDlg").close();
+$("typesDlg").onclick = e => { if (e.target === $("typesDlg")) $("typesDlg").close(); };   // 창 바깥(어두운 곳)을 누르면 닫음. Esc는 브라우저가 처리
 // ---------- 컴파일러 결과: 연 폴더 맨 위 build.log (GCC)의 "파일:줄:칸: error/warning/note: 메시지" ----------
 // 파일 경로는 프로젝트 안 경로의 끝부분과 맞춰 찾는다 (로그에 절대 경로·역슬래시·./ 가 있어도 됨). 색 코드(ESC[..m)는 뗀다.
 // 컴파일러 결과 파일: [이름, 읽는 함수]  (GCC: build.log, Rust: cargo.json)
@@ -4206,6 +4295,7 @@ function showStart(kind) {
 
 // 화면 언어에 따라 바뀌는 고정 글자
 function drawStatic() {
+  drawTypesStatic();
   $("readCancel").textContent = t("readCancel"); $("readCancel").title = t("readCancelTip");
   $("pick").textContent = t("pick"); $("regrant").textContent = t("regrant"); $("pickFiles").textContent = t("pickFiles");
   $("folder").textContent = t("folder"); $("folder").title = t("folderTip");

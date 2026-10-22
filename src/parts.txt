@@ -22,6 +22,7 @@ parts/js/08-markdown.js
 parts/js/09-source-folder.js
 parts/js/10-tree-list.js
 parts/js/11-list-width-and-helpers.js
+parts/js/12-supported-types.js
 parts/js/13-compiler-output.js
 parts/js/14-toml-check.js
 parts/js/14a-json-check.js

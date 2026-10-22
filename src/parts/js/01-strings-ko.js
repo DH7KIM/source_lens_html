@@ -83,4 +83,9 @@ UI.ko = {
   syntaxTip_json: "엄격한 JSON으로 검사합니다. 주석, 끝 쉼표, 작은따옴표, 따옴표 없는 키 등은 오류입니다",
   syntaxTip_json5: "JSON5로 읽습니다. 값이 여러 개 있으면 JSON Lines로 알아보지 않고 오류로 알립니다",
   syntaxTip_lines: "줄마다 엄격한 JSON 값 하나로 읽습니다. 틀린 줄을 모두 알립니다",
+  // 지원 파일 형식 (v0.49.0)
+  types: "지원 파일 형식", typesTip: "이 프로그램이 열 수 있는 파일 형식을 표로 봅니다",
+  typesColExt: "확장자 · 파일 이름", typesColExtTip: "목록에 나타나는 확장자(*.cpp)와 파일 이름(Makefile)입니다", typesColLang: "언어", typesColLangTip: "파일이 어떤 언어·형식인지 보여 줍니다", typesColColor: "색칠", typesColColorTip: "소스 글자를 문법에 따라 색칠해서 보여 주는지 나타냅니다",
+  typesColCheck: "문법 검사기", typesColCheckTip: "문법 오류를 찾아 소스 줄에 표시하는 검사기가 있는지 나타냅니다",
+  typesYes: "있음", typesNo: "없음", typesNote: "이 표에 없는 확장자의 파일은 목록에 나타나지 않습니다.", typesClose: "닫기", typesCloseTip: "이 창을 닫습니다",
 };

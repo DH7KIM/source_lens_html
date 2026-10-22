@@ -68,6 +68,7 @@ function showStart(kind) {
 
 // 화면 언어에 따라 바뀌는 고정 글자
 function drawStatic() {
+  drawTypesStatic();
   $("readCancel").textContent = t("readCancel"); $("readCancel").title = t("readCancelTip");
   $("pick").textContent = t("pick"); $("regrant").textContent = t("regrant"); $("pickFiles").textContent = t("pickFiles");
   $("folder").textContent = t("folder"); $("folder").title = t("folderTip");

@@ -56,6 +56,7 @@ tools/merge-parts src source-viewer.merged.html --check source-viewer.html
 | `parts/js/09-source-folder.js` | 소스 폴더 (FSA 또는 파일 목록) |
 | `parts/js/10-tree-list.js` | 트리 목록 |
 | `parts/js/11-list-width-and-helpers.js` | 목록 폭, 읽기 도우미 |
+| `parts/js/12-supported-types.js` | `지원 파일 형식` 단추와 창 (`FILE_TYPES`를 읽어 그림) |
 | `parts/js/13-compiler-output.js` | 컴파일러 결과 (`build.log`, `cargo.json`) |
 | `parts/js/14-toml-check.js` | TOML 검사 |
 | `parts/js/15-open-file-and-events.js` | 파일 열기, 이벤트 |

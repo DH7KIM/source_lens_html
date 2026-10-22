@@ -3,7 +3,7 @@
 //   name  = 사람이 읽는 언어·파일 이름 (번역하지 않는 고유 이름)
 //   lang  = 색칠·검사 방식: cpp, rust, toml, json, json5, bat, hash(# 주석: 셸·PowerShell·YAML·Makefile·.gitignore), md, ui, uilog, plain
 //   exts  = 확장자 (점 없이, 소문자)
-//   names = 확장자 없는 파일 이름 (소문자)
+//   names = 확장자 없는 파일 이름 (화면에 보이는 그대로 적고, 맞출 때는 소문자로 바꿔 비교)
 //   check = 문법 검사기: ui, toml, json (없으면 검사기 없음). INI 계열은 lang이 toml이어도 검사하지 않아서 비워 둠
 // LANG_BY_EXT·LANG_BY_NAME은 이 표에서 만든다. 새 종류는 이 표에 한 줄만 더한다.
 // 이름은 ".ui.log"처럼 끝이 겹치는 것은 langOf()가 먼저 따로 본다 (exts의 "ui.log"는 표 보기용).
@@ -15,7 +15,7 @@ const FILE_TYPES = [
   { name: "Windows resource",   lang: "cpp",   exts: ["rc"] },
   { name: "Rust",               lang: "rust",  exts: ["rs"] },
   { name: "TOML",               lang: "toml",  check: "toml", exts: ["toml"] },
-  { name: "Cargo lock",         lang: "toml",  check: "toml", names: ["cargo.lock"] },
+  { name: "Cargo lock",         lang: "toml",  check: "toml", names: ["Cargo.lock"] },
   { name: "INI",                lang: "toml",  exts: ["ini", "cfg"] },
   { name: "EditorConfig",       lang: "toml",  exts: ["editorconfig"] },
   { name: "JSON",               lang: "json",  check: "json", exts: ["json"] },
@@ -26,9 +26,9 @@ const FILE_TYPES = [
   { name: "Shell",              lang: "hash",  exts: ["sh"] },
   { name: "PowerShell",         lang: "hash",  exts: ["ps1", "psm1"] },
   { name: "YAML",               lang: "hash",  exts: ["yml", "yaml"] },
-  { name: "CMake",              lang: "hash",  exts: ["cmake"], names: ["cmakelists.txt"] },
-  { name: "Makefile",           lang: "hash",  exts: ["mk"], names: ["makefile", "gnumakefile"] },
-  { name: "Dockerfile",         lang: "hash",  names: ["dockerfile"] },
+  { name: "CMake",              lang: "hash",  exts: ["cmake"], names: ["CMakeLists.txt"] },
+  { name: "Makefile",           lang: "hash",  exts: ["mk"], names: ["Makefile", "GNUmakefile"] },
+  { name: "Dockerfile",         lang: "hash",  names: ["Dockerfile"] },
   { name: "Git ignore",         lang: "hash",  exts: ["gitignore"] },
   { name: "Git attributes",     lang: "hash",  exts: ["gitattributes"] },
   { name: "Markdown",           lang: "md",    exts: ["md"] },
@@ -40,13 +40,13 @@ const FILE_TYPES = [
   { name: "Manifest",           lang: "plain", exts: ["manifest"] },
   { name: "Module definition",  lang: "plain", exts: ["def"] },
   { name: "Linker script",      lang: "plain", exts: ["ld"] },
-  { name: "License",            lang: "plain", names: ["license", "copying"] },
+  { name: "License",            lang: "plain", names: ["LICENSE", "COPYING"] },
 ];
 const LANG_BY_EXT = {};
 const LANG_BY_NAME = {};
 for (const ft of FILE_TYPES) {
   for (const e of ft.exts || []) if (!e.includes(".")) LANG_BY_EXT[e] = ft.lang;
-  for (const n of ft.names || []) LANG_BY_NAME[n] = ft.lang;
+  for (const n of ft.names || []) LANG_BY_NAME[n.toLowerCase()] = ft.lang;
 }
 function langOf(path) {
   const name = path.slice(path.lastIndexOf("/") + 1).toLowerCase();

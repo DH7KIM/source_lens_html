@@ -83,4 +83,9 @@ UI.de = {
   syntaxTip_json: "Als striktes JSON prüfen. Kommentare, abschließende Kommas, einfache Anführungszeichen und Schlüssel ohne Anführungszeichen sind Fehler",
   syntaxTip_json5: "Als JSON5 lesen. Mehr als ein Wert wird als Fehler gemeldet, statt als JSON Lines behandelt zu werden",
   syntaxTip_lines: "Jede Zeile als einen strikten JSON-Wert lesen. Jede fehlerhafte Zeile wird gemeldet",
+  // 지원 파일 형식 (v0.49.0)
+  types: "Unterstützte Dateitypen", typesTip: "Zeigt in einer Tabelle, welche Dateitypen dieser Viewer öffnen kann",
+  typesColExt: "Endung · Dateiname", typesColExtTip: "Endungen (*.cpp) und Dateinamen (Makefile), die in der Liste erscheinen", typesColLang: "Sprache", typesColLangTip: "Die Sprache oder das Format der Datei", typesColColor: "Syntaxhervorhebung", typesColColorTip: "Ob der Quelltext nach Syntax eingefärbt wird",
+  typesColCheck: "Syntaxprüfung", typesColCheckTip: "Ob eine Prüfung Syntaxfehler findet und in den Quellzeilen markiert",
+  typesYes: "Ja", typesNo: "Nein", typesNote: "Dateien mit Endungen, die nicht in dieser Tabelle stehen, erscheinen nicht in der Liste.", typesClose: "Schließen", typesCloseTip: "Dieses Fenster schließen",
 };

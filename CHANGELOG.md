@@ -2,6 +2,17 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.49.0 (2026-10-22)
+
+### source-viewer.html
+
+- **Added the `Supported file types` button and table window**: the button next to the theme box in the header opens a modal window with a table. Columns: `Extension · File name` / `Language` / `Syntax highlighting` / `Syntax checker`. It reads `FILE_TYPES` (v0.47.0~), so adding a file type to the table adds it to this window too. Highlighting is read from the highlight rule table (`RULES`) and the checker from the `check` column. A note below says that files with extensions not in the table do not appear in the list.
+- The window is a `<dialog>`: the page behind it cannot be clicked while it is open, and it closes with Esc, `Close`, or a click outside. The button is also visible on the start screen (before a folder is opened).
+- Added 15 screen strings (`types*`) to all 8 languages. Drafts translated by Claude, not yet checked by native speakers.
+- File names without an extension (`Makefile`, `LICENSE`, …) are now written in `FILE_TYPES` as shown on screen (with their case) and lower-cased only when matching (behavior unchanged).
+- The description column (what each file is) comes in the next version.
+- Branch `types-dialog`.
+
 ## v0.48.0 (2026-10-22)
 
 ### source-viewer.html

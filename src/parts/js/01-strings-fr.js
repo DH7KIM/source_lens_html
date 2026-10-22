@@ -84,4 +84,9 @@ UI.fr = {
   syntaxTip_json: "Vérifier comme du JSON strict. Les commentaires, virgules finales, apostrophes et clés sans guillemets sont des erreurs",
   syntaxTip_json5: "Lire comme du JSON5. Plus d'une valeur est signalé comme une erreur au lieu d'être traité comme du JSON Lines",
   syntaxTip_lines: "Lire chaque ligne comme une valeur JSON stricte. Chaque ligne incorrecte est signalée",
+  // 지원 파일 형식 (v0.49.0)
+  types: "Types de fichiers pris en charge", typesTip: "Voir dans un tableau les types de fichiers que ce lecteur peut ouvrir",
+  typesColExt: "Extension · Nom de fichier", typesColExtTip: "Extensions (*.cpp) et noms de fichiers (Makefile) qui apparaissent dans la liste", typesColLang: "Langage", typesColLangTip: "Le langage ou le format du fichier", typesColColor: "Coloration syntaxique", typesColColorTip: "Indique si le texte source est coloré selon la syntaxe",
+  typesColCheck: "Vérificateur de syntaxe", typesColCheckTip: "Indique s'il existe un vérificateur qui trouve les erreurs de syntaxe et les signale sur les lignes source",
+  typesYes: "Oui", typesNo: "Non", typesNote: "Les fichiers dont l'extension ne figure pas dans ce tableau n'apparaissent pas dans la liste.", typesClose: "Fermer", typesCloseTip: "Fermer cette fenêtre",
 };
