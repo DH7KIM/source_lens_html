@@ -213,8 +213,10 @@
   .types-none { margin: 16px 0 0; text-align: center; }
   .types-table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 1.5; }
   .types-table th, .types-table td { text-align: left; padding: 4px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
-  .types-table thead th { position: sticky; top: 0; background: var(--bg); cursor: help; z-index: 1; }
-  .types-table td code { font-family: var(--mono); font-size: 13px; margin-right: 8px; white-space: nowrap; }
+  .types-table thead th { position: sticky; top: 0; background: var(--panel); border-bottom: 2px solid var(--line); cursor: help; z-index: 1; white-space: nowrap; }
+  .types-table td:first-child { width: 36%; }
+  .types-table td.desc { min-width: 200px; }
+  .types-table td code { font-family: var(--mono); font-size: 13px; white-space: nowrap; }
   .types-table .mark { white-space: nowrap; cursor: help; }
   .types-table .no { color: var(--muted); }
   .types-note { color: var(--muted); font-size: 13px; margin: 12px 0 0; }

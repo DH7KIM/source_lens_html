@@ -2,6 +2,18 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.51.0 (2026-10-22)
+
+### source-viewer.html
+
+- **Added a `Description` column to the `Supported file types` table** (after Language): one line saying what each file is (e.g. `*.rc` → "Windows resource script (icons, menus, dialogs, version info)"). All 33 types, all 8 languages (33 `desc_<id>` strings + 2 column strings). Drafts translated by Claude, not yet checked by native speakers.
+- Every type in `FILE_TYPES` now has an `id` (used for the description string key). Checked that the extension / file name → highlighting tables are identical to before.
+- The filter does not search descriptions (only extensions, file names and language names), so words inside descriptions cannot make a check like `.py` wrong.
+- **The table header row now has the panel background** and a stronger bottom line, so it stands out while scrolling (follows every theme automatically).
+- The extension list now wraps and the headers stay on one line (the table still fits the window at 820px with the extra column). On very narrow screens (about 420px) the table scrolls sideways.
+- The file grew by about 18KB because of the description strings (about 339KB → 357KB).
+- Branch `types-description`.
+
 ## v0.50.0 (2026-10-22)
 
 ### source-viewer.html
