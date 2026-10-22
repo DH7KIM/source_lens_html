@@ -2,6 +2,13 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.65.0 (2026-10-23)
+
+### source-viewer.html
+
+- **Moved the gear (settings) button to the far right end of the header bar.** The order is now `Language`, `Supported file types`, (`Depth`, `Change folder`), gear. The gear is at the far right also when no folder is open. Only the button order changed; the behavior, texts and CSS are the same.
+- The file size is the same (411,884 bytes).
+
 ## v0.64.0 (2026-10-23)
 
 ### source-viewer.html
