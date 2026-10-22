@@ -298,6 +298,8 @@
     border-radius: 5px; padding: 0.1em 0.35em;
   }
   .md td code, .md th code { white-space: nowrap; }
+  /* 글꼴 합자 끄기 (v0.58.0): Cascadia Code 등이 -->·->·!=를 한 모양으로 합쳐 그리지 않게. 소스는 글자 그대로 보여야 함. `font:` 줄임 속성이 이 값을 되돌리므로 그 규칙들보다 뒤에 둠 */
+  .code, .tj-root, .types-table td code, .md code, .md pre { font-variant-ligatures: none; }
   .md pre { line-height: 1.45; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; overflow-x: auto; margin: 1em 0; }
   .md pre code { color: var(--fg); background: none; border: 0; padding: 0; font-size: 0.86em; white-space: pre; tab-size: 4; }
   .md table { border-collapse: collapse; margin: 1em 0; display: block; overflow-x: auto; max-width: 100%; }

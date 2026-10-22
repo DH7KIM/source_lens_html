@@ -2,6 +2,17 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.58.0 (2026-10-23)
+
+### source-viewer.html
+
+- **Turned off ligatures in the code font**: fonts such as `Cascadia Code` draw `-->`, `->`, `!=`, `<=` and `&&` as a single shape (`⟶`, `→`, `≠`, `≤`), so an HTML comment `<!-- … -->` looked like `<!— … —>`. Now the text is shown exactly as written (the file content was never changed, only how it was drawn). `font-variant-ligatures: none` is applied to the source view (`.code`), the JSON tree view (`.tj-root`), code in Markdown (`.md code`, `.md pre`) and the extensions in the `Supported file types` table (`01-style.css`). It is placed after those rules because the `font:` shorthand resets this value.
+- The font list (`--mono`) is unchanged. On PCs where a font without ligatures (`Cascadia Mono`, `Consolas`, `D2Coding`) is picked, nothing changes.
+- A `Font settings` window that lets the user turn ligatures on and off stays in the TODO (user choice, off by default).
+- Tested: the ligature value is `none` in every code text box of the merged file, and with the real `Cascadia Code` the shapes differ between ligatures on and off (on: `⟶ ≠ → ≤ ≥`, off: `--> != -> <= >=`). A side-by-side of both shapes inside the viewer could not be made (the test environment does not join them even when on), so this still needs a check on a PC with a ligature font installed. No errors.
+- The file grows by about 0.3KB (392,759 → 393,095 bytes).
+- Branch `ligatures-off`.
+
 ## v0.57.0 (2026-10-23)
 
 ### source-viewer.html
