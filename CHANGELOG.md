@@ -2,6 +2,16 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.68.0 (2026-10-23)
+
+### source-viewer.html
+
+- **Redrew the header icons to fit the pixel grid, and used the document icon shape the user adjusted.** Before, a 24-grid drawing was scaled down (stroke width 1.125px), so the lines looked blurred at 100% zoom. Now the icons of `Language` (globe), `Supported file types` (document), `Change folder` (folder) and the settings gear are all redrawn on a 17x17 grid with a 1px stroke: the coordinates sit at pixel centers (.5), so the lines are sharp, and they are shown at 17px (`.with-icon svg` and `#settingsBtn svg`). At 200% display scale the lines grow cleanly to 2px, but at 150% the icon is 17px x 1.5 = 25.5 screen pixels, so the lines fall on fractional pixels and look less pretty (confirmed by the user, written in the TODO). `currentColor` and the hand-drawn SVG are the same.
+- **The document icon follows the one the user adjusted in Paint (the 3rd)**: the margins did not match, so the body grew one cell in width and height (11x15 -> 12x16 cells), and the three lines (the last one short) are one cell longer.
+- **The square icons (document and folder) use `shape-rendering: crispEdges`**: when a button sits at a fractional pixel (for example 925.797px), the left vertical line was confirmed to blur over two pixels; with this setting the lines snap to the pixels and look sharp. The round icons (globe and gear) look jagged with it, so they are left as they were (so a round icon can look slightly soft depending on its position).
+- Tested: blur comparison at 100% zoom (enlarged 3 times), at widths where the buttons sit at fractional positions (1300px and 1291px), the buttons before and after opening a folder, the `Supported file types` window, the light and dark themes, the text of both buttons is not empty in all 10 languages, no errors. The header bar height is the same as v0.67.0 (83px at 820px, at 1000px only French, German, Italian, Spanish and Portuguese are 83px, 49px at 1300px).
+- The file size grew by 207 bytes (413,227 -> 413,434 bytes).
+
 ## v0.67.0 (2026-10-23)
 
 ### source-viewer.html

@@ -219,10 +219,11 @@
   .dlg-note { color: var(--muted); font-size: 13px; margin: 12px 0 0; }
   .with-icon { display: inline-flex; align-items: center; gap: 6px; }   /* 아이콘 + 글자 단추 (머리 막대) */
   .with-icon[hidden] { display: none; }
-  .with-icon svg { width: 16px; height: 16px; flex: none; }
+  .with-icon svg { width: 17px; height: 17px; flex: none; }
+  #typesBtn svg, #folder svg { shape-rendering: crispEdges; }   /* 네모난 아이콘(문서·폴더)은 선을 픽셀에 딱 붙임: 단추 위치가 소수여도 번지지 않음. 둥근 아이콘(지구본·톱니)은 그대로 둠 */
   #langDlg { width: min(520px, 94vw); }
   #settingsBtn { display: inline-flex; align-items: center; padding: 7px 8px; }
-  #settingsBtn svg { width: 18px; height: 18px; flex: none; }
+  #settingsBtn svg { width: 17px; height: 17px; flex: none; }
   #settingsDlg { width: min(520px, 94vw); }
   .set-line { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); font-weight: 600; }
   .set-line select { max-width: 60%; font-weight: 400; }
