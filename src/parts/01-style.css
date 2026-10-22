@@ -206,7 +206,11 @@
   dialog[open] { display: flex; flex-direction: column; }
   dialog::backdrop { background: rgba(0, 0, 0, .45); }
   .dlg-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 16px; border-bottom: 1px solid var(--line); font-weight: 600; }
+  .dlg-filter { padding: 8px 16px; border-bottom: 1px solid var(--line); }
+  .dlg-filter input { width: 100%; font: inherit; font-size: 14px; color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; }
+  .dlg-filter input:focus { outline: none; border-color: var(--accent); }
   .dlg-body { overflow: auto; padding: 0 16px 16px; }
+  .types-none { margin: 16px 0 0; text-align: center; }
   .types-table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 1.5; }
   .types-table th, .types-table td { text-align: left; padding: 4px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
   .types-table thead th { position: sticky; top: 0; background: var(--bg); cursor: help; z-index: 1; }

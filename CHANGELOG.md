@@ -2,6 +2,15 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.50.0 (2026-10-22)
+
+### source-viewer.html
+
+- **Added a filter box to the `Supported file types` window**: typing in the box above the table keeps only the rows whose extension, file name or language name **starts with** the text. `py`, `.py`, `*.py`, `makefile` and `C++` all work the same way, and case is ignored. If no row matches, it says "“.py”: not a supported type". The cursor goes to the box when the window opens, and the box is empty every time. The `×` on the right and the first Esc clear the text.
+- Text in the middle of a word does not match (a test showed `py` wrongly matching `copying` (License); fixed).
+- Added 3 screen strings (`typesFilterHint`, `typesFilterTip`, `typesNone`) to all 8 languages. Drafts translated by Claude, not yet checked by native speakers.
+- Branch `types-filter`.
+
 ## v0.49.0 (2026-10-22)
 
 ### source-viewer.html
