@@ -94,8 +94,8 @@ UI.de = {
   // 언어 선택 창 (v0.62.0)
   langTitle: "Sprache wählen", langFilterHint: "Nach Sprachname oder Code filtern (z. B. pt)", langFilterTip: "Zeigt nur Sprachen, deren Name oder Code mit dem eingegebenen Text beginnt. Gesucht wird sowohl der Name in der aktuellen Anzeigesprache als auch der eigene Name der Sprache", langNone: "„{0}“: Sprache nicht gefunden",
   langColName: "Name", langColOwn: "Originalname", langColCode: "Code", langCurrent: "Aktuelle Sprache",
-  // 글꼴 설정 창 (v0.63.0)
-  fontTitle: "Schrifteinstellungen", fontTip: "Fenster mit den Schrifteinstellungen öffnen", fontLigatures: "Ligaturen",
+  // 설정 창 (v0.63.0 글꼴 설정으로 시작, v0.64.0에서 `설정`으로 이름을 바꾸고 테마를 옮김)
+  settingsTitle: "Einstellungen", settingsTip: "Einstellungsfenster öffnen", fontLigatures: "Ligaturen",
   fontLigaturesDesc: "Zeichnet Symbole wie `!=`, `->` und `=>` zu einer Form verbunden. Aus zeigt den Quelltext genau wie geschrieben (Standard: aus). Nur Schriften, die Ligaturen unterstützen, etwa Cascadia Code, sehen anders aus",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Beschreibung", typesColDescTip: "Was für eine Datei es ist",

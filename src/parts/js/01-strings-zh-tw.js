@@ -94,8 +94,8 @@ UI["zh-tw"] = {
   // 언어 선택 창 (v0.62.0)
   langTitle: "選擇語言", langFilterHint: "依語言名稱或代碼篩選(例如: pt)", langFilterTip: "只顯示名稱或代碼以所輸入文字開頭的語言。目前介面語言中的名稱和該語言自己的名稱都可以搜尋", langNone: "「{0}」:找不到該語言",
   langColName: "名稱", langColOwn: "原名稱", langColCode: "代碼", langCurrent: "目前語言",
-  // 글꼴 설정 창 (v0.63.0)
-  fontTitle: "字型設定", fontTip: "開啟字型設定視窗", fontLigatures: "連字",
+  // 설정 창 (v0.63.0 글꼴 설정으로 시작, v0.64.0에서 `설정`으로 이름을 바꾸고 테마를 옮김)
+  settingsTitle: "設定", settingsTip: "開啟設定視窗", fontLigatures: "連字",
   fontLigaturesDesc: "將 `!=`、`->`、`=>` 等符號連成一個圖形顯示。關閉時依原始碼原樣顯示(預設: 關閉)。只有支援連字的字型(如 Cascadia Code)才會有變化",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "說明", typesColDescTip: "說明這是什麼檔案",

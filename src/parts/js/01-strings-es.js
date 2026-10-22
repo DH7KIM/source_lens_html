@@ -94,8 +94,8 @@ UI.es = {
   // 언어 선택 창 (v0.62.0)
   langTitle: "Elegir idioma", langFilterHint: "Filtrar por nombre o código de idioma (p. ej. pt)", langFilterTip: "Muestra solo los idiomas cuyo nombre o código empieza por el texto escrito. Se busca tanto el nombre en el idioma actual de la pantalla como el nombre propio del idioma", langNone: "“{0}”: idioma no encontrado",
   langColName: "Nombre", langColOwn: "Nombre original", langColCode: "Código", langCurrent: "Idioma actual",
-  // 글꼴 설정 창 (v0.63.0)
-  fontTitle: "Ajustes de fuente", fontTip: "Abrir la ventana de ajustes de fuente", fontLigatures: "Ligaduras",
+  // 설정 창 (v0.63.0 글꼴 설정으로 시작, v0.64.0에서 `설정`으로 이름을 바꾸고 테마를 옮김)
+  settingsTitle: "Ajustes", settingsTip: "Abrir la ventana de ajustes", fontLigatures: "Ligaduras",
   fontLigaturesDesc: "Dibuja símbolos como `!=`, `->` y `=>` unidos en una sola forma. Desactivadas, el código fuente se muestra tal como está escrito (predeterminado: desactivadas). Solo cambian de aspecto las fuentes que admiten ligaduras, como Cascadia Code",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Descripción", typesColDescTip: "Qué tipo de archivo es",

@@ -2,6 +2,17 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.64.0 (2026-10-23)
+
+### source-viewer.html
+
+- **Moved the theme select box from the header bar into the settings window** (the theme is a value you change about once). The header bar keeps only `Language`, `Supported file types`, the gear and (when a folder is open) `Depth` and `Change folder`. The window that opens with the gear has the `Theme (text and syntax colors)` select box at the top and `Ligatures` below it. The select box (`#theme`) and its behavior in `17-themes.js` (the light and dark groups, remembering in `sv-theme`, following the system setting) are the same; only the place changed. When the window opens, the focus is on the theme box.
+- **Renamed `Font settings` to `Settings`** (the window now has things that are not about fonts): the window title, the button tooltip and the `aria-label` are now `Settings` and `Open the settings window` (10 languages). The translation keys `fontTitle` and `fontTip` became `settingsTitle` and `settingsTip` (the values were translated again; the number of keys stays 228), the element names `fontBtn`, `fontDlg`, `fontTitle` and `fontClose` became `settingsBtn`, `settingsDlg`, `settingsTitle` and `settingsClose`, the part `12b-font-settings.js` became `12b-settings.js`, the function `drawFontStatic()` became `drawSettingsStatic()`, and the CSS `#fontBtn` and `#fontDlg` became `#settingsBtn` and `#settingsDlg`. The ligature names (`fontLig*`, `sv-ligatures`) are about fonts, so they stay.
+- A row style inside the window: `.set-line` (the name on the left, the select box on the right, a thin line below).
+- Tested: in all 19 themes the background, text, accent, syntax colors, font and error color are the same as in v0.63.0; changing the theme, remembering in `sv-theme`, keeping it after reload, following the system (the background differs between light and dark settings), the ligature switch and the `Language` and `Supported file types` windows still work, the close button and clicking outside, the window title, theme names and group names are not empty in all 10 languages, no errors.
+- Header bar: the theme box is gone, but with a folder open the height is almost the same (only Spanish at 820px width went from 148px to 106px), because the status line (`lines, size, encoding, auto refresh`), `Depth` and `Change folder` take much of the width. It will be measured again in the next version, which moves `Depth` into the settings window.
+- The file grows by 1,368 bytes (410,516 → 411,884 bytes).
+
 ## v0.63.0 (2026-10-23)
 
 ### source-viewer.html

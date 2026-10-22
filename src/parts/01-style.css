@@ -220,9 +220,11 @@
   #langBtn { display: inline-flex; align-items: center; gap: 6px; }
   #langBtn svg { width: 16px; height: 16px; flex: none; }
   #langDlg { width: min(520px, 94vw); }
-  #fontBtn { display: inline-flex; align-items: center; padding: 7px 8px; }
-  #fontBtn svg { width: 18px; height: 18px; flex: none; }
-  #fontDlg { width: min(520px, 94vw); }
+  #settingsBtn { display: inline-flex; align-items: center; padding: 7px 8px; }
+  #settingsBtn svg { width: 18px; height: 18px; flex: none; }
+  #settingsDlg { width: min(520px, 94vw); }
+  .set-line { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); font-weight: 600; }
+  .set-line select { max-width: 60%; font-weight: 400; }
   .set-row { display: flex; align-items: center; gap: 8px; padding-top: 14px; font-weight: 600; cursor: pointer; }
   .set-row input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); cursor: pointer; }
   .set-desc { margin: 6px 0 0 24px; color: var(--muted); font-size: 13px; }

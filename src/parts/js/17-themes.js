@@ -67,7 +67,7 @@ let themeId = "";
 function drawThemes() {
   const sel = $("theme");
   sel.innerHTML = "";
-  sel.title = t("theme");
+  sel.title = t("theme"); $("themeLabel").textContent = t("theme");   // 선택 상자는 설정 창 안에 있음 (12b-settings.js)
   for (const dark of [0, 1]) {
     const g = document.createElement("optgroup");
     g.label = t(dark ? "dark" : "light");
