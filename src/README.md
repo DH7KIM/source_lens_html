@@ -76,7 +76,7 @@ The exit code is 0 when done (and equal), 1 when the check finds a difference, 2
 Screen texts live in one file per language, so a new language is one new file:
 
 1. Copy `parts/js/01-strings-en.js` to `parts/js/01-strings-<code>.js` (for example `01-strings-ja.js`) and change `UI.en` to `UI.<code>` (`UI.ja`).
-2. Translate the values. Keep the keys and the `{0}` `{1}` placeholders as they are. A text that is missing falls back to English, so a partial translation works.
+2. Translate the values. Keep the keys and the `{0}` `{1}` placeholders as they are. A text that is missing falls back to English, so a partial translation works. Plural texts `{0|form1|form2}` use as many forms as the language needs: 2 for English and similar (1 → first, the rest → second), 2 for French (0 and 1 → first), 3 for Russian and Polish (`one|few|many`).
 3. Add the file to `parts.txt` right after `parts/js/01-strings-en.js`.
 4. Add the language name to `LANG_NAMES` in `parts/js/01-strings.js`.
 5. Join the parts: `tools/merge-parts src source-viewer.html`.

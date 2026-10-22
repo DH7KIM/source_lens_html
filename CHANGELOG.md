@@ -2,6 +2,15 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.52.0 (2026-10-22)
+
+### source-viewer.html
+
+- **Plural forms now follow each language's rules**: `{0|form1|form2|…}` in `t()` picks the form with `Intl.PluralRules` (UI language). With 2 forms, `one` uses the first and everything else the second (so French 0 now reads "0 fichier"). With 3 or more forms, the language's categories (`zero one two few many other`) are put in that order and matched to the forms in the same order (Russian `{0|файл|файла|файлов}`: 1 → файл, 2 → файла, 5 and 11 → файлов, 21 → файл, 22 → файла, 25 → файлов, 101 → файл, 111 → файлов). If forms are missing, the last one is used.
+- Existing language files are unchanged. All 3,624 existing `{n|…|…}` texts in the 8 languages (numbers 0 to 150) were compared with the old behavior, and only French 0 differs (intended).
+- No translations were mixed in (new languages such as `ru` come in later versions).
+- Branch `plural-rules`.
+
 ## v0.51.0 (2026-10-22)
 
 ### source-viewer.html

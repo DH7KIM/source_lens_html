@@ -76,7 +76,7 @@ tools/merge-parts src source-viewer.merged.html --check source-viewer.html
 화면 글자는 언어마다 파일이 하나라서, 새 언어는 파일 하나를 더하면 됩니다.
 
 1. `parts/js/01-strings-en.js`를 `parts/js/01-strings-<코드>.js`로 복사하고 (예: `01-strings-ja.js`), `UI.en`을 `UI.<코드>`(`UI.ja`)로 바꿉니다.
-2. 값을 번역합니다. 키와 `{0}` `{1}` 자리는 그대로 둡니다. 빠진 글자는 영어로 보이니 일부만 번역해도 됩니다.
+2. 값을 번역합니다. 키와 `{0}` `{1}` 자리는 그대로 둡니다. 빠진 글자는 영어로 보이니 일부만 번역해도 됩니다. 복수 문구 `{0|칸1|칸2}`는 그 언어 규칙에 맞는 칸 수로 씁니다: 영어 등은 2칸(1 → 앞, 나머지 → 뒤), 프랑스어는 2칸(0·1 → 앞), 러시아어·폴란드어는 3칸(`one|few|many`).
 3. `parts.txt`에서 `parts/js/01-strings-en.js` 바로 뒤에 그 파일을 적습니다.
 4. `parts/js/01-strings.js`의 `LANG_NAMES`에 언어 이름을 넣습니다.
 5. 조각을 합칩니다: `tools/merge-parts src source-viewer.html`.

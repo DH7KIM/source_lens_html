@@ -17,7 +17,23 @@ function pickUiLang() {
   }
   return "en";
 }
-// {0|item|items} = 값이 1이면 앞의 말, 아니면 뒤의 말 (영어 단수·복수, 한국어 문구는 쓰지 않음)
-const t = (key, ...a) => String((UI[uiLang] || UI.en)[key] ?? UI.en[key]).replace(/\{(\d)\|([^|}]*)\|([^|}]*)\}/g, (_, i, one, many) => +a[+i] === 1 ? one : many).replace(/\{(\d)\}/g, (_, i) => a[+i] ?? "");
+// 복수 형식 {0|칸1|칸2|…}: 수 0번째 값에 맞는 칸을 고름. 규칙은 Intl.PluralRules(화면 언어)의 분류 (CLDR)
+//   칸이 2개: one이면 앞의 말, 아니면 뒤의 말 (영어 1 → 앞, 프랑스어는 0·1 → 앞). 예: {0|item|items}
+//   칸이 3개 이상: 그 언어의 분류를 zero·one·two·few·many·other 순서로 놓고 같은 순서의 칸을 씀 (모자라면 마지막 칸).
+//   예: 러시아어 {0|файл|файла|файлов} = one(1, 21, 101) · few(2~4, 22) · many(0, 5~20, 25, 111)
+const PLURAL_ORDER = ["zero", "one", "two", "few", "many", "other"];
+const pluralRules = {};
+function pluralIndex(lang, n, count) {
+  let rules = pluralRules[lang];
+  if (rules === undefined) {
+    try { rules = new Intl.PluralRules(lang); } catch { rules = null; }
+    pluralRules[lang] = rules;
+  }
+  const cat = rules ? rules.select(n) : (n === 1 ? "one" : "other");
+  if (count === 2) return cat === "one" ? 0 : 1;
+  const cats = rules ? PLURAL_ORDER.filter(c => rules.resolvedOptions().pluralCategories.includes(c)) : ["one", "other"];
+  return Math.min(Math.max(cats.indexOf(cat), 0), count - 1);
+}
+const t = (key, ...a) => String((UI[uiLang] || UI.en)[key] ?? UI.en[key]).replace(/\{(\d)\|([^}]*)\}/g, (_, i, list) => { const f = list.split("|"); return f[pluralIndex(uiLang, +a[+i], f.length)]; }).replace(/\{(\d)\}/g, (_, i) => a[+i] ?? "");
 const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
