@@ -2,6 +2,16 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.59.0 (2026-10-23)
+
+### source-viewer.html
+
+- **Changed "글자 파일" to "텍스트 파일" in the Korean screen** (`텍스트` is the usual word, as Notepad calls it `텍스트 문서`): the `.txt` description `일반 글자 파일` → `일반 텍스트 파일`, and the message for a file that is not a text file (a file containing 0 bytes) `글자 파일이 아니라 보여 줄 수 없습니다.` → `텍스트 파일이 아니라서 보여 줄 수 없습니다.` (two places in `01-strings-ko.js` only. The other languages already say `text file`, `texte`, etc., so they are unchanged).
+- The remaining `글자` that means a character (`알 수 없는 글자`, `올바르지 않은 글자` and 3 more in error messages) and `소스 글자` mean something different, so they are not changed in this version (TODO).
+- Tested in the Korean screen: opened `bin.txt` (with a NUL byte) to see the new message, and opened a `.txt` file and then `Supported file types` to see the new description in the `*.txt` row. No errors.
+- The file grows by 9 bytes (393,095 → 393,104 bytes).
+- Branch `text-file-wording`.
+
 ## v0.58.0 (2026-10-23)
 
 ### source-viewer.html
