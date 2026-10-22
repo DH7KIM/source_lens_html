@@ -27,6 +27,7 @@ parts/js/11-list-width-and-helpers.js
 parts/js/11a-dialog-table.js
 parts/js/12-supported-types.js
 parts/js/12a-language-picker.js
+parts/js/12b-font-settings.js
 parts/js/13-compiler-output.js
 parts/js/14-toml-check.js
 parts/js/14a-json-check.js

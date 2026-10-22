@@ -95,6 +95,9 @@ UI.fr = {
   // 언어 선택 창 (v0.62.0)
   langTitle: "Choisir la langue", langFilterHint: "Filtrer par nom ou code de langue (ex. pt)", langFilterTip: "Affiche seulement les langues dont le nom ou le code commence par le texte saisi. Le nom dans la langue actuelle de l'écran et le nom propre de la langue sont tous deux cherchés", langNone: "« {0} » : langue introuvable",
   langColName: "Nom", langColOwn: "Nom d'origine", langColCode: "Code", langCurrent: "Langue actuelle",
+  // 글꼴 설정 창 (v0.63.0)
+  fontTitle: "Paramètres de police", fontTip: "Ouvrir la fenêtre des paramètres de police", fontLigatures: "Ligatures",
+  fontLigaturesDesc: "Dessine des symboles comme `!=`, `->` et `=>` reliés en une seule forme. Désactivées, le code source s'affiche tel qu'il est écrit (par défaut : désactivées). Seules les polices qui prennent en charge les ligatures, comme Cascadia Code, changent d'aspect",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Description", typesColDescTip: "De quel genre de fichier il s'agit",
   desc_cpp: "Fichiers source et en-tête C++",

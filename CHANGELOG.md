@@ -2,6 +2,17 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.63.0 (2026-10-23)
+
+### source-viewer.html
+
+- **`Font settings` window and the ligature switch**: a button with only a gear icon (an SVG made for this project, with the tooltip `Open the font settings window` and an `aria-label`) is added to the header bar, and it opens a settings window. For now it has one check box, `Ligatures`: it turns on or off the joining of characters such as `!=`, `->` and `=>` into one shape by code fonts. The default is off (the source is shown exactly as written, as decided in v0.58.0). A preview line under the description (`a != b -> c => d >= e === <!-- -->`) changes immediately when you switch it, so you can see the effect on the screen. The description says that only fonts that support ligatures (for example Cascadia Code) look different.
+- When on, it applies to the source view (`.code`), the tree view, markdown code blocks and the code in the `Supported file types` table. The value is remembered in `sv-ligatures` ("1" = on), one for all folders (like `sv-lang`). In CSS, the `font-variant-ligatures: none` of v0.58.0 became `var(--lig, none)` and `body.ligatures { --lig: normal }` turns it on (the rule still comes after the `font:` shorthand, which would reset the value).
+- The new part `parts/js/12b-font-settings.js` holds opening the window, the check box, remembering and the fixed texts. Closing the window uses the common part of v0.61.0 (`wireTableDialog`). Choosing the font and the font size will be added to this window in later versions.
+- 4 new translation keys (`fontTitle`, `fontTip`, `fontLigatures`, `fontLigaturesDesc`) in the 10 languages, 228 keys each. **All translations are Claude drafts and not yet checked by native speakers.**
+- Tested: with Cascadia Code, off shows `!=`, `->` and `=>` as typed and on joins them (seen on the preview line). When on, `.code`, `.tj-root`, `.md pre` and `.md code` all follow it; it is remembered after reload; the check box is right when the window opens; clicking the name toggles it; 3 ways of closing (the close button, outside, Esc); the window texts are not empty in all 10 languages; the `Language` and `Supported file types` windows still work; no errors. The gear button is 34px high like the other buttons (the header bar stays 49px at 1300px width).
+- The file grows by 7,507 bytes (403,009 → 410,516 bytes: 40 translated texts, the window code, the gear icon).
+
 ## v0.62.0 (2026-10-23)
 
 ### source-viewer.html

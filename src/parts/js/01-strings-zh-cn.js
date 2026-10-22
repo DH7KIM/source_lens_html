@@ -94,6 +94,9 @@ UI["zh-cn"] = {
   // 언어 선택 창 (v0.62.0)
   langTitle: "选择语言", langFilterHint: "按语言名称或代码筛选(例如: pt)", langFilterTip: "只显示名称或代码以所输入文字开头的语言。当前界面语言中的名称和该语言自己的名称都可以搜索", langNone: "“{0}”:未找到该语言",
   langColName: "名称", langColOwn: "原名称", langColCode: "代码", langCurrent: "当前语言",
+  // 글꼴 설정 창 (v0.63.0)
+  fontTitle: "字体设置", fontTip: "打开字体设置窗口", fontLigatures: "连字",
+  fontLigaturesDesc: "将 `!=`、`->`、`=>` 等符号连成一个图形显示。关闭时按源码原样显示(默认: 关闭)。只有支持连字的字体(如 Cascadia Code)才会有变化",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "说明", typesColDescTip: "说明这是什么文件",
   desc_cpp: "C++ 源文件和头文件",

@@ -95,6 +95,9 @@ UI.pt = {
   // 언어 선택 창 (v0.62.0)
   langTitle: "Escolher idioma", langFilterHint: "Filtrar por nome ou código do idioma (ex.: pt)", langFilterTip: "Mostra apenas os idiomas cujo nome ou código começa com o texto digitado. Procura tanto o nome no idioma atual da tela quanto o nome do próprio idioma", langNone: "“{0}”: idioma não encontrado",
   langColName: "Nome", langColOwn: "Nome original", langColCode: "Código", langCurrent: "Idioma atual",
+  // 글꼴 설정 창 (v0.63.0)
+  fontTitle: "Configurações de fonte", fontTip: "Abrir a janela de configurações de fonte", fontLigatures: "Ligaduras",
+  fontLigaturesDesc: "Desenha símbolos como `!=`, `->` e `=>` unidos em uma só forma. Desativadas, o código-fonte aparece exatamente como foi escrito (padrão: desativadas). Só mudam de aparência as fontes que oferecem suporte a ligaduras, como Cascadia Code",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Descrição", typesColDescTip: "Que tipo de arquivo é",
   desc_cpp: "Arquivos de código-fonte e de cabeçalho de C++",

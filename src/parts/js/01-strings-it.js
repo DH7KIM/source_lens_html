@@ -94,6 +94,9 @@ UI.it = {
   // 언어 선택 창 (v0.62.0)
   langTitle: "Scegli la lingua", langFilterHint: "Filtra per nome o codice della lingua (es. pt)", langFilterTip: "Mostra solo le lingue il cui nome o codice inizia con il testo digitato. Si cerca sia il nome nella lingua attuale dello schermo sia il nome nella lingua stessa", langNone: "“{0}”: lingua non trovata",
   langColName: "Nome", langColOwn: "Nome originale", langColCode: "Codice", langCurrent: "Lingua attuale",
+  // 글꼴 설정 창 (v0.63.0)
+  fontTitle: "Impostazioni carattere", fontTip: "Apri la finestra delle impostazioni del carattere", fontLigatures: "Legature",
+  fontLigaturesDesc: "Disegna simboli come `!=`, `->` e `=>` uniti in un'unica forma. Disattivate, il sorgente è mostrato esattamente come scritto (predefinito: disattivate). Cambiano aspetto solo i caratteri che supportano le legature, come Cascadia Code",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Descrizione", typesColDescTip: "Che tipo di file è",
   desc_cpp: "File sorgente e header C++",

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.62.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.63.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -240,6 +240,13 @@
   #langBtn { display: inline-flex; align-items: center; gap: 6px; }
   #langBtn svg { width: 16px; height: 16px; flex: none; }
   #langDlg { width: min(520px, 94vw); }
+  #fontBtn { display: inline-flex; align-items: center; padding: 7px 8px; }
+  #fontBtn svg { width: 18px; height: 18px; flex: none; }
+  #fontDlg { width: min(520px, 94vw); }
+  .set-row { display: flex; align-items: center; gap: 8px; padding-top: 14px; font-weight: 600; cursor: pointer; }
+  .set-row input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); cursor: pointer; }
+  .set-desc { margin: 6px 0 0 24px; color: var(--muted); font-size: 13px; }
+  .font-sample { margin: 12px 0 0 24px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); font: 13.5px/1.6 var(--mono); white-space: pre-wrap; }
   .lang-table tbody tr { cursor: pointer; }
   .lang-table tbody tr:not(.current):hover td { background: color-mix(in srgb, var(--accent) 10%, transparent); }
   .lang-table tbody tr:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
@@ -326,7 +333,8 @@
   }
   .md td code, .md th code { white-space: nowrap; }
   /* 글꼴 합자 끄기 (v0.58.0): Cascadia Code 등이 -->·->·!=를 한 모양으로 합쳐 그리지 않게. 소스는 글자 그대로 보여야 함. `font:` 줄임 속성이 이 값을 되돌리므로 그 규칙들보다 뒤에 둠 */
-  .code, .tj-root, .types-table td code, .md code, .md pre { font-variant-ligatures: none; }
+  .code, .tj-root, .types-table td code, .md code, .md pre, .font-sample { font-variant-ligatures: var(--lig, none); }
+  body.ligatures { --lig: normal; }   /* 글꼴 설정 창의 합자 켜기 (sv-ligatures) */
   .md pre { line-height: 1.45; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; overflow-x: auto; margin: 1em 0; }
   .md pre code { color: var(--fg); background: none; border: 0; padding: 0; font-size: 0.86em; white-space: pre; tab-size: 4; }
   .md table { border-collapse: collapse; margin: 1em 0; display: block; overflow-x: auto; max-width: 100%; }
@@ -344,6 +352,7 @@
   <button id="langBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><ellipse cx="12" cy="12" rx="4" ry="9.5"/><path d="M2.5 12h19"/></svg><span id="langBtnName"></span></button>
   <select id="theme"></select>
   <button id="typesBtn"></button>
+  <button id="fontBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 4.6 L10.6 1.9 L13.4 1.9 L13.7 4.6 L16.0 5.6 L18.1 3.9 L20.1 5.9 L18.4 8.0 L19.4 10.3 L22.1 10.6 L22.1 13.4 L19.4 13.7 L18.4 16.0 L20.1 18.1 L18.1 20.1 L16.0 18.4 L13.7 19.4 L13.4 22.1 L10.6 22.1 L10.3 19.4 L8.0 18.4 L5.9 20.1 L3.9 18.1 L5.6 16.0 L4.6 13.7 L1.9 13.4 L1.9 10.6 L4.6 10.3 L5.6 8.0 L3.9 5.9 L5.9 3.9 L8.0 5.6Z"/><circle cx="12" cy="12" r="3"/></svg></button>
   <select id="depth" hidden></select>
   <button id="folder" hidden></button>
 </header>
@@ -396,6 +405,14 @@
   <div class="dlg-head"><span id="langTitle"></span><button id="langClose"></button></div>
   <div class="dlg-filter"><input type="search" id="langFilter" autocomplete="off" spellcheck="false"></div>
   <div class="dlg-body" id="langBody"></div>
+</dialog>
+<dialog id="fontDlg" aria-labelledby="fontTitle">
+  <div class="dlg-head"><span id="fontTitle"></span><button id="fontClose"></button></div>
+  <div class="dlg-body">
+    <label class="set-row"><input type="checkbox" id="fontLig"><span id="fontLigName"></span></label>
+    <p class="set-desc" id="fontLigDesc"></p>
+    <div class="font-sample" id="fontSample" aria-hidden="true"></div>
+  </div>
 </dialog>
 <input type="file" id="dirInput" webkitdirectory multiple hidden>
 <script>
@@ -535,6 +552,9 @@ UI.ko = {
   // 언어 선택 창 (v0.62.0)
   langTitle: "언어 선택", langFilterHint: "언어 이름·코드로 찾기 (예: pt)", langFilterTip: "입력한 문자로 시작하는 언어 이름·코드만 보여 줍니다. 지금 화면 언어로 된 이름과 그 언어 자신의 이름 모두 찾을 수 있습니다", langNone: "“{0}”: 찾는 언어가 없습니다",
   langColName: "이름", langColOwn: "원래 이름", langColCode: "코드", langCurrent: "지금 쓰는 언어",
+  // 글꼴 설정 창 (v0.63.0)
+  fontTitle: "글꼴 설정", fontTip: "글꼴 설정 창을 엽니다", fontLigatures: "합자",
+  fontLigaturesDesc: "`!=`·`->`·`=>` 같은 기호를 이어서 한 모양으로 그립니다. 끄면 소스를 글자 그대로 봅니다 (기본: 끔). 합자를 지원하는 글꼴(예: Cascadia Code)에서만 달라 보입니다",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "설명", typesColDescTip: "어떤 파일인지 설명합니다",
   desc_cpp: "C++ 소스·헤더 파일",
@@ -668,6 +688,9 @@ UI.en = {
   // 언어 선택 창 (v0.62.0)
   langTitle: "Choose language", langFilterHint: "Filter by language name or code (e.g. pt)", langFilterTip: "Shows only the languages whose name or code starts with the text you type. Both the name in the current screen language and the language's own name are searched", langNone: "“{0}”: language not found",
   langColName: "Name", langColOwn: "Original name", langColCode: "Code", langCurrent: "Current language",
+  // 글꼴 설정 창 (v0.63.0)
+  fontTitle: "Font settings", fontTip: "Open the font settings window", fontLigatures: "Ligatures",
+  fontLigaturesDesc: "Draws symbols such as `!=`, `->` and `=>` joined into one shape. Off shows the source exactly as written (default: off). Only fonts that support ligatures, such as Cascadia Code, look different",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Description", typesColDescTip: "What kind of file it is",
   desc_cpp: "C++ source and header files",
@@ -801,6 +824,9 @@ UI.ja = {
   // 언어 선택 창 (v0.62.0)
   langTitle: "言語を選択", langFilterHint: "言語名・コードで絞り込み（例: pt）", langFilterTip: "入力した文字で始まる言語名・コードだけを表示します。現在の画面の言語での名前と、その言語自身の名前のどちらでも探せます", langNone: "「{0}」: 該当する言語がありません",
   langColName: "名前", langColOwn: "元の名前", langColCode: "コード", langCurrent: "現在の言語",
+  // 글꼴 설정 창 (v0.63.0)
+  fontTitle: "フォント設定", fontTip: "フォント設定ウィンドウを開きます", fontLigatures: "合字（リガチャ）",
+  fontLigaturesDesc: "`!=`・`->`・`=>` のような記号を1つの形につなげて表示します。オフにするとソースを書かれたとおりに表示します（初期値: オフ）。合字に対応したフォント（Cascadia Code など）でのみ見た目が変わります",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "説明", typesColDescTip: "どんなファイルかの説明です",
   desc_cpp: "C++のソース・ヘッダファイル",
@@ -934,6 +960,9 @@ UI["zh-cn"] = {
   // 언어 선택 창 (v0.62.0)
   langTitle: "选择语言", langFilterHint: "按语言名称或代码筛选(例如: pt)", langFilterTip: "只显示名称或代码以所输入文字开头的语言。当前界面语言中的名称和该语言自己的名称都可以搜索", langNone: "“{0}”:未找到该语言",
   langColName: "名称", langColOwn: "原名称", langColCode: "代码", langCurrent: "当前语言",
+  // 글꼴 설정 창 (v0.63.0)
+  fontTitle: "字体设置", fontTip: "打开字体设置窗口", fontLigatures: "连字",
+  fontLigaturesDesc: "将 `!=`、`->`、`=>` 等符号连成一个图形显示。关闭时按源码原样显示(默认: 关闭)。只有支持连字的字体(如 Cascadia Code)才会有变化",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "说明", typesColDescTip: "说明这是什么文件",
   desc_cpp: "C++ 源文件和头文件",
@@ -1067,6 +1096,9 @@ UI["zh-tw"] = {
   // 언어 선택 창 (v0.62.0)
   langTitle: "選擇語言", langFilterHint: "依語言名稱或代碼篩選(例如: pt)", langFilterTip: "只顯示名稱或代碼以所輸入文字開頭的語言。目前介面語言中的名稱和該語言自己的名稱都可以搜尋", langNone: "「{0}」:找不到該語言",
   langColName: "名稱", langColOwn: "原名稱", langColCode: "代碼", langCurrent: "目前語言",
+  // 글꼴 설정 창 (v0.63.0)
+  fontTitle: "字型設定", fontTip: "開啟字型設定視窗", fontLigatures: "連字",
+  fontLigaturesDesc: "將 `!=`、`->`、`=>` 等符號連成一個圖形顯示。關閉時依原始碼原樣顯示(預設: 關閉)。只有支援連字的字型(如 Cascadia Code)才會有變化",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "說明", typesColDescTip: "說明這是什麼檔案",
   desc_cpp: "C++ 原始碼與標頭檔",
@@ -1201,6 +1233,9 @@ UI.fr = {
   // 언어 선택 창 (v0.62.0)
   langTitle: "Choisir la langue", langFilterHint: "Filtrer par nom ou code de langue (ex. pt)", langFilterTip: "Affiche seulement les langues dont le nom ou le code commence par le texte saisi. Le nom dans la langue actuelle de l'écran et le nom propre de la langue sont tous deux cherchés", langNone: "« {0} » : langue introuvable",
   langColName: "Nom", langColOwn: "Nom d'origine", langColCode: "Code", langCurrent: "Langue actuelle",
+  // 글꼴 설정 창 (v0.63.0)
+  fontTitle: "Paramètres de police", fontTip: "Ouvrir la fenêtre des paramètres de police", fontLigatures: "Ligatures",
+  fontLigaturesDesc: "Dessine des symboles comme `!=`, `->` et `=>` reliés en une seule forme. Désactivées, le code source s'affiche tel qu'il est écrit (par défaut : désactivées). Seules les polices qui prennent en charge les ligatures, comme Cascadia Code, changent d'aspect",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Description", typesColDescTip: "De quel genre de fichier il s'agit",
   desc_cpp: "Fichiers source et en-tête C++",
@@ -1334,6 +1369,9 @@ UI.de = {
   // 언어 선택 창 (v0.62.0)
   langTitle: "Sprache wählen", langFilterHint: "Nach Sprachname oder Code filtern (z. B. pt)", langFilterTip: "Zeigt nur Sprachen, deren Name oder Code mit dem eingegebenen Text beginnt. Gesucht wird sowohl der Name in der aktuellen Anzeigesprache als auch der eigene Name der Sprache", langNone: "„{0}“: Sprache nicht gefunden",
   langColName: "Name", langColOwn: "Originalname", langColCode: "Code", langCurrent: "Aktuelle Sprache",
+  // 글꼴 설정 창 (v0.63.0)
+  fontTitle: "Schrifteinstellungen", fontTip: "Fenster mit den Schrifteinstellungen öffnen", fontLigatures: "Ligaturen",
+  fontLigaturesDesc: "Zeichnet Symbole wie `!=`, `->` und `=>` zu einer Form verbunden. Aus zeigt den Quelltext genau wie geschrieben (Standard: aus). Nur Schriften, die Ligaturen unterstützen, etwa Cascadia Code, sehen anders aus",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Beschreibung", typesColDescTip: "Was für eine Datei es ist",
   desc_cpp: "C++-Quelltext- und Headerdateien",
@@ -1467,6 +1505,9 @@ UI.it = {
   // 언어 선택 창 (v0.62.0)
   langTitle: "Scegli la lingua", langFilterHint: "Filtra per nome o codice della lingua (es. pt)", langFilterTip: "Mostra solo le lingue il cui nome o codice inizia con il testo digitato. Si cerca sia il nome nella lingua attuale dello schermo sia il nome nella lingua stessa", langNone: "“{0}”: lingua non trovata",
   langColName: "Nome", langColOwn: "Nome originale", langColCode: "Codice", langCurrent: "Lingua attuale",
+  // 글꼴 설정 창 (v0.63.0)
+  fontTitle: "Impostazioni carattere", fontTip: "Apri la finestra delle impostazioni del carattere", fontLigatures: "Legature",
+  fontLigaturesDesc: "Disegna simboli come `!=`, `->` e `=>` uniti in un'unica forma. Disattivate, il sorgente è mostrato esattamente come scritto (predefinito: disattivate). Cambiano aspetto solo i caratteri che supportano le legature, come Cascadia Code",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Descrizione", typesColDescTip: "Che tipo di file è",
   desc_cpp: "File sorgente e header C++",
@@ -1600,6 +1641,9 @@ UI.es = {
   // 언어 선택 창 (v0.62.0)
   langTitle: "Elegir idioma", langFilterHint: "Filtrar por nombre o código de idioma (p. ej. pt)", langFilterTip: "Muestra solo los idiomas cuyo nombre o código empieza por el texto escrito. Se busca tanto el nombre en el idioma actual de la pantalla como el nombre propio del idioma", langNone: "“{0}”: idioma no encontrado",
   langColName: "Nombre", langColOwn: "Nombre original", langColCode: "Código", langCurrent: "Idioma actual",
+  // 글꼴 설정 창 (v0.63.0)
+  fontTitle: "Ajustes de fuente", fontTip: "Abrir la ventana de ajustes de fuente", fontLigatures: "Ligaduras",
+  fontLigaturesDesc: "Dibuja símbolos como `!=`, `->` y `=>` unidos en una sola forma. Desactivadas, el código fuente se muestra tal como está escrito (predeterminado: desactivadas). Solo cambian de aspecto las fuentes que admiten ligaduras, como Cascadia Code",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Descripción", typesColDescTip: "Qué tipo de archivo es",
   desc_cpp: "Archivos de código fuente y de encabezado de C++",
@@ -1734,6 +1778,9 @@ UI.pt = {
   // 언어 선택 창 (v0.62.0)
   langTitle: "Escolher idioma", langFilterHint: "Filtrar por nome ou código do idioma (ex.: pt)", langFilterTip: "Mostra apenas os idiomas cujo nome ou código começa com o texto digitado. Procura tanto o nome no idioma atual da tela quanto o nome do próprio idioma", langNone: "“{0}”: idioma não encontrado",
   langColName: "Nome", langColOwn: "Nome original", langColCode: "Código", langCurrent: "Idioma atual",
+  // 글꼴 설정 창 (v0.63.0)
+  fontTitle: "Configurações de fonte", fontTip: "Abrir a janela de configurações de fonte", fontLigatures: "Ligaduras",
+  fontLigaturesDesc: "Desenha símbolos como `!=`, `->` e `=>` unidos em uma só forma. Desativadas, o código-fonte aparece exatamente como foi escrito (padrão: desativadas). Só mudam de aparência as fontes que oferecem suporte a ligaduras, como Cascadia Code",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Descrição", typesColDescTip: "Que tipo de arquivo é",
   desc_cpp: "Arquivos de código-fonte e de cabeçalho de C++",
@@ -4155,6 +4202,32 @@ $("langBody").onkeydown = e => {   // 행에 초점이 있을 때 Enter·Space�
   if ((e.key === "Enter" || e.key === " ") && e.target.matches("tr[data-code]")) { e.preventDefault(); chooseLang(e.target.dataset.code); }
 };
 wireTableDialog($("langDlg"), $("langClose"));
+// ======================= 글꼴 설정 (머리 막대 톱니 단추 + 설정 창) =======================
+// 지금은 합자(ligature) 켜기/끄기 하나. 글꼴 고르기·글자 크기는 이 창에 다음 버전들에서 더함. 창 닫기는 공통 부분(11a-dialog-table.js)을 씀
+// 합자: 코드 글꼴이 `->`·`!=`·`=>` 같은 글자를 한 모양으로 합쳐 그리는 것. 기본은 끔(소스를 글자 그대로 보여 줌). 값은 sv-ligatures ("1" = 켬), 폴더와 상관없이 하나
+let ligatures = false;
+try { ligatures = localStorage.getItem("sv-ligatures") === "1"; } catch (e) {}
+function applyLigatures() { document.body.classList.toggle("ligatures", ligatures); }   // CSS의 --lig 변수가 바뀜 (01-style.css)
+applyLigatures();
+
+// 화면 언어에 따라 바뀌는 고정 글자. drawStatic()에서 부름
+function drawFontStatic() {
+  $("fontBtn").title = t("fontTip"); $("fontBtn").setAttribute("aria-label", t("fontTitle"));
+  $("fontTitle").textContent = t("fontTitle");
+  $("fontLigName").textContent = t("fontLigatures"); $("fontLigDesc").textContent = t("fontLigaturesDesc");
+  $("fontClose").textContent = t("typesClose"); $("fontClose").title = t("typesCloseTip");
+}
+
+// 미리 보기 줄: 켜고 끌 때 바로 달라지는 것을 보여 줌 (합자가 되는 글자들. "<!--"는 스크립트 안에서 쓰지 않으려고 나눠 적음)
+$("fontSample").textContent = "a != b  ->  c => d >= e  === " + "<" + "!-- --" + ">";
+
+$("fontBtn").onclick = () => { $("fontLig").checked = ligatures; $("fontDlg").showModal(); $("fontLig").focus({ preventScroll: true }); };
+$("fontLig").onchange = () => {
+  ligatures = $("fontLig").checked;
+  applyLigatures();
+  try { localStorage.setItem("sv-ligatures", ligatures ? "1" : "0"); } catch (e) {}
+};
+wireTableDialog($("fontDlg"), $("fontClose"));
 // ---------- 컴파일러 결과: 연 폴더 맨 위 build.log (GCC)의 "파일:줄:칸: error/warning/note: 메시지" ----------
 // 파일 경로는 프로젝트 안 경로의 끝부분과 맞춰 찾는다 (로그에 절대 경로·역슬래시·./ 가 있어도 됨). 색 코드(ESC[..m)는 뗀다.
 // 컴파일러 결과 파일: [이름, 읽는 함수]  (GCC: build.log, Rust: cargo.json)
@@ -5078,7 +5151,7 @@ function showStart(kind) {
 
 // 화면 언어에 따라 바뀌는 고정 글자
 function drawStatic() {
-  drawTypesStatic(); drawLangStatic();
+  drawTypesStatic(); drawLangStatic(); drawFontStatic();
   $("readCancel").textContent = t("readCancel"); $("readCancel").title = t("readCancelTip");
   $("pick").textContent = t("pick"); $("regrant").textContent = t("regrant"); $("pickFiles").textContent = t("pickFiles");
   $("folder").textContent = t("folder"); $("folder").title = t("folderTip");
