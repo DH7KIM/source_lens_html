@@ -89,6 +89,7 @@ UI.de = {
   typesColExt: "Endung · Dateiname", typesColExtTip: "Endungen (*.cpp) und Dateinamen (Makefile), die in der Liste erscheinen", typesColLang: "Sprache", typesColLangTip: "Die Sprache oder das Format der Datei", typesColColor: "Syntaxhervorhebung", typesColColorTip: "Ob der Quelltext nach Syntax eingefärbt wird",
   typesColCheck: "Syntaxprüfung", typesColCheckTip: "Ob eine Prüfung Syntaxfehler findet und in den Quellzeilen markiert",
   typesYes: "Ja", typesNo: "Nein", typesNote: "Dateien mit Endungen, die nicht in dieser Tabelle stehen, erscheinen nicht in der Liste.", typesClose: "Schließen", typesCloseTip: "Dieses Fenster schließen",
+  typesCurrent: "Typ der geöffneten Datei",
   typesFilterHint: "Nach Endung, Dateiname oder Sprache filtern (z. B. py)", typesFilterTip: "Zeigt nur die Zeilen, deren Endung, Dateiname oder Sprache mit dem eingegebenen Text beginnt. Wenn nichts passt, wird dieser Typ nicht unterstützt", typesNone: "„{0}“: nicht unterstützter Typ",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Beschreibung", typesColDescTip: "Was für eine Datei es ist",

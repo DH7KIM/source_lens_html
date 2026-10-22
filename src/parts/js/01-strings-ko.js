@@ -89,6 +89,7 @@ UI.ko = {
   typesColExt: "확장자 · 파일 이름", typesColExtTip: "목록에 나타나는 확장자(*.cpp)와 파일 이름(Makefile)입니다", typesColLang: "언어", typesColLangTip: "파일이 어떤 언어·형식인지 보여 줍니다", typesColColor: "색칠", typesColColorTip: "소스 글자를 문법에 따라 색칠해서 보여 주는지 나타냅니다",
   typesColCheck: "문법 검사기", typesColCheckTip: "문법 오류를 찾아 소스 줄에 표시하는 검사기가 있는지 나타냅니다",
   typesYes: "있음", typesNo: "없음", typesNote: "이 표에 없는 확장자의 파일은 목록에 나타나지 않습니다.", typesClose: "닫기", typesCloseTip: "이 창을 닫습니다",
+  typesCurrent: "지금 열어 둔 파일의 종류",
   typesFilterHint: "확장자·파일 이름·언어로 찾기 (예: py)", typesFilterTip: "입력한 글자로 시작하는 확장자·파일 이름·언어만 보여 줍니다. 찾는 것이 없으면 지원하지 않는 형식입니다", typesNone: "“{0}”: 지원하지 않는 형식입니다",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "설명", typesColDescTip: "어떤 파일인지 설명합니다",

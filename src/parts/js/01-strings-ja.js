@@ -89,6 +89,7 @@ UI.ja = {
   typesColExt: "拡張子・ファイル名", typesColExtTip: "一覧に表示される拡張子（*.cpp）とファイル名（Makefile）です", typesColLang: "言語", typesColLangTip: "ファイルの言語・形式です", typesColColor: "シンタックスハイライト", typesColColorTip: "ソースの文字を構文に合わせて色分けして表示するかどうかです",
   typesColCheck: "構文チェック", typesColCheckTip: "構文エラーを見つけてソースの行に表示するチェック機能があるかどうかです",
   typesYes: "あり", typesNo: "なし", typesNote: "この表にない拡張子のファイルは、一覧に表示されません。", typesClose: "閉じる", typesCloseTip: "このウィンドウを閉じます",
+  typesCurrent: "開いているファイルの種類",
   typesFilterHint: "拡張子・ファイル名・言語で絞り込み（例: py）", typesFilterTip: "入力した文字で始まる拡張子・ファイル名・言語の行だけを表示します。何も見つからなければ、対応していない形式です", typesNone: "「{0}」: 対応していない形式です",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "説明", typesColDescTip: "どんなファイルかの説明です",

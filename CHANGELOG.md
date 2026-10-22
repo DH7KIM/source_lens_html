@@ -2,6 +2,17 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.56.0 (2026-10-23)
+
+### source-viewer.html
+
+- **The `Supported file types` window highlights the row of the type of the file you have open**: background, bold text and a left bar (not color alone). When the window opens, that row is scrolled into view, and hovering it shows the tooltip "Type of the open file" (one new UI string key, `typesCurrent`, added to all 10 languages).
+- Added `typeOf(path)` to `02-file-kinds.js`: it finds the `FILE_TYPES` entry in the same order as `langOf()` (file name, then compound extensions such as `ui.log`, then the last extension). `foo.ui.log` highlights the `*.ui.log` row, not `*.log`.
+- No highlight on the start screen (no file open) or for a file whose type is not in the table. If the filter hides the row, the highlight is hidden too and returns when the filter is cleared.
+- Tested: `.cpp`, `Makefile`, `.ui.log`, `.ui`, `.log`, the start screen, light and dark screens, Korean and English. No errors.
+- The file grows by about 2KB (388,692 → 390,682 bytes).
+- Branch `types-current-row`.
+
 ## v0.55.0 (2026-10-22)
 
 ### source-viewer.html

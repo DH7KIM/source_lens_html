@@ -20,10 +20,12 @@ function mark(on, label) {   // ✓ / — 는 색만으로 구분하지 않게 �
 function drawTypesTable() {
   const th = (key, tipKey) => `<th title="${esc(t(tipKey))}">${esc(t(key))}</th>`;
   let h = `<table class="types-table"><thead><tr>${th("typesColExt", "typesColExtTip")}${th("typesColLang", "typesColLangTip")}${th("typesColDesc", "typesColDescTip")}${th("typesColColor", "typesColColorTip")}${th("typesColCheck", "typesColCheckTip")}</tr></thead><tbody>`;
+  const curType = cur ? typeOf(cur) : null;   // 지금 열어 둔 파일의 종류 (없으면 강조 없음)
   for (const ft of FILE_TYPES) {
     const keys = [...(ft.exts || []).map(e => "*." + e), ...(ft.names || [])];
     const find = [...keys.map(k => k.replace(/^\*\./, "")), ...ft.name.split(/[\s/]+/)].join(" ").toLowerCase();   // 필터가 앞부분을 비교하는 낱말들 (확장자는 "*." 없이, 언어 이름은 낱말로 나눔)
-    h += `<tr data-find="${esc(find)}"><td>${keys.map(k => `<code>${esc(k)}</code>`).join(" ")}</td><td>${esc(ft.name)}</td><td class="desc">${esc(t("desc_" + ft.id))}</td>${mark(hasColors(ft.lang))}${mark(!!ft.check, CHECK_NAMES[ft.check])}</tr>`;
+    const isCur = ft === curType;
+    h += `<tr data-find="${esc(find)}"${isCur ? ` class="current" aria-current="true" title="${esc(t("typesCurrent"))}"` : ""}><td>${keys.map(k => `<code>${esc(k)}</code>`).join(" ")}</td><td>${esc(ft.name)}</td><td class="desc">${esc(t("desc_" + ft.id))}</td>${mark(hasColors(ft.lang))}${mark(!!ft.check, CHECK_NAMES[ft.check])}</tr>`;
   }
   $("typesBody").innerHTML = h + `</tbody></table><p class="types-none" id="typesNone" hidden></p><p class="types-note">${esc(t("typesNote"))}</p>`;
 }
@@ -48,7 +50,9 @@ $("typesBtn").onclick = () => {
   $("typesFilter").value = "";   // 열 때마다 처음부터
   drawTypesTable();
   $("typesDlg").showModal();
-  $("typesFilter").focus();
+  $("typesFilter").focus({ preventScroll: true });
+  const row = $("typesBody").querySelector("tr.current");   // 지금 파일의 행이 보이게 (머리 줄에 가리지 않게 가운데로)
+  if (row) row.scrollIntoView({ block: "center" });
 };
 $("typesFilter").oninput = applyTypesFilter;
 $("typesClose").onclick = () => $("typesDlg").close();

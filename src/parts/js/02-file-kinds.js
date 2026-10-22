@@ -56,4 +56,17 @@ function langOf(path) {
   const dot = name.lastIndexOf(".");
   return dot >= 0 ? LANG_BY_EXT[name.slice(dot + 1)] || null : null;
 }
+// 지금 파일이 FILE_TYPES의 어느 종류인지(`지원 파일 형식` 창의 현재 행 강조용). langOf()와 같은 순서: 파일 이름 → 겹친 확장자(ui.log) → 마지막 확장자
+const TYPE_BY_NAME = {}, TYPE_BY_EXT = {}, COMPOUND_EXTS = [];
+for (const ft of FILE_TYPES) {
+  for (const n of ft.names || []) TYPE_BY_NAME[n.toLowerCase()] = ft;
+  for (const e of ft.exts || []) { if (e.includes(".")) COMPOUND_EXTS.push([e, ft]); else TYPE_BY_EXT[e] = ft; }
+}
+function typeOf(path) {
+  const name = path.slice(path.lastIndexOf("/") + 1).toLowerCase();
+  if (TYPE_BY_NAME[name]) return TYPE_BY_NAME[name];
+  for (const [e, ft] of COMPOUND_EXTS) if (name.endsWith("." + e)) return ft;
+  const dot = name.lastIndexOf(".");
+  return dot >= 0 ? TYPE_BY_EXT[name.slice(dot + 1)] || null : null;
+}
 const isMd = p => langOf(p) === "md";
