@@ -2,6 +2,17 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.55.0 (2026-10-22)
+
+### source-viewer.html
+
+- **포르투갈어(`pt`) 화면 글자 추가** (`01-strings-pt.js`, 214개 키, 설명 `desc_<id>` 33개 포함). **브라질식**으로 번역함(버튼은 동사 원형, 문장은 명령형). 초안은 Claude가 번역했고 원어민 확인 전. `LANG_NAMES`에 `pt: "Português"`를 더함 (목록에는 `Português (pt)`).
+- **`pt` 하나만 만들고 `pt-br`·`pt-pt`로 나누지 않음** (2026.10.22 결정): 브라우저 언어가 `pt-BR`이든 `pt-PT`이든 모두 `pt`로 열림 (`langCodeOf` 규칙은 그대로). 포르투갈식(`ficheiro`·`ecrã` 등)이 필요하면 원어민이 나중에 `pt-pt`를 더할 수 있음.
+- 포르투갈어 복수는 `Intl.PluralRules`(v0.52.0)를 따라 0과 1을 단수로 봄 (`0 linha`, `1 linha`, `2 linhas`).
+- 시험: 브라우저 언어 `pt-BR`·`pt-PT`·`pt`로 열어 시작 언어, 언어 목록, `.toml` 오류 설명, 상태 줄을 확인함. 영어와 키 214개가 같고 `{0}` 자리가 모두 일치함. 오류 없음.
+- 파일 용량이 약 15KB 늘어남 (373,450 → 388,692바이트).
+- 갈래 `lang-pt`.
+
 ## v0.54.0 (2026-10-22)
 
 ### source-viewer.html

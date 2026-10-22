@@ -1,7 +1,7 @@
 // ======================= 화면 문자열 =======================
 const UI = {};   // 언어별 표는 01-strings-ko.js, 01-strings-en.js 같은 파일에서 UI.<언어 코드> = { ... }로 채움
 // 언어 이름은 번역하지 않고 각 언어 자신의 이름으로 (화면 언어를 못 읽어도 찾을 수 있게). 이 표의 순서가 언어 목록 상자의 순서
-const LANG_NAMES = { ko: "한국어", en: "English", ja: "日本語", "zh-cn": "中文(简体)", "zh-tw": "中文(繁體)", fr: "Français", de: "Deutsch", it: "Italiano", es: "Español", zh: "中文" };
+const LANG_NAMES = { ko: "한국어", en: "English", ja: "日本語", "zh-cn": "中文(简体)", "zh-tw": "中文(繁體)", fr: "Français", de: "Deutsch", it: "Italiano", es: "Español", pt: "Português", zh: "中文" };
 let uiLang = "en";   // 시작 때 pickUiLang()가 브라우저 언어로 다시 고름 (언어 표가 모두 읽힌 뒤, 09-source-folder.js)
 // 브라우저 언어 태그 → 언어 코드: zh-TW·zh-HK·zh-MO·zh-Hant → zh-tw, 그 밖의 zh → zh-cn, 나머지는 앞 부분 (ja-JP → ja)
 function langCodeOf(tag) {

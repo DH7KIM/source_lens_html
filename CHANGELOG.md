@@ -2,6 +2,17 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.55.0 (2026-10-22)
+
+### source-viewer.html
+
+- **Added Portuguese (`pt`) screen strings** (`01-strings-pt.js`, 214 keys, including the 33 `desc_<id>` descriptions). Written in **Brazilian** Portuguese (infinitives for buttons, imperative in sentences). Draft translated by Claude, not yet checked by native speakers. Added `pt: "Português"` to `LANG_NAMES` (the list shows `Português (pt)`).
+- **One `pt` only, not split into `pt-br` and `pt-pt`** (decided 2026-10-22): a browser language of `pt-BR` or `pt-PT` both open `pt` (the `langCodeOf` rule is unchanged). If European Portuguese wording (`ficheiro`, `ecrã`, …) is needed, a native speaker can add `pt-pt` later.
+- Portuguese plurals follow `Intl.PluralRules` (v0.52.0), which treats 0 and 1 as singular (`0 linha`, `1 linha`, `2 linhas`).
+- Tested with the browser language set to `pt-BR`, `pt-PT` and `pt`: start language, language list, `.toml` error messages and status lines. The 214 keys match English and every `{0}` placeholder matches. No errors.
+- File size grew by about 15 KB (373,450 → 388,692 bytes).
+- Branch `lang-pt`.
+
 ## v0.54.0 (2026-10-22)
 
 ### source-viewer.html
