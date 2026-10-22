@@ -7,7 +7,7 @@ const hasColors = lang => lang === "ui" || !!RULES[LANG_ALIAS[lang] || lang];
 
 // 화면 언어에 따라 바뀌는 고정 글자 (단추·창 제목·필터·닫기). drawStatic()에서 부름
 function drawTypesStatic() {
-  $("typesBtn").textContent = t("types"); $("typesBtn").title = t("typesTip");
+  $("typesBtnName").textContent = t("types"); $("typesBtn").title = t("typesTip");
   $("typesTitle").textContent = t("types");
   $("typesFilter").placeholder = t("typesFilterHint"); $("typesFilter").title = t("typesFilterTip");
   $("typesClose").textContent = t("typesClose"); $("typesClose").title = t("typesCloseTip");

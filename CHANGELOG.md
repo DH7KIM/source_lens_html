@@ -2,6 +2,16 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.67.0 (2026-10-23)
+
+### source-viewer.html
+
+- **Added icons to the `Supported file types` and `Change folder` buttons** (the icon rule: a button is icon + text, and only a button with a universal meaning, like the gear, is icon only). The icons are hand-drawn thick-line SVGs (24x24, stroke width 1.5, `currentColor`): a document with lines for `Supported file types` and a folder for `Change folder`. They look like the globe (`Language`), so the three buttons are consistent. They follow the text color in dark themes too.
+- Made a shared CSS `.with-icon` (16px icon + text, 6px gap) used by `Language`, `Supported file types` and `Change folder` (it replaces the old `#langBtn` rules; the look is the same). `.with-icon[hidden]` hides the button (so `Change folder` stays hidden before a folder is open).
+- The text now goes into `<span id="typesBtnName">` and `<span id="folderName">` (so changing a button's text does not erase its icon). The behavior and translations are the same.
+- Tested: before a folder only `Language`, `Supported file types` and the gear show, and `Change folder` appears when a folder is open; the `Supported file types` window opens; checked the light and dark themes; the text of both buttons is not empty in all 10 languages; the header bar height is the same as v0.66.0 (83px at 820px, at 1000px only French, German, Italian, Spanish and Portuguese are 83px, 49px at 1300px); no errors.
+- The file size grew by 725 bytes (412,502 -> 413,227 bytes).
+
 ## v0.66.0 (2026-10-23)
 
 ### source-viewer.html

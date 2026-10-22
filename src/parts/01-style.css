@@ -217,8 +217,9 @@
   .dlg-table tr.current td { background: var(--hl); font-weight: 600; }   /* 지금 고른 행: 배경 + 굵게 + 왼쪽 막대 (색만으로 구분하지 않음) */
   .dlg-table tr.current td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
   .dlg-note { color: var(--muted); font-size: 13px; margin: 12px 0 0; }
-  #langBtn { display: inline-flex; align-items: center; gap: 6px; }
-  #langBtn svg { width: 16px; height: 16px; flex: none; }
+  .with-icon { display: inline-flex; align-items: center; gap: 6px; }   /* 아이콘 + 글자 단추 (머리 막대) */
+  .with-icon[hidden] { display: none; }
+  .with-icon svg { width: 16px; height: 16px; flex: none; }
   #langDlg { width: min(520px, 94vw); }
   #settingsBtn { display: inline-flex; align-items: center; padding: 7px 8px; }
   #settingsBtn svg { width: 18px; height: 18px; flex: none; }
