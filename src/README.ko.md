@@ -47,7 +47,7 @@ tools/merge-parts src source-viewer.merged.html --check source-viewer.html
 | `parts/js/01-strings.js` | 화면 문자열: 빈 `UI` 표, 언어 이름, `t()` |
 | `parts/js/01-strings-ko.js` | 화면 문자열, 한국어 (`UI.ko`) |
 | `parts/js/01-strings-en.js` | 화면 문자열, 영어 (`UI.en`, 원문) |
-| `parts/js/02-file-kinds.js` | 파일 종류 |
+| `parts/js/02-file-kinds.js` | 파일 종류 (기준 표 `FILE_TYPES`) |
 | `parts/js/03-highlight.js` | 문법 색칠 |
 | `parts/js/05-ui-messages.js` | `.ui` 오류·경고 설명 번역 |
 | `parts/js/06-ui-check.js` | `.ui` 검사기 |

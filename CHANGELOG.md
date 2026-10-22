@@ -2,6 +2,14 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.47.0 (2026-10-22)
+
+### source-viewer.html
+
+- **Added the file type table `FILE_TYPES`** (`02-file-kinds.js`): every extension and file name now has a language name (e.g. `ps1` → PowerShell) and a highlighting kind in one table. `LANG_BY_EXT` and `LANG_BY_NAME` are built from it, so a new file type is one line in the table. The `Supported file types` button (next version) will read this table.
+- Behavior is unchanged: the same extensions get the same highlighting and the same files appear in the tree (checked that all 45 extensions and 7 file names match the old tables). New extensions such as `.py` and `.cs` are not added in this version.
+- Branch `info-table`.
+
 ## v0.46.0 (2026-10-21)
 
 ### source-viewer.html

@@ -47,7 +47,7 @@ The exit code is 0 when done (and equal), 1 when the check finds a difference, 2
 | `parts/js/01-strings.js` | screen texts: the empty `UI` table, language names, `t()` |
 | `parts/js/01-strings-ko.js` | screen texts, Korean (`UI.ko`) |
 | `parts/js/01-strings-en.js` | screen texts, English (`UI.en`, the original) |
-| `parts/js/02-file-kinds.js` | file kinds |
+| `parts/js/02-file-kinds.js` | file kinds (the `FILE_TYPES` table) |
 | `parts/js/03-highlight.js` | syntax colors |
 | `parts/js/05-ui-messages.js` | `.ui` error and warning texts |
 | `parts/js/06-ui-check.js` | `.ui` checker |
