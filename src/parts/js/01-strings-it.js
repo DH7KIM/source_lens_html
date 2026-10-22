@@ -91,6 +91,9 @@ UI.it = {
   typesYes: "Sì", typesNo: "No", typesNote: "I file con estensioni che non sono in questa tabella non compaiono nell'elenco.", typesClose: "Chiudi", typesCloseTip: "Chiude questa finestra",
   typesCurrent: "Tipo del file aperto",
   typesFilterHint: "Filtra per estensione, nome file o linguaggio (es. py)", typesFilterTip: "Mostra solo le righe la cui estensione, nome file o linguaggio inizia con il testo digitato. Se non c'è nessuna corrispondenza, il tipo non è supportato", typesNone: "“{0}”: tipo non supportato",
+  // 언어 선택 창 (v0.62.0)
+  langTitle: "Scegli la lingua", langFilterHint: "Filtra per nome o codice della lingua (es. pt)", langFilterTip: "Mostra solo le lingue il cui nome o codice inizia con il testo digitato. Si cerca sia il nome nella lingua attuale dello schermo sia il nome nella lingua stessa", langNone: "“{0}”: lingua non trovata",
+  langColName: "Nome", langColOwn: "Nome originale", langColCode: "Codice", langCurrent: "Lingua attuale",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Descrizione", typesColDescTip: "Che tipo di file è",
   desc_cpp: "File sorgente e header C++",

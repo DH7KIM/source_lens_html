@@ -25,26 +25,6 @@ $("navSize").addEventListener("dblclick", () => {
   document.body.style.removeProperty("--nav-w");   // 기본 폭(CSS의 230px)으로
 });
 
-// 언어 목록 상자: 내장 화면 언어(UI)와 연 폴더의 문서 언어(이름.<코드>.md)를 합쳐 항상 모두 보여 줌. 고르면 문서·화면 언어가 같이 바뀜
-// 항목 = 그 언어 자신의 이름 (코드), 예: 한국어 (ko), 日本語 (ja) (일반 선택 상자, 테마·하위 단계 상자와 같은 모양과 동작)
-function langName(l) {
-  return (LANG_NAMES[l] || l) + " (" + l + ")";
-}
-function drawLangs() {
-  const all = new Set(Object.keys(UI));
-  for (const e of entries.values()) if (e.md) for (const l of Object.keys(e.md)) all.add(l);
-  const known = Object.keys(LANG_NAMES);   // 이름 표의 순서가 목록 순서, 표에 없는 코드는 그 뒤에 코드 순
-  const pos = l => known.indexOf(l) < 0 ? 1e3 : known.indexOf(l);
-  const box = $("langs");
-  box.querySelectorAll("option").forEach(o => o.remove());
-  for (const l of [...all].sort((a, b) => pos(a) - pos(b) || a.localeCompare(b))) {
-    const o = document.createElement("option");
-    o.value = l; o.textContent = langName(l);
-    box.appendChild(o);
-  }
-  box.value = docLang; box.title = t("langTip");
-  box.onchange = () => { try { localStorage.setItem("sv-lang", box.value); } catch (e) {} setLanguage(box.value); };   // 직접 고른 때만 기억
-}
 function setLanguage(l) {
   docLang = l;
   if (UI[l]) uiLang = l;   // 화면 글자 표가 있는 언어만 화면 언어가 바뀜

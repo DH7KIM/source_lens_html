@@ -217,6 +217,13 @@
   .dlg-table tr.current td { background: var(--hl); font-weight: 600; }   /* 지금 고른 행: 배경 + 굵게 + 왼쪽 막대 (색만으로 구분하지 않음) */
   .dlg-table tr.current td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
   .dlg-note { color: var(--muted); font-size: 13px; margin: 12px 0 0; }
+  #langBtn { display: inline-flex; align-items: center; gap: 6px; }
+  #langBtn svg { width: 16px; height: 16px; flex: none; }
+  #langDlg { width: min(520px, 94vw); }
+  .lang-table tbody tr { cursor: pointer; }
+  .lang-table tbody tr:not(.current):hover td { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+  .lang-table tbody tr:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .lang-table td code { font-family: var(--mono); font-size: 13px; }
   .types-table td:first-child { width: 36%; }
   .types-table td.desc { min-width: 200px; }
   .types-table td code { font-family: var(--mono); font-size: 13px; white-space: nowrap; }

@@ -91,6 +91,9 @@ UI.de = {
   typesYes: "Ja", typesNo: "Nein", typesNote: "Dateien mit Endungen, die nicht in dieser Tabelle stehen, erscheinen nicht in der Liste.", typesClose: "Schließen", typesCloseTip: "Dieses Fenster schließen",
   typesCurrent: "Typ der geöffneten Datei",
   typesFilterHint: "Nach Endung, Dateiname oder Sprache filtern (z. B. py)", typesFilterTip: "Zeigt nur die Zeilen, deren Endung, Dateiname oder Sprache mit dem eingegebenen Text beginnt. Wenn nichts passt, wird dieser Typ nicht unterstützt", typesNone: "„{0}“: nicht unterstützter Typ",
+  // 언어 선택 창 (v0.62.0)
+  langTitle: "Sprache wählen", langFilterHint: "Nach Sprachname oder Code filtern (z. B. pt)", langFilterTip: "Zeigt nur Sprachen, deren Name oder Code mit dem eingegebenen Text beginnt. Gesucht wird sowohl der Name in der aktuellen Anzeigesprache als auch der eigene Name der Sprache", langNone: "„{0}“: Sprache nicht gefunden",
+  langColName: "Name", langColOwn: "Originalname", langColCode: "Code", langCurrent: "Aktuelle Sprache",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Beschreibung", typesColDescTip: "Was für eine Datei es ist",
   desc_cpp: "C++-Quelltext- und Headerdateien",

@@ -91,6 +91,9 @@ UI["zh-cn"] = {
   typesYes: "有", typesNo: "无", typesNote: "扩展名不在此表中的文件不会出现在列表中。", typesClose: "关闭", typesCloseTip: "关闭此窗口",
   typesCurrent: "当前打开文件的类型",
   typesFilterHint: "按扩展名、文件名或语言筛选(例如: py)", typesFilterTip: "只显示扩展名、文件名或语言以所输入文字开头的行。如果没有匹配项,则表示不支持该格式", typesNone: "“{0}”:不支持的格式",
+  // 언어 선택 창 (v0.62.0)
+  langTitle: "选择语言", langFilterHint: "按语言名称或代码筛选(例如: pt)", langFilterTip: "只显示名称或代码以所输入文字开头的语言。当前界面语言中的名称和该语言自己的名称都可以搜索", langNone: "“{0}”:未找到该语言",
+  langColName: "名称", langColOwn: "原名称", langColCode: "代码", langCurrent: "当前语言",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "说明", typesColDescTip: "说明这是什么文件",
   desc_cpp: "C++ 源文件和头文件",

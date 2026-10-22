@@ -91,6 +91,9 @@ UI["zh-tw"] = {
   typesYes: "有", typesNo: "無", typesNote: "副檔名不在此表中的檔案不會出現在清單中。", typesClose: "關閉", typesCloseTip: "關閉此視窗",
   typesCurrent: "目前開啟檔案的類型",
   typesFilterHint: "依副檔名、檔案名稱或語言篩選(例如: py)", typesFilterTip: "只顯示副檔名、檔案名稱或語言以所輸入文字開頭的列。若沒有符合項目,表示不支援該格式", typesNone: "「{0}」:不支援的格式",
+  // 언어 선택 창 (v0.62.0)
+  langTitle: "選擇語言", langFilterHint: "依語言名稱或代碼篩選(例如: pt)", langFilterTip: "只顯示名稱或代碼以所輸入文字開頭的語言。目前介面語言中的名稱和該語言自己的名稱都可以搜尋", langNone: "「{0}」:找不到該語言",
+  langColName: "名稱", langColOwn: "原名稱", langColCode: "代碼", langCurrent: "目前語言",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "說明", typesColDescTip: "說明這是什麼檔案",
   desc_cpp: "C++ 原始碼與標頭檔",

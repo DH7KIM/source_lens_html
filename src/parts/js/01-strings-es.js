@@ -91,6 +91,9 @@ UI.es = {
   typesYes: "Sí", typesNo: "No", typesNote: "Los archivos con extensiones que no están en esta tabla no aparecen en la lista.", typesClose: "Cerrar", typesCloseTip: "Cerrar esta ventana",
   typesCurrent: "Tipo del archivo abierto",
   typesFilterHint: "Filtrar por extensión, nombre de archivo o lenguaje (p. ej. py)", typesFilterTip: "Muestra solo las filas cuya extensión, nombre de archivo o lenguaje empieza por el texto que escriba. Si no coincide ninguna, ese tipo no es admitido", typesNone: "“{0}”: tipo no admitido",
+  // 언어 선택 창 (v0.62.0)
+  langTitle: "Elegir idioma", langFilterHint: "Filtrar por nombre o código de idioma (p. ej. pt)", langFilterTip: "Muestra solo los idiomas cuyo nombre o código empieza por el texto escrito. Se busca tanto el nombre en el idioma actual de la pantalla como el nombre propio del idioma", langNone: "“{0}”: idioma no encontrado",
+  langColName: "Nombre", langColOwn: "Nombre original", langColCode: "Código", langCurrent: "Idioma actual",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Descripción", typesColDescTip: "Qué tipo de archivo es",
   desc_cpp: "Archivos de código fuente y de encabezado de C++",

@@ -91,6 +91,9 @@ UI.en = {
   typesYes: "Yes", typesNo: "No", typesNote: "Files with extensions that are not in this table do not appear in the list.", typesClose: "Close", typesCloseTip: "Close this window",
   typesCurrent: "Type of the open file",
   typesFilterHint: "Filter by extension, file name or language (e.g. py)", typesFilterTip: "Shows only the rows whose extension, file name or language starts with the text you type. If nothing matches, that type is not supported", typesNone: "“{0}”: not a supported type",
+  // 언어 선택 창 (v0.62.0)
+  langTitle: "Choose language", langFilterHint: "Filter by language name or code (e.g. pt)", langFilterTip: "Shows only the languages whose name or code starts with the text you type. Both the name in the current screen language and the language's own name are searched", langNone: "“{0}”: language not found",
+  langColName: "Name", langColOwn: "Original name", langColCode: "Code", langCurrent: "Current language",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Description", typesColDescTip: "What kind of file it is",
   desc_cpp: "C++ source and header files",

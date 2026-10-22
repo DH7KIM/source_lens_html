@@ -58,6 +58,7 @@ tools/merge-parts src source-viewer.merged.html --check source-viewer.html
 | `parts/js/11-list-width-and-helpers.js` | 목록 폭, 읽기 도우미 |
 | `parts/js/11a-dialog-table.js` | 모달 표 창 공통 (필터, 열기, 닫기) |
 | `parts/js/12-supported-types.js` | `지원 파일 형식` 단추와 창 (`FILE_TYPES`를 읽어 그림) |
+| `parts/js/12a-language-picker.js` | `언어 선택` 단추와 창 (언어 목록·이름·고르기) |
 | `parts/js/13-compiler-output.js` | 컴파일러 결과 (`build.log`, `cargo.json`) |
 | `parts/js/14-toml-check.js` | TOML 검사 |
 | `parts/js/15-open-file-and-events.js` | 파일 열기, 이벤트 |

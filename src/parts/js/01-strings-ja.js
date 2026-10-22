@@ -91,6 +91,9 @@ UI.ja = {
   typesYes: "あり", typesNo: "なし", typesNote: "この表にない拡張子のファイルは、一覧に表示されません。", typesClose: "閉じる", typesCloseTip: "このウィンドウを閉じます",
   typesCurrent: "開いているファイルの種類",
   typesFilterHint: "拡張子・ファイル名・言語で絞り込み（例: py）", typesFilterTip: "入力した文字で始まる拡張子・ファイル名・言語の行だけを表示します。何も見つからなければ、対応していない形式です", typesNone: "「{0}」: 対応していない形式です",
+  // 언어 선택 창 (v0.62.0)
+  langTitle: "言語を選択", langFilterHint: "言語名・コードで絞り込み（例: pt）", langFilterTip: "入力した文字で始まる言語名・コードだけを表示します。現在の画面の言語での名前と、その言語自身の名前のどちらでも探せます", langNone: "「{0}」: 該当する言語がありません",
+  langColName: "名前", langColOwn: "元の名前", langColCode: "コード", langCurrent: "現在の言語",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "説明", typesColDescTip: "どんなファイルかの説明です",
   desc_cpp: "C++のソース・ヘッダファイル",

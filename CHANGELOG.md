@@ -2,6 +2,19 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.62.0 (2026-10-23)
+
+### source-viewer.html
+
+- **`Language` window** (the language select box in the header bar is now a button): the button shows a globe icon made for this project (SVG, 264 bytes, `currentColor` so it follows the theme) and the document language's own name (e.g. `English`). It opens a table window with the columns `Name` (in the current screen language, from `Intl.DisplayNames`), `Original name` (the language's own name) and `Code`. The new part `parts/js/12a-language-picker.js` uses the common part from v0.61.0 (`11a-dialog-table.js`: filter, open, close). The old `langName()` and `drawLangs()` moved there from `11-list-width-and-helpers.js`.
+- Choosing: click a row, or Enter/Space with the focus on a row, or Enter when the filter leaves one row. The current language row is highlighted (background, bold, left bar) and scrolled into view when the window opens. Choosing the same language only closes the window. The choice is remembered in `sv-lang` only when chosen by hand (as before).
+- Filter: the same rule as the `Supported file types` window (start of a word). It searches the name in the current screen language, the original name and the code (`pt`, `port` and `포르` find Portuguese, `zh` finds both Chinese rows). Chinese is asked as `zh-Hans`/`zh-Hant` so it reads as Simplified/Traditional instead of "Chinese (China)".
+- The list is the same as before: the 10 built-in screen languages plus the document languages of the opened folder (e.g. `zh`, which only has `name.zh.md` files, appears as `Chinese | 中文 | zh`, and choosing it changes only the document language).
+- 8 new translation keys (`langTitle`, `langFilterHint`, `langFilterTip`, `langNone`, `langColName`, `langColOwn`, `langColCode`, `langCurrent`) in the 10 languages, 224 keys each. **All translations are Claude drafts and not yet checked by native speakers.**
+- Header bar: the language box shrinks from 162px to 86-100px (ko 86, en 92, es 96, fr 100), so English at 1300px width goes from two lines (83px) to one line (49px). The button is 34px high like the other buttons (the select box was 29px), so at widths where the bar wraps (Spanish and French at 1300px, etc.) the height can grow by 5px.
+- Tested: the button text, opening the window, the number of rows, the name column, 7 filter inputs, Enter, clicking a row, choosing the same language, 3 ways of closing, the keyboard, remembering after reload, the window texts not empty in all 10 languages, and a document-only `zh` all work with no errors. The light and dark themes were checked by screenshot. The `Supported file types` window still works.
+- The file grows by 8,870 bytes (394,139 → 403,009 bytes: 80 translated texts, the window code, the icon).
+
 ## v0.61.0 (2026-10-23)
 
 ### source-viewer.html
