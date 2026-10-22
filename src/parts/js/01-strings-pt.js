@@ -122,6 +122,7 @@ UI.pt = {
   desc_log: "Arquivo de log. Um build.log no topo da pasta mostra os resultados do GCC nas linhas de código",
   desc_ui: "Arquivo de layout de interface (verificado quanto a erros, com pré-visualização do layout)",
   desc_ui_log: "Log de correções gravado pelo verificador de layouts de interface",
+  desc_html: "Página web HTML",
   desc_xml: "Documento XML",
   desc_manifest: "Manifesto de aplicativo do Windows (XML)",
   desc_def: "Arquivo de definição de módulo (lista os nomes exportados de uma DLL)",

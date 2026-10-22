@@ -2,6 +2,19 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.57.0 (2026-10-23)
+
+### source-viewer.html
+
+- **Added source-view coloring for `.html` and `.htm`**: tag names, attribute names, attribute values (quoted or not), comments `<!-- -->`, `<!doctype>`, `<![CDATA[` and `<?xml`, and entities such as `&amp;`. Multi-line tags and unclosed quotes are handled (`htmlTag()`, `RULES.html`, `03-highlight.js`).
+- The inside of `<script>` and `<style>` is shown without coloring (there are no JS or CSS colorers yet; the text up to the closing tag is skipped as a whole so that something like `a<b` is not mistaken for a tag).
+- Added one `html` line to `FILE_TYPES` and the `desc_html` description (10 languages), so a `*.html *.htm` row appears in the `Supported file types` window and `.html` files now appear in the folder list.
+- ```` ```html ```` code blocks in Markdown are colored with the same rules.
+- The part of `highlight()` that skips uncolored text in one go no longer skips `<` and `&` (HTML rules start with them). The coloring of the other languages is unchanged: C++, Rust, TOML, JSON, BAT and shell samples color character for character the same as before.
+- Tested with the new sample `tests/samples/project/html/page.html` (tags, attributes, entities, comments, `a<b` inside `<script>`, multi-line tags, an unclosed quote), and a 1.5MB HTML file colors in about 0.5 seconds (about 0.4 seconds for C++ of the same size). No errors.
+- The file grows by about 2KB (390,682 → 392,759 bytes).
+- Branch `html-highlight`.
+
 ## v0.56.0 (2026-10-23)
 
 ### source-viewer.html

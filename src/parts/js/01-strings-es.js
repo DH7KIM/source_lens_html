@@ -121,6 +121,7 @@ UI.es = {
   desc_log: "Archivo de registro. Un build.log en la parte superior de la carpeta muestra los resultados de GCC en las líneas de código",
   desc_ui: "Archivo de diseño de interfaz (se comprueban los errores, con vista previa del diseño)",
   desc_ui_log: "Registro de correcciones escrito por el verificador de diseños de interfaz",
+  desc_html: "Página web HTML",
   desc_xml: "Documento XML",
   desc_manifest: "Manifiesto de aplicación de Windows (XML)",
   desc_def: "Archivo de definición de módulo (lista los nombres exportados de una DLL)",

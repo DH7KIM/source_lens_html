@@ -85,6 +85,35 @@ const hashComment = (s, p, push) => {           // # 주석 (앞이 줄 처음�
 };
 const lineStart = (rx, cls) => (s, p, push) => atLineStart(s, p) ? re(rx, cls)(s, p, push) : -1;
 
+// HTML: 태그 이름(k)·속성 이름(f)·속성 값(s)·주석(c)·<!doctype>(p)·&엔티티;(n). <script>·<style> 안은 색칠 없이 그대로 둔다 (JS·CSS 색칠기가 아직 없음)
+function htmlTag(s, p, push) {                   // <div class="a">, </div>, <br/>: 한 태그를 이름·속성·값으로 나눠 색칠
+  const m = /<(\/?)([A-Za-z][\w:.-]*)((?:"[^"]*"|'[^']*'|[^'">])*)(>?)/y;
+  m.lastIndex = p;
+  const r = m.exec(s);
+  if (!r) return -1;
+  push(null, "<" + r[1]); push("k", r[2]);
+  const body = r[3], tk = /\s+|"[^"]*"|'[^']*'|=|\/|[^\s="'\/]+|[\s\S]/y;
+  let i = 0, afterEq = false;
+  while (i < body.length) {
+    tk.lastIndex = i;
+    const w = tk.exec(body)[0]; i += w.length;
+    if (/^\s+$/.test(w) || w === "/") { push(null, w); continue; }
+    if (w === "=") { push(null, w); afterEq = true; continue; }
+    push(w[0] === '"' || w[0] === "'" || afterEq ? "s" : "f", w);   // 따옴표 값·따옴표 없는 값은 s, 그 밖은 속성 이름
+    afterEq = false;
+  }
+  push(null, r[4]);
+  const name = r[2].toLowerCase();
+  if (!r[1] && r[4] && (name === "script" || name === "style") && !body.trimEnd().endsWith("/")) {   // 안쪽은 그대로
+    const end = p + r[0].length, close = new RegExp("</" + name, "gi");
+    close.lastIndex = end;
+    const c = close.exec(s), stop = c ? c.index : s.length;
+    push(null, s.slice(end, stop));
+    return stop;
+  }
+  return p + r[0].length;
+}
+
 const RULES = {
   cpp: [
     re(/\/\/.*/y, "c"),
@@ -149,6 +178,12 @@ const RULES = {
     re(/->/y, "p"),
     re(/[A-Za-z_][\w.]*/y, null),
   ],
+  html: [
+    re(/<!--[\s\S]*?(?:-->|$)/y, "c"),
+    re(/<![\s\S]*?(?:>|$)|<\?[\s\S]*?(?:\?>|$)/y, "p"),   // <!doctype html>, <![CDATA[ ]]>, <?xml ?>
+    htmlTag,
+    re(/&(?:#\d+|#[xX][\da-fA-F]+|[A-Za-z]\w*);/y, "n"),
+  ],
   hash: [
     hashComment,
     re(/\$\{[^}\n]*\}|\$\([^)\n]*\)|\$[\w@#?*!]+/y, "p"),
@@ -182,7 +217,7 @@ function highlight(src, lang) {
       if (n > pos) { pos = n; continue outer; }
     }
     // 아무 규칙도 맞지 않으면 이름이 아닌 글자를 한꺼번에 넘긴다
-    const rx = /[^\w"'#/$%!@:;\[\-\.+]+|[\s\S]/y; rx.lastIndex = pos;
+    const rx = /[^\w"'#/$%!@:;\[\-\.+<&]+|[\s\S]/y; rx.lastIndex = pos;
     const m = rx.exec(src)[0];
     push(null, m); pos += m.length;
   }

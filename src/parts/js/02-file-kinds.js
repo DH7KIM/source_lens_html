@@ -2,7 +2,7 @@
 // 기준 표 FILE_TYPES: 지원하는 파일 종류를 여기에만 적는다 (v0.47.0~).
 //   id    = 종류 이름표 (영문 소문자·밑줄). 설명 글자 키 desc_<id>에 씀
 //   name  = 사람이 읽는 언어·파일 이름 (번역하지 않는 고유 이름)
-//   lang  = 색칠·검사 방식: cpp, rust, toml, json, json5, bat, hash(# 주석: 셸·PowerShell·YAML·Makefile·.gitignore), md, ui, uilog, plain
+//   lang  = 색칠·검사 방식: cpp, rust, toml, json, json5, html, bat, hash(# 주석: 셸·PowerShell·YAML·Makefile·.gitignore), md, ui, uilog, plain
 //   exts  = 확장자 (점 없이, 소문자)
 //   names = 확장자 없는 파일 이름 (화면에 보이는 그대로 적고, 맞출 때는 소문자로 바꿔 비교)
 //   check = 문법 검사기: ui, toml, json (없으면 검사기 없음). INI 계열은 lang이 toml이어도 검사하지 않아서 비워 둠
@@ -33,6 +33,7 @@ const FILE_TYPES = [
   { id: "gitignore",     name: "Git ignore",         lang: "hash",  exts: ["gitignore"] },
   { id: "gitattributes", name: "Git attributes",     lang: "hash",  exts: ["gitattributes"] },
   { id: "markdown",      name: "Markdown",           lang: "md",    exts: ["md"] },
+  { id: "html",          name: "HTML",               lang: "html",  exts: ["html", "htm"] },
   { id: "text",          name: "Text",               lang: "plain", exts: ["txt"] },
   { id: "log",           name: "Log",                lang: "plain", exts: ["log"] },
   { id: "ui",            name: "UI layout",          lang: "ui",    check: "ui",   exts: ["ui"] },

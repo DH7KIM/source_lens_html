@@ -121,6 +121,7 @@ UI.de = {
   desc_log: "Protokolldatei. Eine build.log im obersten Ordner zeigt GCC-Ergebnisse in den Quellzeilen",
   desc_ui: "UI-Layoutdatei (Fehlerprüfung, Layoutvorschau)",
   desc_ui_log: "Korrekturprotokoll des UI-Layout-Prüfers",
+  desc_html: "HTML-Webseite",
   desc_xml: "XML-Dokument",
   desc_manifest: "Windows-Anwendungsmanifest (XML)",
   desc_def: "Moduldefinitionsdatei (listet die exportierten Namen einer DLL)",

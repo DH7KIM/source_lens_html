@@ -121,6 +121,7 @@ UI.en = {
   desc_log: "Log file. A build.log at the top of the folder shows GCC results on the source lines",
   desc_ui: "UI layout file (checked for errors, with layout preview)",
   desc_ui_log: "Fix log written by the UI layout checker",
+  desc_html: "HTML web page",
   desc_xml: "XML document",
   desc_manifest: "Windows application manifest (XML)",
   desc_def: "Module definition file (lists a DLL's exported names)",

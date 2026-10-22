@@ -1,0 +1,26 @@
+<!doctype html>
+<!-- 시험용 HTML: 태그, 속성, 값, 주석, 엔티티 -->
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>Source Lens &amp; HTML &#169; &#xA9;</title>
+  <style>
+    body > p { color: red; }   /* 색칠 안 함: a<b */
+  </style>
+</head>
+<body class='main' data-id=42 hidden>
+  <h1 id="top">제목</h1>
+  <p>1 &lt; 2 and 3 > 2, "따옴표"와 'apostrophe'는 본문이라 색칠하지 않음.</p>
+  <a href="https://example.com/?a=1&b=2"
+     title="여러 줄
+     태그">링크</a>
+  <img src="a.png" alt=""/>
+  <br />
+  <input type=text disabled>
+  <script>
+    if (a<b && c>d) { document.title = "x</p>"; }
+  </script>
+  <!-- 닫히지 않은 따옴표가 있는 태그 -->
+  <div class="oops>끝</div>
+</body>
+</html>

@@ -122,6 +122,7 @@ UI.fr = {
   desc_log: "Fichier journal. Un build.log à la racine du dossier affiche les résultats de GCC sur les lignes source",
   desc_ui: "Fichier de mise en page d'interface (vérification des erreurs, aperçu de la mise en page)",
   desc_ui_log: "Journal des corrections écrit par le vérificateur de mise en page",
+  desc_html: "Page web HTML",
   desc_xml: "Document XML",
   desc_manifest: "Manifeste d'application Windows (XML)",
   desc_def: "Fichier de définition de module (liste les noms exportés d'une DLL)",

@@ -121,6 +121,7 @@ UI.ja = {
   desc_log: "ログファイル。フォルダー直下のbuild.logは、GCCの結果をソースの行に表示します",
   desc_ui: "UIレイアウトファイル（エラー検査、レイアウトプレビュー）",
   desc_ui_log: "UIレイアウト検査機能が残す修正ログ",
+  desc_html: "HTMLのウェブページ",
   desc_xml: "XMLドキュメント",
   desc_manifest: "Windowsアプリケーションのマニフェスト（XML）",
   desc_def: "モジュール定義ファイル（DLLが公開する名前の一覧）",

@@ -121,6 +121,7 @@ UI.ko = {
   desc_log: "로그 파일. 폴더 맨 위의 build.log는 GCC 결과를 소스 줄에 표시함",
   desc_ui: "UI 레이아웃 파일 (오류 검사, 배치 미리보기)",
   desc_ui_log: "UI 레이아웃 검사기가 남기는 수정 기록",
+  desc_html: "HTML 웹 문서",
   desc_xml: "XML 문서",
   desc_manifest: "Windows 응용 프로그램 매니페스트 (XML)",
   desc_def: "모듈 정의 파일 (DLL이 내보내는 이름 목록)",

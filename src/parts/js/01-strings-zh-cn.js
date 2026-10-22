@@ -121,6 +121,7 @@ UI["zh-cn"] = {
   desc_log: "日志文件。文件夹顶层的 build.log 会把 GCC 结果显示在源码行上",
   desc_ui: "UI 布局文件(错误检查、布局预览)",
   desc_ui_log: "UI 布局检查器留下的修正记录",
+  desc_html: "HTML 网页",
   desc_xml: "XML 文档",
   desc_manifest: "Windows 应用程序清单(XML)",
   desc_def: "模块定义文件(列出 DLL 导出的名称)",

@@ -121,6 +121,7 @@ UI["zh-tw"] = {
   desc_log: "記錄檔。資料夾最上層的 build.log 會把 GCC 結果顯示在原始碼行上",
   desc_ui: "UI 版面配置檔(錯誤檢查、版面預覽)",
   desc_ui_log: "UI 版面配置檢查器留下的修正記錄",
+  desc_html: "HTML 網頁",
   desc_xml: "XML 文件",
   desc_manifest: "Windows 應用程式資訊清單(XML)",
   desc_def: "模組定義檔(列出 DLL 匯出的名稱)",

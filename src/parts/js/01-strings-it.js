@@ -121,6 +121,7 @@ UI.it = {
   desc_log: "File di log. Un build.log nella cartella principale mostra i risultati di GCC sulle righe sorgente",
   desc_ui: "File di layout dell'interfaccia (controllo errori, anteprima del layout)",
   desc_ui_log: "Registro delle correzioni scritto dal controllo del layout dell'interfaccia",
+  desc_html: "Pagina web HTML",
   desc_xml: "Documento XML",
   desc_manifest: "Manifest di applicazione Windows (XML)",
   desc_def: "File di definizione del modulo (elenca i nomi esportati da una DLL)",
