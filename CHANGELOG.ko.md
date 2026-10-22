@@ -2,6 +2,15 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.61.0 (2026-10-23)
+
+### source-viewer.html
+
+- **`지원 파일 형식` 창의 공통 부분을 따로 뺌** (다음 버전의 `언어 선택` 창이 같이 쓰려고. 화면·동작은 그대로): 새 조각 `parts/js/11a-dialog-table.js`에 필터(`filterTableRows`), 창 열기(`openTableDialog`: 필터 비우기 → 표 그리기 → 열기 → 필터에 초점 → 현재 행으로 스크롤), 닫기(`wireTableDialog`: 닫기 단추·창 바깥 누르기)를 둠. `12-supported-types.js`에는 이 창만의 것(열, 확장자·파일 이름·언어 낱말 만들기, 문법 검사기 이름)이 남음.
+- CSS 이름: 표 틀과 현재 행 강조는 `.dlg-table`·`.dlg-none`·`.dlg-note`로 바꾸고(`.types-table`·`.types-none`·`.types-note`에서), 열 폭·`code` 글꼴처럼 이 표만의 것은 `.types-table`에 남김.
+- 시험: 10개 언어에서 v0.60.0과 표 HTML·필터 8가지 결과·닫기 둘·열 때 필터 초점이 모두 같고, 밝은·어두운 테마에서 표 스타일(계산된 값, 현재 행 강조 포함)도 같음. 오류 없음.
+- 파일 용량이 1,035바이트 늘어남 (393,104 → 394,139바이트: 공통 함수 이름·주석).
+
 ## v0.60.0 (2026-10-23)
 
 ### source-viewer.html

@@ -210,18 +210,18 @@
   .dlg-filter input { width: 100%; font: inherit; font-size: 14px; color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 4px 10px; }
   .dlg-filter input:focus { outline: none; border-color: var(--accent); }
   .dlg-body { overflow: auto; padding: 0 16px 16px; }
-  .types-none { margin: 16px 0 0; text-align: center; }
-  .types-table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 1.5; }
-  .types-table th, .types-table td { text-align: left; padding: 4px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
-  .types-table thead th { position: sticky; top: 0; background: var(--panel); border-bottom: 2px solid var(--line); cursor: help; z-index: 1; white-space: nowrap; }
+  .dlg-none { margin: 16px 0 0; text-align: center; }
+  .dlg-table { border-collapse: collapse; width: 100%; font-size: 14px; line-height: 1.5; }
+  .dlg-table th, .dlg-table td { text-align: left; padding: 4px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .dlg-table thead th { position: sticky; top: 0; background: var(--panel); border-bottom: 2px solid var(--line); cursor: help; z-index: 1; white-space: nowrap; }
+  .dlg-table tr.current td { background: var(--hl); font-weight: 600; }   /* 지금 고른 행: 배경 + 굵게 + 왼쪽 막대 (색만으로 구분하지 않음) */
+  .dlg-table tr.current td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
+  .dlg-note { color: var(--muted); font-size: 13px; margin: 12px 0 0; }
   .types-table td:first-child { width: 36%; }
   .types-table td.desc { min-width: 200px; }
   .types-table td code { font-family: var(--mono); font-size: 13px; white-space: nowrap; }
   .types-table .mark { white-space: nowrap; cursor: help; }
   .types-table .no { color: var(--muted); }
-  .types-table tr.current td { background: var(--hl); font-weight: 600; }   /* 지금 열어 둔 파일의 종류: 배경 + 굵게 + 왼쪽 막대 (색만으로 구분하지 않음) */
-  .types-table tr.current td:first-child { box-shadow: inset 3px 0 0 var(--accent); }
-  .types-note { color: var(--muted); font-size: 13px; margin: 12px 0 0; }
   .mode-seg button[aria-pressed="true"] { background: var(--accent); color: var(--bg); font-weight: 700; }
   /* JSON·JSON5 계층 보기 (.code 안에 그림). 객체·배열 아이콘, 접기·펼치기, 오른쪽 끝은 소스 줄 번호 */
   .tj-root { padding: 8px 12px 40px; font: 13.5px/1.6 var(--mono); }

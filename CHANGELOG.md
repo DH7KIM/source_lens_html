@@ -2,6 +2,15 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.61.0 (2026-10-23)
+
+### source-viewer.html
+
+- **Moved the common part of the `Supported file types` window into its own part** (so the next version's `Language` window can share it; the screen and behavior are the same): the new part `parts/js/11a-dialog-table.js` holds the filter (`filterTableRows`), opening the window (`openTableDialog`: clear the filter → draw the table → open → focus the filter → scroll to the current row) and closing (`wireTableDialog`: the close button and clicking outside the window). `12-supported-types.js` keeps only what belongs to this window (the columns, building the words from extensions, file names and the language, the syntax checker names).
+- CSS names: the table frame and the current-row highlight are now `.dlg-table`, `.dlg-none` and `.dlg-note` (from `.types-table`, `.types-none` and `.types-note`); things only this table has, such as the column width and the `code` font, stay in `.types-table`.
+- Tested: in the 10 languages the table HTML, the results of 8 filter inputs, both ways of closing and the focus on the filter at opening are the same as v0.60.0, and the table styles (computed values, including the current-row highlight) are the same in the light and dark themes. No errors.
+- The file grows by 1,035 bytes (393,104 → 394,139 bytes: the common function names and comments).
+
 ## v0.60.0 (2026-10-23)
 
 ### source-viewer.html

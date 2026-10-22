@@ -19,7 +19,7 @@ function mark(on, label) {   // ✓ / — 는 색만으로 구분하지 않게 �
 
 function drawTypesTable() {
   const th = (key, tipKey) => `<th title="${esc(t(tipKey))}">${esc(t(key))}</th>`;
-  let h = `<table class="types-table"><thead><tr>${th("typesColExt", "typesColExtTip")}${th("typesColLang", "typesColLangTip")}${th("typesColDesc", "typesColDescTip")}${th("typesColColor", "typesColColorTip")}${th("typesColCheck", "typesColCheckTip")}</tr></thead><tbody>`;
+  let h = `<table class="dlg-table types-table"><thead><tr>${th("typesColExt", "typesColExtTip")}${th("typesColLang", "typesColLangTip")}${th("typesColDesc", "typesColDescTip")}${th("typesColColor", "typesColColorTip")}${th("typesColCheck", "typesColCheckTip")}</tr></thead><tbody>`;
   const curType = cur ? typeOf(cur) : null;   // 지금 열어 둔 파일의 종류 (없으면 강조 없음)
   for (const ft of FILE_TYPES) {
     const keys = [...(ft.exts || []).map(e => "*." + e), ...(ft.names || [])];
@@ -27,33 +27,12 @@ function drawTypesTable() {
     const isCur = ft === curType;
     h += `<tr data-find="${esc(find)}"${isCur ? ` class="current" aria-current="true" title="${esc(t("typesCurrent"))}"` : ""}><td>${keys.map(k => `<code>${esc(k)}</code>`).join(" ")}</td><td>${esc(ft.name)}</td><td class="desc">${esc(t("desc_" + ft.id))}</td>${mark(hasColors(ft.lang))}${mark(!!ft.check, CHECK_NAMES[ft.check])}</tr>`;
   }
-  $("typesBody").innerHTML = h + `</tbody></table><p class="types-none" id="typesNone" hidden></p><p class="types-note">${esc(t("typesNote"))}</p>`;
+  $("typesBody").innerHTML = h + `</tbody></table><p class="dlg-none" id="typesNone" hidden></p><p class="dlg-note">${esc(t("typesNote"))}</p>`;
 }
 
-// 필터: 확장자·파일 이름·언어 이름의 낱말이 입력한 글로 시작하는 행만 보임. "py"·".py"·"*.py"·"Makefile"·"C++" 모두 같은 방식 (대소문자 구분 없음)
-// 글자가 중간에 들어 있는 것은 맞추지 않음: "py"가 "copying"(License)에 맞으면 ".py 지원 여부" 확인이 틀려짐
-function applyTypesFilter() {
-  const raw = $("typesFilter").value.trim();
-  const q = raw.toLowerCase().replace(/^[*.]+/, "");
-  let shown = 0;
-  for (const tr of $("typesBody").querySelectorAll("tbody tr")) {
-    const ok = !q || tr.dataset.find.split(" ").some(w => w.startsWith(q));
-    tr.hidden = !ok;
-    if (ok) shown++;
-  }
-  const none = $("typesNone");
-  none.hidden = shown > 0;   // 맞는 행이 없으면 "지원하지 않는 형식"이라고 알림
-  if (!none.hidden) none.textContent = t("typesNone", raw);
-}
+// 필터·창 열기·닫기는 공통 부분(11a-dialog-table.js)을 씀. 필터는 확장자·파일 이름·언어 이름의 낱말이 입력한 글로 시작하는 행만 보임
+function applyTypesFilter() { filterTableRows($("typesFilter"), $("typesBody"), $("typesNone"), "typesNone"); }
 
-$("typesBtn").onclick = () => {
-  $("typesFilter").value = "";   // 열 때마다 처음부터
-  drawTypesTable();
-  $("typesDlg").showModal();
-  $("typesFilter").focus({ preventScroll: true });
-  const row = $("typesBody").querySelector("tr.current");   // 지금 파일의 행이 보이게 (머리 줄에 가리지 않게 가운데로)
-  if (row) row.scrollIntoView({ block: "center" });
-};
+$("typesBtn").onclick = () => openTableDialog($("typesDlg"), $("typesFilter"), $("typesBody"), drawTypesTable);
 $("typesFilter").oninput = applyTypesFilter;
-$("typesClose").onclick = () => $("typesDlg").close();
-$("typesDlg").onclick = e => { if (e.target === $("typesDlg")) $("typesDlg").close(); };   // 창 바깥(어두운 곳)을 누르면 닫음. Esc는 브라우저가 처리
+wireTableDialog($("typesDlg"), $("typesClose"));

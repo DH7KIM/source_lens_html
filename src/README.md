@@ -56,6 +56,7 @@ The exit code is 0 when done (and equal), 1 when the check finds a difference, 2
 | `parts/js/09-source-folder.js` | source folder (FSA or file list) |
 | `parts/js/10-tree-list.js` | tree list |
 | `parts/js/11-list-width-and-helpers.js` | list width, reading helpers |
+| `parts/js/11a-dialog-table.js` | common parts of table windows (filter, open, close) |
 | `parts/js/12-supported-types.js` | `Supported file types` button and window (reads `FILE_TYPES`) |
 | `parts/js/13-compiler-output.js` | compiler output (`build.log`, `cargo.json`) |
 | `parts/js/14-toml-check.js` | TOML check |
