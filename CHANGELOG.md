@@ -2,6 +2,17 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.54.0 (2026-10-22)
+
+### source-viewer.html
+
+- **Added Spanish (`es`) screen strings** (`01-strings-es.js`, 214 keys, including the 33 `desc_<id>` descriptions). Written in neutral Spanish (infinitives for buttons, `usted` in sentences). Draft translated by Claude, not yet checked by native speakers.
+- If the browser's preferred language is Spanish (`es`, `es-ES`, `es-MX`, …), the viewer now starts in Spanish. The language list shows `Español (es)` (it was already in `LANG_NAMES`).
+- Spanish plurals use the `Intl.PluralRules` support from v0.52.0 (`0 líneas`, `1 línea`, `2 líneas`).
+- Tested with the browser language set to `es-ES`: start language, language list, `.toml` error messages, status lines for `.json` and `.cpp`, and the `Supported file types` window. The 214 keys match English and every `{0}` placeholder matches. No errors.
+- File size grew by about 15 KB (358,039 → 373,450 bytes).
+- Branch `lang-es`.
+
 ## v0.53.0 (2026-10-22)
 
 ### source-viewer.html
