@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.65.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.66.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -353,7 +353,6 @@
   <span class="state" id="reading" hidden><span id="readingText"></span> <button id="readCancel"></button></span>
   <button id="langBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><ellipse cx="12" cy="12" rx="4" ry="9.5"/><path d="M2.5 12h19"/></svg><span id="langBtnName"></span></button>
   <button id="typesBtn"></button>
-  <select id="depth" hidden></select>
   <button id="folder" hidden></button>
   <button id="settingsBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 4.6 L10.6 1.9 L13.4 1.9 L13.7 4.6 L16.0 5.6 L18.1 3.9 L20.1 5.9 L18.4 8.0 L19.4 10.3 L22.1 10.6 L22.1 13.4 L19.4 13.7 L18.4 16.0 L20.1 18.1 L18.1 20.1 L16.0 18.4 L13.7 19.4 L13.4 22.1 L10.6 22.1 L10.3 19.4 L8.0 18.4 L5.9 20.1 L3.9 18.1 L5.6 16.0 L4.6 13.7 L1.9 13.4 L1.9 10.6 L4.6 10.3 L5.6 8.0 L3.9 5.9 L5.9 3.9 L8.0 5.6Z"/><circle cx="12" cy="12" r="3"/></svg></button>
 </header>
@@ -411,6 +410,7 @@
   <div class="dlg-head"><span id="settingsTitle"></span><button id="settingsClose"></button></div>
   <div class="dlg-body">
     <div class="set-line"><label for="theme" id="themeLabel"></label><select id="theme"></select></div>
+    <div class="set-line"><label for="depth" id="depthLabel"></label><select id="depth"></select></div>
     <label class="set-row"><input type="checkbox" id="fontLig"><span id="fontLigName"></span></label>
     <p class="set-desc" id="fontLigDesc"></p>
     <div class="font-sample" id="fontSample" aria-hidden="true"></div>
@@ -489,6 +489,7 @@ UI.ko = {
   noTip: "클릭: 이 줄 표시 (주소에 줄 번호가 남아 다음에 바로 열림)",
   navSizeTip: "끌어서 폭 조절 / 두 번 클릭하면 기본 폭",
   dirTip: "클릭: 폴더 접기 / 펼치기",
+  depthLabel: "하위 폴더 단계",
   theme: "테마 (글자·문법 색)", light: "밝은 테마", dark: "어두운 테마",
   pvOn: "배치 보기", pvOff: "배치 숨기기", pvTip: ".ui 파일의 배치(요소 위치)를 아래 칸에 그리거나 숨깁니다.",
   pvSizeTip: "끌어서 소스 / 배치 칸 높이를 바꿉니다", pvWinTip: "미리 볼 창 크기. '아래 칸에 맞춤'은 아래 칸 크기를 창 크기로 씁니다.",
@@ -625,6 +626,7 @@ UI.en = {
   noTip: "Click: mark this line (the line number stays in the address)",
   navSizeTip: "Drag to resize / double-click for default width",
   dirTip: "Click: collapse / expand the folder",
+  depthLabel: "Subfolder levels",
   theme: "Theme (text and syntax colors)", light: "Light themes", dark: "Dark themes",
   pvOn: "Show layout", pvOff: "Hide layout", pvTip: "Draw the layout (element positions) of this .ui file in the lower pane, or hide it.",
   pvSizeTip: "Drag to change the height of the source / layout panes", pvWinTip: "Window size to preview. 'Fit to pane' uses the lower pane size as the window size.",
@@ -761,6 +763,7 @@ UI.ja = {
   noTip: "クリック: この行に印を付けます(行番号がアドレスに残ります)",
   navSizeTip: "ドラッグで幅を変更 / ダブルクリックで初期の幅に戻します",
   dirTip: "クリック: フォルダを折りたたむ / 展開する",
+  depthLabel: "サブフォルダの階層",
   theme: "テーマ(文字と構文の色)", light: "ライトテーマ", dark: "ダークテーマ",
   pvOn: "レイアウトを表示", pvOff: "レイアウトを隠す", pvTip: "この .ui ファイルのレイアウト(要素の位置)を下のペインに描画します。もう一度押すと隠します。",
   pvSizeTip: "ドラッグでソースとレイアウトのペインの高さを変更します", pvWinTip: "プレビューするウィンドウのサイズ。「ペインに合わせる」は下のペインの大きさをウィンドウサイズにします。",
@@ -897,6 +900,7 @@ UI["zh-cn"] = {
   noTip: "点击: 标记此行(行号会保留在地址中)",
   navSizeTip: "拖动可调整宽度 / 双击恢复默认宽度",
   dirTip: "点击: 折叠 / 展开文件夹",
+  depthLabel: "子文件夹层数",
   theme: "主题(文字和语法颜色)", light: "浅色主题", dark: "深色主题",
   pvOn: "显示布局", pvOff: "隐藏布局", pvTip: "在下方窗格中绘制此 .ui 文件的布局(元素位置),再次点击则隐藏。",
   pvSizeTip: "拖动可调整源码窗格和布局窗格的高度", pvWinTip: "要预览的窗口大小。“适应窗格”会将下方窗格的大小作为窗口大小。",
@@ -1033,6 +1037,7 @@ UI["zh-tw"] = {
   noTip: "點擊: 標記此行(行號會保留在網址中)",
   navSizeTip: "拖曳可調整寬度 / 按兩下恢復預設寬度",
   dirTip: "點擊: 摺疊 / 展開資料夾",
+  depthLabel: "子資料夾層數",
   theme: "佈景主題(文字和語法顏色)", light: "淺色佈景主題", dark: "深色佈景主題",
   pvOn: "顯示版面配置", pvOff: "隱藏版面配置", pvTip: "在下方窗格中繪製此 .ui 檔案的版面配置(元素位置),再次點擊則隱藏。",
   pvSizeTip: "拖曳可調整原始碼窗格和版面配置窗格的高度", pvWinTip: "要預覽的視窗大小。「符合窗格」會將下方窗格的大小作為視窗大小。",
@@ -1170,6 +1175,7 @@ UI.fr = {
   noTip: "Clic : marquer cette ligne (le numéro de ligne reste dans l'adresse)",
   navSizeTip: "Glisser pour redimensionner / double-clic pour la largeur par défaut",
   dirTip: "Clic : replier / déplier le dossier",
+  depthLabel: "Niveaux de sous-dossiers",
   theme: "Thème (couleurs du texte et de la syntaxe)", light: "Thèmes clairs", dark: "Thèmes sombres",
   pvOn: "Afficher la mise en page", pvOff: "Masquer la mise en page", pvTip: "Dessiner la mise en page (position des éléments) de ce fichier .ui dans le volet du bas, ou la masquer.",
   pvSizeTip: "Glisser pour changer la hauteur des volets source / mise en page", pvWinTip: "Taille de fenêtre à prévisualiser. « Ajuster au volet » utilise la taille du volet du bas comme taille de fenêtre.",
@@ -1306,6 +1312,7 @@ UI.de = {
   noTip: "Klick: diese Zeile markieren (die Zeilennummer bleibt in der Adresse)",
   navSizeTip: "Ziehen zum Ändern der Größe / Doppelklick für die Standardbreite",
   dirTip: "Klick: Ordner ein- / ausklappen",
+  depthLabel: "Unterordner-Ebenen",
   theme: "Design (Text- und Syntaxfarben)", light: "Helle Designs", dark: "Dunkle Designs",
   pvOn: "Layout anzeigen", pvOff: "Layout ausblenden", pvTip: "Das Layout (Positionen der Elemente) dieser .ui-Datei im unteren Bereich zeichnen oder ausblenden.",
   pvSizeTip: "Ziehen, um die Höhe von Quelltext- und Layoutbereich zu ändern", pvWinTip: "Fenstergröße für die Vorschau. „An Bereich anpassen“ verwendet die Größe des unteren Bereichs als Fenstergröße.",
@@ -1442,6 +1449,7 @@ UI.it = {
   noTip: "Clic: segna questa riga (il numero di riga resta nell'indirizzo)",
   navSizeTip: "Trascina per ridimensionare / doppio clic per la larghezza predefinita",
   dirTip: "Clic: comprimi / espandi la cartella",
+  depthLabel: "Livelli di sottocartelle",
   theme: "Tema (colori del testo e della sintassi)", light: "Temi chiari", dark: "Temi scuri",
   pvOn: "Mostra layout", pvOff: "Nascondi layout", pvTip: "Disegna il layout (posizione degli elementi) di questo file .ui nel riquadro in basso, oppure lo nasconde.",
   pvSizeTip: "Trascina per cambiare l'altezza dei riquadri sorgente / layout", pvWinTip: "Dimensione della finestra da visualizzare. “Adatta al riquadro” usa la dimensione del riquadro in basso come dimensione della finestra.",
@@ -1578,6 +1586,7 @@ UI.es = {
   noTip: "Clic: marcar esta línea (el número de línea queda en la dirección)",
   navSizeTip: "Arrastre para cambiar el tamaño / doble clic para el ancho predeterminado",
   dirTip: "Clic: contraer / expandir la carpeta",
+  depthLabel: "Niveles de subcarpetas",
   theme: "Tema (colores del texto y de la sintaxis)", light: "Temas claros", dark: "Temas oscuros",
   pvOn: "Mostrar diseño", pvOff: "Ocultar diseño", pvTip: "Dibuja el diseño (posiciones de los elementos) de este archivo .ui en el panel inferior, o lo oculta.",
   pvSizeTip: "Arrastre para cambiar la altura de los paneles de código y de diseño", pvWinTip: "Tamaño de ventana para la vista previa. «Ajustar al panel» usa el tamaño del panel inferior como tamaño de ventana.",
@@ -1715,6 +1724,7 @@ UI.pt = {
   noTip: "Clique: marcar esta linha (o número da linha fica no endereço)",
   navSizeTip: "Arraste para redimensionar / clique duas vezes para a largura padrão",
   dirTip: "Clique: recolher / expandir a pasta",
+  depthLabel: "Níveis de subpastas",
   theme: "Tema (cores do texto e da sintaxe)", light: "Temas claros", dark: "Temas escuros",
   pvOn: "Mostrar layout", pvOff: "Ocultar layout", pvTip: "Desenha o layout (posições dos elementos) deste arquivo .ui no painel inferior, ou o oculta.",
   pvSizeTip: "Arraste para alterar a altura dos painéis de código e de layout", pvWinTip: "Tamanho da janela para a pré-visualização. “Ajustar ao painel” usa o tamanho do painel inferior como tamanho da janela.",
@@ -4205,7 +4215,7 @@ $("langBody").onkeydown = e => {   // 행에 초점이 있을 때 Enter·Space�
 };
 wireTableDialog($("langDlg"), $("langClose"));
 // ======================= 설정 (머리 막대 톱니 단추 + 설정 창) =======================
-// 지금은 테마(v0.64.0에서 머리 막대에서 옮김, 선택 상자 #theme과 그 동작은 17-themes.js)와 합자(ligature) 켜기/끄기. 하위 단계·글꼴 고르기·글자 크기는 이 창에 다음 버전들에서 더함. 창 닫기는 공통 부분(11a-dialog-table.js)을 씀
+// 지금은 테마(v0.64.0에서 머리 막대에서 옮김, 선택 상자 #theme과 그 동작은 17-themes.js)와 합자(ligature) 켜기/끄기. 하위 단계(v0.66.0에서 옮김, 선택 상자 #depth와 그 동작은 16-start.js)·글꼴 고르기·글자 크기는 이 창에 다음 버전들에서 더함. 창 닫기는 공통 부분(11a-dialog-table.js)을 씀
 // 합자: 코드 글꼴이 `->`·`!=`·`=>` 같은 글자를 한 모양으로 합쳐 그리는 것. 기본은 끔(소스를 글자 그대로 보여 줌). 값은 sv-ligatures ("1" = 켬), 폴더와 상관없이 하나
 let ligatures = false;
 try { ligatures = localStorage.getItem("sv-ligatures") === "1"; } catch (e) {}
@@ -5104,7 +5114,7 @@ async function startWith(target, undo = () => {}) {
     throw e;
   }
   if (!n) { showStart("noFiles"); return true; }
-  $("folder").hidden = false; $("depth").hidden = false;
+  $("folder").hidden = false;
   if (target && target.path && fileSet.has(target.path)) openFile(target.path, { line: target.line || 0, hash: target.hash || "" });
   else openFile(pathFor(orderedKeys()[0], docLang));
   return true;
@@ -5157,7 +5167,8 @@ function drawStatic() {
   $("readCancel").textContent = t("readCancel"); $("readCancel").title = t("readCancelTip");
   $("pick").textContent = t("pick"); $("regrant").textContent = t("regrant"); $("pickFiles").textContent = t("pickFiles");
   $("folder").textContent = t("folder"); $("folder").title = t("folderTip");
-  const ds = $("depth"); ds.innerHTML = "";   // 하위 폴더 단계 선택 (폴더 전체에 적용되는 설정이라 머리 막대에 둠)
+  const ds = $("depth"); ds.innerHTML = "";   // 하위 폴더 단계 선택 (폴더를 열기 전에도 고를 수 있음: 값은 이 HTML 파일 경로로 기억하고, 다음에 폴더를 읽을 때 적용됨)
+  $("depthLabel").textContent = t("depthLabel");
   for (const d of DEPTHS) {
     const o = document.createElement("option");
     o.value = String(d); o.textContent = d ? t("depthN", d) : t("depthAll");

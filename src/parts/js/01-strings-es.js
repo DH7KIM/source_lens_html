@@ -29,6 +29,7 @@ UI.es = {
   noTip: "Clic: marcar esta línea (el número de línea queda en la dirección)",
   navSizeTip: "Arrastre para cambiar el tamaño / doble clic para el ancho predeterminado",
   dirTip: "Clic: contraer / expandir la carpeta",
+  depthLabel: "Niveles de subcarpetas",
   theme: "Tema (colores del texto y de la sintaxis)", light: "Temas claros", dark: "Temas oscuros",
   pvOn: "Mostrar diseño", pvOff: "Ocultar diseño", pvTip: "Dibuja el diseño (posiciones de los elementos) de este archivo .ui en el panel inferior, o lo oculta.",
   pvSizeTip: "Arrastre para cambiar la altura de los paneles de código y de diseño", pvWinTip: "Tamaño de ventana para la vista previa. «Ajustar al panel» usa el tamaño del panel inferior como tamaño de ventana.",

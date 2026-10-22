@@ -2,6 +2,16 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.66.0 (2026-10-23)
+
+### source-viewer.html
+
+- **Moved the `Depth` select box from the header bar into the settings window.** In the window it is a `Subfolder levels` row under the theme. It can be chosen before a folder is open too (the value is one value remembered by the path of this HTML file, not by the opened folder, so choosing it with no folder only remembers it and it is used the next time a folder is read). The behavior of the select box (`#depth`) is the same: remembering the value (`sv-depth:<folder>`), reading the list again at once when it changes, going back to the old level if the reading is cancelled, and not selectable while reading. The header bar keeps only `Language`, `Supported file types`, (`Change folder`) and the gear.
+- A new translation key `depthLabel` (10 languages, newly translated in this conversation, not yet checked by native speakers). The number of keys is 229 (was 228).
+- Tested: it can be chosen with no folder and is remembered, open a folder -> default 4 levels, changing to 2 levels reduces the files from 10 to 6 and `sv-depth` remembers 2, the row name is not empty in all 10 languages, no errors.
+- Header bar height (folder open): 83px at 820px width (English, Korean and others; the previous version was 106px in Spanish), 49px at 1000 and 1300px (one line). The height difference between buttons is gone because the select boxes are all out.
+- The file size grew by 618 bytes (411,884 -> 412,502 bytes).
+
 ## v0.65.0 (2026-10-23)
 
 ### source-viewer.html

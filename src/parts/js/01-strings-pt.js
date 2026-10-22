@@ -30,6 +30,7 @@ UI.pt = {
   noTip: "Clique: marcar esta linha (o número da linha fica no endereço)",
   navSizeTip: "Arraste para redimensionar / clique duas vezes para a largura padrão",
   dirTip: "Clique: recolher / expandir a pasta",
+  depthLabel: "Níveis de subpastas",
   theme: "Tema (cores do texto e da sintaxe)", light: "Temas claros", dark: "Temas escuros",
   pvOn: "Mostrar layout", pvOff: "Ocultar layout", pvTip: "Desenha o layout (posições dos elementos) deste arquivo .ui no painel inferior, ou o oculta.",
   pvSizeTip: "Arraste para alterar a altura dos painéis de código e de layout", pvWinTip: "Tamanho da janela para a pré-visualização. “Ajustar ao painel” usa o tamanho do painel inferior como tamanho da janela.",

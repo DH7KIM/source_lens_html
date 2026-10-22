@@ -30,6 +30,7 @@ UI.fr = {
   noTip: "Clic : marquer cette ligne (le numéro de ligne reste dans l'adresse)",
   navSizeTip: "Glisser pour redimensionner / double-clic pour la largeur par défaut",
   dirTip: "Clic : replier / déplier le dossier",
+  depthLabel: "Niveaux de sous-dossiers",
   theme: "Thème (couleurs du texte et de la syntaxe)", light: "Thèmes clairs", dark: "Thèmes sombres",
   pvOn: "Afficher la mise en page", pvOff: "Masquer la mise en page", pvTip: "Dessiner la mise en page (position des éléments) de ce fichier .ui dans le volet du bas, ou la masquer.",
   pvSizeTip: "Glisser pour changer la hauteur des volets source / mise en page", pvWinTip: "Taille de fenêtre à prévisualiser. « Ajuster au volet » utilise la taille du volet du bas comme taille de fenêtre.",

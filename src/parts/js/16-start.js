@@ -19,7 +19,7 @@ async function startWith(target, undo = () => {}) {
     throw e;
   }
   if (!n) { showStart("noFiles"); return true; }
-  $("folder").hidden = false; $("depth").hidden = false;
+  $("folder").hidden = false;
   if (target && target.path && fileSet.has(target.path)) openFile(target.path, { line: target.line || 0, hash: target.hash || "" });
   else openFile(pathFor(orderedKeys()[0], docLang));
   return true;
@@ -72,7 +72,8 @@ function drawStatic() {
   $("readCancel").textContent = t("readCancel"); $("readCancel").title = t("readCancelTip");
   $("pick").textContent = t("pick"); $("regrant").textContent = t("regrant"); $("pickFiles").textContent = t("pickFiles");
   $("folder").textContent = t("folder"); $("folder").title = t("folderTip");
-  const ds = $("depth"); ds.innerHTML = "";   // 하위 폴더 단계 선택 (폴더 전체에 적용되는 설정이라 머리 막대에 둠)
+  const ds = $("depth"); ds.innerHTML = "";   // 하위 폴더 단계 선택 (폴더를 열기 전에도 고를 수 있음: 값은 이 HTML 파일 경로로 기억하고, 다음에 폴더를 읽을 때 적용됨)
+  $("depthLabel").textContent = t("depthLabel");
   for (const d of DEPTHS) {
     const o = document.createElement("option");
     o.value = String(d); o.textContent = d ? t("depthN", d) : t("depthAll");

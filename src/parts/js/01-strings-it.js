@@ -29,6 +29,7 @@ UI.it = {
   noTip: "Clic: segna questa riga (il numero di riga resta nell'indirizzo)",
   navSizeTip: "Trascina per ridimensionare / doppio clic per la larghezza predefinita",
   dirTip: "Clic: comprimi / espandi la cartella",
+  depthLabel: "Livelli di sottocartelle",
   theme: "Tema (colori del testo e della sintassi)", light: "Temi chiari", dark: "Temi scuri",
   pvOn: "Mostra layout", pvOff: "Nascondi layout", pvTip: "Disegna il layout (posizione degli elementi) di questo file .ui nel riquadro in basso, oppure lo nasconde.",
   pvSizeTip: "Trascina per cambiare l'altezza dei riquadri sorgente / layout", pvWinTip: "Dimensione della finestra da visualizzare. “Adatta al riquadro” usa la dimensione del riquadro in basso come dimensione della finestra.",

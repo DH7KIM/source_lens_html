@@ -29,6 +29,7 @@ UI.en = {
   noTip: "Click: mark this line (the line number stays in the address)",
   navSizeTip: "Drag to resize / double-click for default width",
   dirTip: "Click: collapse / expand the folder",
+  depthLabel: "Subfolder levels",
   theme: "Theme (text and syntax colors)", light: "Light themes", dark: "Dark themes",
   pvOn: "Show layout", pvOff: "Hide layout", pvTip: "Draw the layout (element positions) of this .ui file in the lower pane, or hide it.",
   pvSizeTip: "Drag to change the height of the source / layout panes", pvWinTip: "Window size to preview. 'Fit to pane' uses the lower pane size as the window size.",

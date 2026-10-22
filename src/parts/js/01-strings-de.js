@@ -29,6 +29,7 @@ UI.de = {
   noTip: "Klick: diese Zeile markieren (die Zeilennummer bleibt in der Adresse)",
   navSizeTip: "Ziehen zum Ändern der Größe / Doppelklick für die Standardbreite",
   dirTip: "Klick: Ordner ein- / ausklappen",
+  depthLabel: "Unterordner-Ebenen",
   theme: "Design (Text- und Syntaxfarben)", light: "Helle Designs", dark: "Dunkle Designs",
   pvOn: "Layout anzeigen", pvOff: "Layout ausblenden", pvTip: "Das Layout (Positionen der Elemente) dieser .ui-Datei im unteren Bereich zeichnen oder ausblenden.",
   pvSizeTip: "Ziehen, um die Höhe von Quelltext- und Layoutbereich zu ändern", pvWinTip: "Fenstergröße für die Vorschau. „An Bereich anpassen“ verwendet die Größe des unteren Bereichs als Fenstergröße.",
