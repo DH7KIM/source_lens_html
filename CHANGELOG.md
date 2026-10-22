@@ -2,6 +2,14 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.60.0 (2026-10-23)
+
+### source-viewer.html
+
+- **Changed `글자` to `문자` / `소스 코드` in the Korean screen** (when `글자` means a character, the usual word is `문자`; the same messages already use `영문자` and `문자열`). 7 places in 6 lines of `01-strings-ko.js`: `tomlT002h` `다른 글자는` → `다른 문자는`, `tomlT006` `알 수 없는 글자가` → `알 수 없는 문자가`, `tomlT006h` `남는 글자를` → `남는 문자를`, `jsonJ009` `올바르지 않은 글자` → `올바르지 않은 문자`, `jsonJ010` `값 뒤에 글자가` → `값 뒤에 문자가`, `typesFilterTip` `입력한 글자로` → `입력한 문자로`, `typesColColorTip` `소스 글자를` → `소스 코드를`.
+- The `글자색` in `테마 (글자·문법 색)` is the usual expression, so it is unchanged. No other language changed.
+- Tested: all 10 language files still have the same 216 keys and load without errors; the joined file keeps the same size (393,104 bytes, because the replaced words have the same byte length).
+
 ## v0.59.0 (2026-10-23)
 
 ### source-viewer.html
