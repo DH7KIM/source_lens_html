@@ -91,6 +91,7 @@ UI.de = {
   types: "Unterstützte Dateitypen", typesTip: "Zeigt in einer Tabelle, welche Dateitypen dieser Viewer öffnen kann",
   typesColExt: "Endung · Dateiname", typesColExtTip: "Endungen (*.cpp) und Dateinamen (Makefile), die in der Liste erscheinen", typesColLang: "Sprache", typesColLangTip: "Die Sprache oder das Format der Datei", typesColColor: "Syntaxhervorhebung", typesColColorTip: "Ob der Quelltext nach Syntax eingefärbt wird",
   typesColCheck: "Syntaxprüfung", typesColCheckTip: "Ob eine Prüfung Syntaxfehler findet und in den Quellzeilen markiert",
+  typesColTreeTip: "Zeigt an, ob die Datei als aufklappbarer Baum angezeigt werden kann",
   typesYes: "Ja", typesNo: "Nein", typesNote: "Dateien mit Endungen, die nicht in dieser Tabelle stehen, erscheinen nicht in der Liste.", typesClose: "Schließen", typesCloseTip: "Dieses Fenster schließen",
   typesCurrent: "Typ der geöffneten Datei",
   typesFilterHint: "Nach Endung, Dateiname oder Sprache filtern (z. B. py)", typesFilterTip: "Zeigt nur die Zeilen, deren Endung, Dateiname oder Sprache mit dem eingegebenen Text beginnt. Wenn nichts passt, wird dieser Typ nicht unterstützt", typesNone: "„{0}“: nicht unterstützter Typ",

@@ -92,6 +92,7 @@ UI.pt = {
   types: "Tipos de arquivo compatíveis", typesTip: "Veja quais tipos de arquivo este visualizador consegue abrir",
   typesColExt: "Extensão · Nome do arquivo", typesColExtTip: "Extensões (*.cpp) e nomes de arquivo (Makefile) que aparecem na lista", typesColLang: "Linguagem", typesColLangTip: "A linguagem ou o formato do arquivo", typesColColor: "Realce de sintaxe", typesColColorTip: "Se o texto do código é colorido conforme a sintaxe",
   typesColCheck: "Verificador de sintaxe", typesColCheckTip: "Se um verificador encontra erros de sintaxe e os marca nas linhas de código",
+  typesColTreeTip: "Indica se o arquivo pode ser visualizado como uma árvore expansível",
   typesYes: "Sim", typesNo: "Não", typesNote: "Arquivos com extensões que não estão nesta tabela não aparecem na lista.", typesClose: "Fechar", typesCloseTip: "Fechar esta janela",
   typesCurrent: "Tipo do arquivo aberto",
   typesFilterHint: "Filtrar por extensão, nome de arquivo ou linguagem (ex.: py)", typesFilterTip: "Mostra somente as linhas cuja extensão, nome de arquivo ou linguagem começa com o texto digitado. Se nada corresponder, esse tipo não é compatível", typesNone: "“{0}”: tipo não compatível",

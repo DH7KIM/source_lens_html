@@ -91,6 +91,7 @@ UI["zh-tw"] = {
   types: "支援的檔案格式", typesTip: "以表格檢視本檢視器可開啟的檔案格式",
   typesColExt: "副檔名 · 檔案名稱", typesColExtTip: "清單中會出現的副檔名(*.cpp)與檔案名稱(Makefile)", typesColLang: "語言", typesColLangTip: "檔案所屬的語言或格式", typesColColor: "語法醒目提示", typesColColorTip: "是否依語法為原始碼文字上色",
   typesColCheck: "語法檢查器", typesColCheckTip: "是否有能找出語法錯誤並標在原始碼行上的檢查器",
+  typesColTreeTip: "表示是否可以依階層(樹狀)展開檢視",
   typesYes: "有", typesNo: "無", typesNote: "副檔名不在此表中的檔案不會出現在清單中。", typesClose: "關閉", typesCloseTip: "關閉此視窗",
   typesCurrent: "目前開啟檔案的類型",
   typesFilterHint: "依副檔名、檔案名稱或語言篩選(例如: py)", typesFilterTip: "只顯示副檔名、檔案名稱或語言以所輸入文字開頭的列。若沒有符合項目,表示不支援該格式", typesNone: "「{0}」:不支援的格式",

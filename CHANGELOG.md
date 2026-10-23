@@ -2,6 +2,15 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.74.0 (2026-10-23)
+
+### source-viewer.html
+
+- **Added a `Tree view` column to the `Supported file types` window** (last column, after `Syntax checker`). It shows `✓` for the types that have the tree view (JSON, JSON with comments, JSON Lines and JSON5) and `—` for the others. The column name is the same word as the `Tree` button of the file bar. The rule is the same as for showing that button (language `json` or `json5`), so a new file type needs no extra entry. The remaining columns (document view, build result, layout preview) are left for later versions.
+- 1 translation key (`typesColTreeTip`) added to all 10 languages (keys 241 -> 242, the same in all 10 languages). The column name reuses the existing `treeTree`. The translations are Claude drafts, not yet checked by native speakers.
+- Tested: 4 rows (`*.json`, `*.jsonc`, `*.jsonl *.ndjson`, `*.json5`) get `✓` and the others `—`; every row has 6 cells; the filter and the highlight of the current file's row still work; the column name and the tip appear in all 10 languages; the table scrolls sideways in a narrow window; no errors.
+- File size 424,868 -> 425,992 bytes.
+
 ## v0.73.0 (2026-10-23)
 
 ### source-viewer.html

@@ -91,6 +91,7 @@ UI["zh-cn"] = {
   types: "支持的文件格式", typesTip: "以表格查看本查看器可以打开的文件格式",
   typesColExt: "扩展名 · 文件名", typesColExtTip: "列表中会出现的扩展名(*.cpp)和文件名(Makefile)", typesColLang: "语言", typesColLangTip: "文件所属的语言或格式", typesColColor: "语法高亮", typesColColorTip: "是否按语法给源码文字着色",
   typesColCheck: "语法检查器", typesColCheckTip: "是否有能找出语法错误并标在源码行上的检查器",
+  typesColTreeTip: "表示是否可以按层级(树)展开查看",
   typesYes: "有", typesNo: "无", typesNote: "扩展名不在此表中的文件不会出现在列表中。", typesClose: "关闭", typesCloseTip: "关闭此窗口",
   typesCurrent: "当前打开文件的类型",
   typesFilterHint: "按扩展名、文件名或语言筛选(例如: py)", typesFilterTip: "只显示扩展名、文件名或语言以所输入文字开头的行。如果没有匹配项,则表示不支持该格式", typesNone: "“{0}”:不支持的格式",

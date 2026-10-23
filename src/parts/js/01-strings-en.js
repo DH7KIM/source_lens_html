@@ -91,6 +91,7 @@ UI.en = {
   types: "Supported file types", typesTip: "See which file types this viewer can open",
   typesColExt: "Extension · File name", typesColExtTip: "Extensions (*.cpp) and file names (Makefile) that appear in the list", typesColLang: "Language", typesColLangTip: "The language or format of the file", typesColColor: "Syntax highlighting", typesColColorTip: "Whether the source text is colored by syntax",
   typesColCheck: "Syntax checker", typesColCheckTip: "Whether a checker finds syntax errors and marks them on the source lines",
+  typesColTreeTip: "Whether the file can be viewed as an expandable tree",
   typesYes: "Yes", typesNo: "No", typesNote: "Files with extensions that are not in this table do not appear in the list.", typesClose: "Close", typesCloseTip: "Close this window",
   typesCurrent: "Type of the open file",
   typesFilterHint: "Filter by extension, file name or language (e.g. py)", typesFilterTip: "Shows only the rows whose extension, file name or language starts with the text you type. If nothing matches, that type is not supported", typesNone: "“{0}”: not a supported type",
