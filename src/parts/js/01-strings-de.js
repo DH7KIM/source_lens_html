@@ -93,6 +93,7 @@ UI.de = {
   typesColCheck: "Syntaxprüfung", typesColCheckTip: "Ob eine Prüfung Syntaxfehler findet und in den Quellzeilen markiert",
   typesColTreeTip: "Zeigt an, ob die Datei als aufklappbarer Baum angezeigt werden kann",
   typesColDocTip: "Zeigt an, ob die Datei als gerendertes Dokument angezeigt werden kann",
+  compilerOutput: "Compiler-Ausgabe", typesColCompilerTip: "Zeigt an, ob Fehler und Warnungen des Compilers in den Quellzeilen angezeigt werden",
   typesYes: "Ja", typesNo: "Nein", typesNote: "Dateien mit Endungen, die nicht in dieser Tabelle stehen, erscheinen nicht in der Liste.", typesClose: "Schließen", typesCloseTip: "Dieses Fenster schließen",
   typesCurrent: "Typ der geöffneten Datei",
   typesFilterHint: "Nach Endung, Dateiname oder Sprache filtern (z. B. py)", typesFilterTip: "Zeigt nur die Zeilen, deren Endung, Dateiname oder Sprache mit dem eingegebenen Text beginnt. Wenn nichts passt, wird dieser Typ nicht unterstützt", typesNone: "„{0}“: nicht unterstützter Typ",

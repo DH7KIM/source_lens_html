@@ -94,6 +94,7 @@ UI.fr = {
   typesColCheck: "Vérificateur de syntaxe", typesColCheckTip: "Indique s'il existe un vérificateur qui trouve les erreurs de syntaxe et les signale sur les lignes source",
   typesColTreeTip: "Indique si le fichier peut être affiché sous forme d'arbre dépliable",
   typesColDocTip: "Indique si le fichier peut être affiché sous forme de document mis en forme",
+  compilerOutput: "Sortie du compilateur", typesColCompilerTip: "Indique si les erreurs et avertissements du compilateur sont affichés sur les lignes source",
   typesYes: "Oui", typesNo: "Non", typesNote: "Les fichiers dont l'extension ne figure pas dans ce tableau n'apparaissent pas dans la liste.", typesClose: "Fermer", typesCloseTip: "Fermer cette fenêtre",
   typesCurrent: "Type du fichier ouvert",
   typesFilterHint: "Filtrer par extension, nom de fichier ou langage (ex. py)", typesFilterTip: "Affiche seulement les lignes dont l'extension, le nom de fichier ou le langage commence par le texte saisi. Si rien ne correspond, ce type n'est pas pris en charge", typesNone: "« {0} » : type non pris en charge",

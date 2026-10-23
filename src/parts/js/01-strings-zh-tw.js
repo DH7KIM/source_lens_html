@@ -93,6 +93,7 @@ UI["zh-tw"] = {
   typesColCheck: "語法檢查器", typesColCheckTip: "是否有能找出語法錯誤並標在原始碼行上的檢查器",
   typesColTreeTip: "表示是否可以依階層(樹狀)展開檢視",
   typesColDocTip: "表示是否可以依文件樣式(算繪)檢視",
+  compilerOutput: "編譯器輸出", typesColCompilerTip: "表示是否會在原始碼行上顯示編譯器的錯誤和警告",
   typesYes: "有", typesNo: "無", typesNote: "副檔名不在此表中的檔案不會出現在清單中。", typesClose: "關閉", typesCloseTip: "關閉此視窗",
   typesCurrent: "目前開啟檔案的類型",
   typesFilterHint: "依副檔名、檔案名稱或語言篩選(例如: py)", typesFilterTip: "只顯示副檔名、檔案名稱或語言以所輸入文字開頭的列。若沒有符合項目,表示不支援該格式", typesNone: "「{0}」:不支援的格式",

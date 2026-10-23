@@ -93,6 +93,7 @@ UI["zh-cn"] = {
   typesColCheck: "语法检查器", typesColCheckTip: "是否有能找出语法错误并标在源码行上的检查器",
   typesColTreeTip: "表示是否可以按层级(树)展开查看",
   typesColDocTip: "表示是否可以按文档样式(渲染)查看",
+  compilerOutput: "编译器输出", typesColCompilerTip: "表示是否会在源码行上显示编译器的错误和警告",
   typesYes: "有", typesNo: "无", typesNote: "扩展名不在此表中的文件不会出现在列表中。", typesClose: "关闭", typesCloseTip: "关闭此窗口",
   typesCurrent: "当前打开文件的类型",
   typesFilterHint: "按扩展名、文件名或语言筛选(例如: py)", typesFilterTip: "只显示扩展名、文件名或语言以所输入文字开头的行。如果没有匹配项,则表示不支持该格式", typesNone: "“{0}”:不支持的格式",

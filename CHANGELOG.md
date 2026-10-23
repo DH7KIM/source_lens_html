@@ -2,6 +2,16 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.78.0 (2026-10-23)
+
+### source-viewer.html
+
+- **Added a `Compiler output` column to the `Supported file types` window** (last column, after `Document view`). Only the types that can get compiler output (the errors and warnings of `build.log` and `cargo.json` at the top of the opened folder, shown on the source lines) get `✓`: the C/C++ family and Rust (6 rows). The others get `—`. The rule is language `cpp` or `rust`. The column is named after the feature's existing name ("Compiler output"), not "build result" as in the hand-over note.
+- Unlike the other columns, this rule is not the same as the real condition in the code: the code looks for the log path in every file that is not plain text, but the table shows only the source types a compiler reads. `Windows resource` (`.rc`) also gets `✓` because its language is `cpp`. The mismatch is written in the TODO.
+- 2 translation keys (`compilerOutput`, `typesColCompilerTip`) added to all 10 languages (keys 244 -> 246, the same in all 10 languages). The translations are Claude drafts, not yet checked by native speakers. The column name matches the first words of the existing `gccTip` in each language.
+- Tested: only the 6 rows `cpp`, `cpp_module`, `c`, `c_header`, `rc` and `rust` get `✓` and the others `—`; every row has 8 cells (34 rows); the column name and the tip appear in all 10 languages; no errors.
+- File size 428,625 -> 430,606 bytes. Remaining column: layout preview (`.ui`, after ui_format).
+
 ## v0.77.0 (2026-10-23)
 
 ### source-viewer.html
