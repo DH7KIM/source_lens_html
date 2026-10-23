@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.72.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.73.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -523,7 +523,7 @@ UI.ko = {
   tomlT008: "키 `{0}`가 중복되었습니다", tomlT008h: "한 표 안에서 키는 한 번만 정할 수 있습니다. 하나를 지우거나 이름을 바꾸세요",
   tomlT009: "표 `{0}`가 이미 정해졌거나 값과 겹칩니다", tomlT009h: "[표]는 한 번만 쓸 수 있습니다. 같은 이름을 반복하려면 [[이름]]을 쓰세요",
   tomlT010: "배열 또는 인라인 표가 닫히지 않았습니다", tomlT010h: "항목은 `,`로 나누고 `]` 또는 `}`로 닫으세요",
-  jsonTip: "JSON·JSON5 문법 검사입니다 (J001~J019). 문법 오류만 검사하고, 첫 오류 하나만 보여 줍니다. 밑줄에 마우스를 올리면 설명이 보입니다.",
+  jsonTip: "JSON·JSON5 문법 검사입니다 (J001~J020). 문법 오류만 검사하고, 첫 오류 하나만 보여 줍니다. 밑줄에 마우스를 올리면 설명이 보입니다.",
   jsonJ001: "주석이 닫히지 않았습니다", jsonJ001h: "`/*`로 연 주석은 `*/`로 닫으세요",
   jsonJ002: "올바르지 않은 16진수 이스케이프입니다", jsonJ002h: "`\\x` 뒤에는 16진수 2자리, `\\u` 뒤에는 4자리를 쓰세요",
   jsonJ003: "문자열이 닫히지 않았습니다", jsonJ003h: "문자열 끝에 닫는 따옴표를 붙이세요. 문자열은 줄을 넘길 수 없습니다",
@@ -543,10 +543,12 @@ UI.ko = {
   jsonJ017: "JSON에서 쓸 수 없는 숫자 `{0}`", jsonJ017h: "JSON 숫자는 `-1.5e3` 모양입니다. 앞의 `+`, 불필요한 앞자리 0, `.5`, `1.`, 16진수, Infinity, NaN은 JSON5에서만 가능합니다",
   jsonJ018: "JSON에서 쓸 수 없는 이스케이프 `{0}`", jsonJ018h: "JSON은 `\\\"` `\\\\` `\\/` `\\b` `\\f` `\\n` `\\r` `\\t` `\\uXXXX`만 쓸 수 있습니다 (`\\x`·`\\v`·`\\0`·줄 잇기는 JSON5)",
   jsonJ019: "문자열 안에 제어 문자가 있습니다", jsonJ019h: "탭 같은 제어 문자는 `\\t`처럼 이스케이프로 쓰세요",
-  syntaxN: "문법: {0}", syntax_auto: "자동", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines",
+  jsonJ020: "JSONC에서는 마지막 항목 뒤에 쉼표를 쓸 수 없습니다", jsonJ020h: "`}`·`]` 바로 앞의 쉼표를 지우세요 (JSON5는 허용하고, VS Code `settings.json`·`tsconfig.json` 같은 일부 도구도 받아들입니다)",
+  syntaxN: "문법: {0}", syntax_auto: "자동", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines", syntax_jsonc: "JSONC",
   syntaxTip: "이 파일을 어떤 문법으로 읽을지 고릅니다. 다른 파일을 열면 자동으로 돌아갑니다.",
   syntaxTip_auto: "JSON5 규칙으로 읽고, 줄마다 값 하나인 파일은 JSON Lines로 알아봅니다 (확장자와 상관없이)",
   syntaxTip_json: "엄격한 JSON으로 검사합니다. 주석, 끝 쉼표, 작은따옴표, 따옴표 없는 키 등은 오류입니다",
+  syntaxTip_jsonc: "주석을 허용하는 JSON(JSONC)으로 검사합니다. 주석은 되고, 끝 쉼표·작은따옴표·따옴표 없는 키 등은 오류입니다",
   syntaxTip_json5: "JSON5로 읽습니다. 값이 여러 개 있으면 JSON Lines로 알아보지 않고 오류로 알립니다",
   syntaxTip_lines: "줄마다 엄격한 JSON 값 하나로 읽습니다. 틀린 줄을 모두 알립니다",
   // 지원 파일 형식 (v0.49.0)
@@ -662,7 +664,7 @@ UI.en = {
   tomlT008: "duplicate key `{0}`", tomlT008h: "a key can be defined only once in a table; remove or rename one",
   tomlT009: "table `{0}` is already defined or conflicts with a value", tomlT009h: "each [table] can appear only once; use [[name]] for repeated entries",
   tomlT010: "array or inline table is not closed", tomlT010h: "separate items with `,` and close with `]` or `}`",
-  jsonTip: "JSON/JSON5 syntax check (J001-J019). Only syntax errors are checked, and only the first error is shown. Hover an underline to see the message.",
+  jsonTip: "JSON/JSON5 syntax check (J001-J020). Only syntax errors are checked, and only the first error is shown. Hover an underline to see the message.",
   jsonJ001: "comment is not closed", jsonJ001h: "close a comment opened with `/*` using `*/`",
   jsonJ002: "invalid hex escape", jsonJ002h: "`\\x` needs 2 hex digits and `\\u` needs 4",
   jsonJ003: "string is not closed", jsonJ003h: "add the closing quote; a string cannot span lines",
@@ -682,10 +684,12 @@ UI.en = {
   jsonJ017: "number `{0}` is not allowed in JSON", jsonJ017h: "write numbers like `-1.5e3`; a leading `+`, extra leading zeros, `.5`, `1.`, hex, Infinity and NaN are JSON5 only",
   jsonJ018: "escape `{0}` is not allowed in JSON", jsonJ018h: "JSON allows only `\\\"` `\\\\` `\\/` `\\b` `\\f` `\\n` `\\r` `\\t` `\\uXXXX` (`\\x`, `\\v`, `\\0` and line continuations are JSON5)",
   jsonJ019: "control character inside a string", jsonJ019h: "escape control characters such as tab, e.g. `\\t`",
-  syntaxN: "Syntax: {0}", syntax_auto: "auto", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines",
+  jsonJ020: "trailing comma is not allowed in JSONC", jsonJ020h: "remove the comma right before `}` or `]` (JSON5 allows it; some tools such as VS Code `settings.json` and `tsconfig.json` also accept it)",
+  syntaxN: "Syntax: {0}", syntax_auto: "auto", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines", syntax_jsonc: "JSONC",
   syntaxTip: "Choose the syntax used to read this file. Opening another file goes back to auto.",
   syntaxTip_auto: "Read with JSON5 rules and recognize files with one value per line as JSON Lines (whatever the extension)",
   syntaxTip_json: "Check as strict JSON. Comments, trailing commas, single quotes and unquoted keys are errors",
+  syntaxTip_jsonc: "Check as JSON with comments (JSONC). Comments are allowed; trailing commas, single quotes and unquoted keys are errors",
   syntaxTip_json5: "Read as JSON5. More than one value is reported as an error instead of being treated as JSON Lines",
   syntaxTip_lines: "Read each line as one strict JSON value. Every bad line is reported",
   // 지원 파일 형식 (v0.49.0)
@@ -801,7 +805,7 @@ UI.ja = {
   tomlT008: "キー `{0}` が重複しています", tomlT008h: "1つのテーブルの中で同じキーは一度しか定義できません。削除するか名前を変えてください",
   tomlT009: "テーブル `{0}` はすでに定義されているか、値と衝突しています", tomlT009h: "[テーブル] は一度しか書けません。繰り返す項目には [[name]] を使ってください",
   tomlT010: "配列またはインラインテーブルが閉じられていません", tomlT010h: "項目は `,` で区切り、`]` または `}` で閉じてください",
-  jsonTip: "JSON/JSON5 の構文チェック(J001-J019)。構文エラーのみを調べ、最初のエラーだけを表示します。下線にカーソルを合わせるとメッセージが表示されます。",
+  jsonTip: "JSON/JSON5 の構文チェック(J001-J020)。構文エラーのみを調べ、最初のエラーだけを表示します。下線にカーソルを合わせるとメッセージが表示されます。",
   jsonJ001: "コメントが閉じられていません", jsonJ001h: "`/*` で始めたコメントは `*/` で閉じてください",
   jsonJ002: "16進エスケープが正しくありません", jsonJ002h: "`\\x` には16進数2桁、`\\u` には4桁が必要です",
   jsonJ003: "文字列が閉じられていません", jsonJ003h: "閉じの引用符を付けてください。文字列は複数行にまたがれません",
@@ -821,10 +825,12 @@ UI.ja = {
   jsonJ017: "数値 `{0}` は JSON では使えません", jsonJ017h: "数値は `-1.5e3` のように書いてください。先頭の `+`、余分な先頭の0、`.5`、`1.`、16進数、Infinity、NaN は JSON5 のみです",
   jsonJ018: "エスケープ `{0}` は JSON では使えません", jsonJ018h: "JSON で使えるのは `\\\"` `\\\\` `\\/` `\\b` `\\f` `\\n` `\\r` `\\t` `\\uXXXX` のみです(`\\x`、`\\v`、`\\0`、行の継続は JSON5 です)",
   jsonJ019: "文字列の中に制御文字があります", jsonJ019h: "タブなどの制御文字は `\\t` のようにエスケープしてください",
-  syntaxN: "構文: {0}", syntax_auto: "自動", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines",
+  jsonJ020: "JSONC では末尾のカンマは使えません", jsonJ020h: "`}` や `]` の直前のカンマを削除してください(JSON5 では使え、VS Code の `settings.json` や `tsconfig.json` など一部のツールも受け付けます)",
+  syntaxN: "構文: {0}", syntax_auto: "自動", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines", syntax_jsonc: "JSONC",
   syntaxTip: "このファイルを読むときの構文を選びます。別のファイルを開くと自動に戻ります。",
   syntaxTip_auto: "JSON5 の規則で読み、1行に1つの値があるファイルは(拡張子に関係なく)JSON Lines として扱います",
   syntaxTip_json: "厳密な JSON としてチェックします。コメント・末尾のカンマ・単一引用符・引用符なしのキーはエラーになります",
+  syntaxTip_jsonc: "コメント付き JSON(JSONC)としてチェックします。コメントは使え、末尾のカンマ・単一引用符・引用符なしのキーはエラーになります",
   syntaxTip_json5: "JSON5 として読みます。値が複数ある場合は、JSON Lines として扱わずエラーにします",
   syntaxTip_lines: "各行を厳密な JSON の値として読みます。正しくない行はすべて報告します",
   // 지원 파일 형식 (v0.49.0)
@@ -940,7 +946,7 @@ UI["zh-cn"] = {
   tomlT008: "键 `{0}` 重复", tomlT008h: "同一个表中的键只能定义一次;请删除或重命名其中一个",
   tomlT009: "表 `{0}` 已被定义,或与某个值冲突", tomlT009h: "每个 [表] 只能出现一次;重复的条目请使用 [[name]]",
   tomlT010: "数组或内联表未闭合", tomlT010h: "各项之间用 `,` 分隔,并以 `]` 或 `}` 闭合",
-  jsonTip: "JSON/JSON5 语法检查(J001-J019)。只检查语法错误,且只显示第一个错误。将鼠标悬停在下划线上可查看消息。",
+  jsonTip: "JSON/JSON5 语法检查(J001-J020)。只检查语法错误,且只显示第一个错误。将鼠标悬停在下划线上可查看消息。",
   jsonJ001: "注释未闭合", jsonJ001h: "以 `/*` 开始的注释请用 `*/` 闭合",
   jsonJ002: "十六进制转义无效", jsonJ002h: "`\\x` 需要 2 位十六进制数,`\\u` 需要 4 位",
   jsonJ003: "字符串未闭合", jsonJ003h: "请加上结束引号;字符串不能跨行",
@@ -960,10 +966,12 @@ UI["zh-cn"] = {
   jsonJ017: "JSON 中不允许数字 `{0}`", jsonJ017h: "请把数字写成 `-1.5e3` 这样的形式;开头的 `+`、多余的前导 0、`.5`、`1.`、十六进制、Infinity 和 NaN 仅 JSON5 支持",
   jsonJ018: "JSON 中不允许转义 `{0}`", jsonJ018h: "JSON 只允许 `\\\"` `\\\\` `\\/` `\\b` `\\f` `\\n` `\\r` `\\t` `\\uXXXX`(`\\x`、`\\v`、`\\0` 和续行属于 JSON5)",
   jsonJ019: "字符串中含有控制字符", jsonJ019h: "请转义制表符等控制字符,例如 `\\t`",
-  syntaxN: "语法: {0}", syntax_auto: "自动", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines",
+  jsonJ020: "JSONC 中不允许末尾逗号", jsonJ020h: "请删除紧挨在 `}` 或 `]` 之前的逗号(JSON5 允许,VS Code 的 `settings.json`、`tsconfig.json` 等部分工具也接受)",
+  syntaxN: "语法: {0}", syntax_auto: "自动", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines", syntax_jsonc: "JSONC",
   syntaxTip: "选择读取此文件所用的语法。打开其他文件后会恢复为自动。",
   syntaxTip_auto: "按 JSON5 规则读取,并把每行一个值的文件(无论扩展名)识别为 JSON Lines",
   syntaxTip_json: "按严格的 JSON 检查。注释、末尾逗号、单引号和不带引号的键都会报错",
+  syntaxTip_jsonc: "按带注释的 JSON(JSONC)检查。允许注释;末尾逗号、单引号和不带引号的键会报错",
   syntaxTip_json5: "按 JSON5 读取。如果有多个值,会报错,而不是当作 JSON Lines",
   syntaxTip_lines: "将每一行作为一个严格的 JSON 值读取。每个错误行都会被报告",
   // 지원 파일 형식 (v0.49.0)
@@ -1079,7 +1087,7 @@ UI["zh-tw"] = {
   tomlT008: "鍵 `{0}` 重複", tomlT008h: "同一個表格中的鍵只能定義一次;請刪除或重新命名其中一個",
   tomlT009: "表格 `{0}` 已被定義,或與某個值衝突", tomlT009h: "每個 [表格] 只能出現一次;重複的項目請使用 [[name]]",
   tomlT010: "陣列或內嵌表格未結束", tomlT010h: "各項之間用 `,` 分隔,並以 `]` 或 `}` 結束",
-  jsonTip: "JSON/JSON5 語法檢查(J001-J019)。只檢查語法錯誤,且只顯示第一個錯誤。將滑鼠游標停在底線上可查看訊息。",
+  jsonTip: "JSON/JSON5 語法檢查(J001-J020)。只檢查語法錯誤,且只顯示第一個錯誤。將滑鼠游標停在底線上可查看訊息。",
   jsonJ001: "註解未結束", jsonJ001h: "以 `/*` 開始的註解請用 `*/` 結束",
   jsonJ002: "十六進位逸出無效", jsonJ002h: "`\\x` 需要 2 位十六進位數,`\\u` 需要 4 位",
   jsonJ003: "字串未結束", jsonJ003h: "請加上結束引號;字串不能跨行",
@@ -1099,10 +1107,12 @@ UI["zh-tw"] = {
   jsonJ017: "JSON 中不允許數字 `{0}`", jsonJ017h: "請把數字寫成 `-1.5e3` 這樣的形式;開頭的 `+`、多餘的前導 0、`.5`、`1.`、十六進位、Infinity 和 NaN 僅 JSON5 支援",
   jsonJ018: "JSON 中不允許逸出 `{0}`", jsonJ018h: "JSON 只允許 `\\\"` `\\\\` `\\/` `\\b` `\\f` `\\n` `\\r` `\\t` `\\uXXXX`(`\\x`、`\\v`、`\\0` 和接續行屬於 JSON5)",
   jsonJ019: "字串中含有控制字元", jsonJ019h: "請逸出定位字元等控制字元,例如 `\\t`",
-  syntaxN: "語法: {0}", syntax_auto: "自動", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines",
+  jsonJ020: "JSONC 中不允許結尾逗號", jsonJ020h: "請刪除緊接在 `}` 或 `]` 之前的逗號(JSON5 允許,VS Code 的 `settings.json`、`tsconfig.json` 等部分工具也接受)",
+  syntaxN: "語法: {0}", syntax_auto: "自動", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines", syntax_jsonc: "JSONC",
   syntaxTip: "選擇讀取此檔案所用的語法。開啟其他檔案後會恢復為自動。",
   syntaxTip_auto: "依 JSON5 規則讀取,並把每行一個值的檔案(不論副檔名)辨識為 JSON Lines",
   syntaxTip_json: "依嚴格的 JSON 檢查。註解、結尾逗號、單引號和不帶引號的鍵都會報錯",
+  syntaxTip_jsonc: "依含註解的 JSON(JSONC)檢查。允許註解;結尾逗號、單引號和不帶引號的鍵會報錯",
   syntaxTip_json5: "依 JSON5 讀取。如果有多個值,會報錯,而不是當作 JSON Lines",
   syntaxTip_lines: "將每一行當作一個嚴格的 JSON 值讀取。每個錯誤行都會被回報",
   // 지원 파일 형식 (v0.49.0)
@@ -1219,7 +1229,7 @@ UI.fr = {
   tomlT008: "clé `{0}` en double", tomlT008h: "une clé ne peut être définie qu'une fois dans une table ; supprimez-en une ou renommez-la",
   tomlT009: "la table `{0}` est déjà définie ou entre en conflit avec une valeur", tomlT009h: "chaque [table] ne peut apparaître qu'une fois ; utilisez [[name]] pour des entrées répétées",
   tomlT010: "le tableau ou la table en ligne n'est pas fermé", tomlT010h: "séparez les éléments par `,` et fermez avec `]` ou `}`",
-  jsonTip: "Vérification de la syntaxe JSON/JSON5 (J001-J019). Seules les erreurs de syntaxe sont vérifiées, et seule la première erreur est affichée. Survolez un soulignement pour voir le message.",
+  jsonTip: "Vérification de la syntaxe JSON/JSON5 (J001-J020). Seules les erreurs de syntaxe sont vérifiées, et seule la première erreur est affichée. Survolez un soulignement pour voir le message.",
   jsonJ001: "le commentaire n'est pas fermé", jsonJ001h: "fermez avec `*/` un commentaire ouvert avec `/*`",
   jsonJ002: "échappement hexadécimal invalide", jsonJ002h: "`\\x` demande 2 chiffres hexadécimaux et `\\u` en demande 4",
   jsonJ003: "la chaîne n'est pas fermée", jsonJ003h: "ajoutez le guillemet fermant ; une chaîne ne peut pas s'étendre sur plusieurs lignes",
@@ -1239,10 +1249,12 @@ UI.fr = {
   jsonJ017: "le nombre `{0}` n'est pas autorisé en JSON", jsonJ017h: "écrivez les nombres comme `-1.5e3` ; un `+` initial, des zéros initiaux en trop, `.5`, `1.`, l'hexadécimal, Infinity et NaN sont propres à JSON5",
   jsonJ018: "l'échappement `{0}` n'est pas autorisé en JSON", jsonJ018h: "JSON n'autorise que `\\\"` `\\\\` `\\/` `\\b` `\\f` `\\n` `\\r` `\\t` `\\uXXXX` (`\\x`, `\\v`, `\\0` et les lignes continuées sont propres à JSON5)",
   jsonJ019: "caractère de contrôle dans une chaîne", jsonJ019h: "échappez les caractères de contrôle comme la tabulation, par exemple `\\t`",
-  syntaxN: "Syntaxe : {0}", syntax_auto: "auto", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines",
+  jsonJ020: "la virgule finale n'est pas autorisée en JSONC", jsonJ020h: "supprimez la virgule juste avant `}` ou `]` (JSON5 l'autorise, et certains outils comme `settings.json` de VS Code ou `tsconfig.json` l'acceptent aussi)",
+  syntaxN: "Syntaxe : {0}", syntax_auto: "auto", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines", syntax_jsonc: "JSONC",
   syntaxTip: "Choisissez la syntaxe utilisée pour lire ce fichier. Ouvrir un autre fichier revient à auto.",
   syntaxTip_auto: "Lire avec les règles JSON5 et reconnaître comme JSON Lines les fichiers à une valeur par ligne (quelle que soit l'extension)",
   syntaxTip_json: "Vérifier comme du JSON strict. Les commentaires, virgules finales, apostrophes et clés sans guillemets sont des erreurs",
+  syntaxTip_jsonc: "Vérifier comme du JSON avec commentaires (JSONC). Les commentaires sont autorisés ; les virgules finales, apostrophes et clés sans guillemets sont des erreurs",
   syntaxTip_json5: "Lire comme du JSON5. Plus d'une valeur est signalé comme une erreur au lieu d'être traité comme du JSON Lines",
   syntaxTip_lines: "Lire chaque ligne comme une valeur JSON stricte. Chaque ligne incorrecte est signalée",
   // 지원 파일 형식 (v0.49.0)
@@ -1358,7 +1370,7 @@ UI.de = {
   tomlT008: "doppelter Schlüssel `{0}`", tomlT008h: "ein Schlüssel darf in einer Tabelle nur einmal definiert werden; einen entfernen oder umbenennen",
   tomlT009: "Tabelle `{0}` ist bereits definiert oder steht im Konflikt mit einem Wert", tomlT009h: "jede [Tabelle] darf nur einmal vorkommen; für wiederholte Einträge [[name]] verwenden",
   tomlT010: "Array oder Inline-Tabelle ist nicht geschlossen", tomlT010h: "Einträge mit `,` trennen und mit `]` oder `}` schließen",
-  jsonTip: "Syntaxprüfung für JSON/JSON5 (J001-J019). Es werden nur Syntaxfehler geprüft, und nur der erste Fehler wird angezeigt. Über einer Unterstreichung verweilen, um die Meldung zu sehen.",
+  jsonTip: "Syntaxprüfung für JSON/JSON5 (J001-J020). Es werden nur Syntaxfehler geprüft, und nur der erste Fehler wird angezeigt. Über einer Unterstreichung verweilen, um die Meldung zu sehen.",
   jsonJ001: "Kommentar ist nicht geschlossen", jsonJ001h: "einen mit `/*` begonnenen Kommentar mit `*/` schließen",
   jsonJ002: "ungültiges Hex-Escape", jsonJ002h: "`\\x` braucht 2 Hexziffern und `\\u` braucht 4",
   jsonJ003: "Zeichenkette ist nicht geschlossen", jsonJ003h: "das schließende Anführungszeichen ergänzen; eine Zeichenkette darf sich nicht über mehrere Zeilen erstrecken",
@@ -1378,10 +1390,12 @@ UI.de = {
   jsonJ017: "die Zahl `{0}` ist in JSON nicht erlaubt", jsonJ017h: "Zahlen wie `-1.5e3` schreiben; ein führendes `+`, überzählige führende Nullen, `.5`, `1.`, Hexadezimalzahlen, Infinity und NaN gibt es nur in JSON5",
   jsonJ018: "das Escape `{0}` ist in JSON nicht erlaubt", jsonJ018h: "JSON erlaubt nur `\\\"` `\\\\` `\\/` `\\b` `\\f` `\\n` `\\r` `\\t` `\\uXXXX` (`\\x`, `\\v`, `\\0` und Zeilenfortsetzungen gibt es nur in JSON5)",
   jsonJ019: "Steuerzeichen in einer Zeichenkette", jsonJ019h: "Steuerzeichen wie den Tabulator escapen, z. B. `\\t`",
-  syntaxN: "Syntax: {0}", syntax_auto: "automatisch", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines",
+  jsonJ020: "ein abschließendes Komma ist in JSONC nicht erlaubt", jsonJ020h: "das Komma direkt vor `}` oder `]` entfernen (JSON5 erlaubt es; manche Werkzeuge wie `settings.json` von VS Code oder `tsconfig.json` akzeptieren es ebenfalls)",
+  syntaxN: "Syntax: {0}", syntax_auto: "automatisch", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines", syntax_jsonc: "JSONC",
   syntaxTip: "Wählen Sie die Syntax, mit der diese Datei gelesen wird. Beim Öffnen einer anderen Datei wird wieder automatisch verwendet.",
   syntaxTip_auto: "Mit JSON5-Regeln lesen und Dateien mit einem Wert pro Zeile (unabhängig von der Dateiendung) als JSON Lines erkennen",
   syntaxTip_json: "Als striktes JSON prüfen. Kommentare, abschließende Kommas, einfache Anführungszeichen und Schlüssel ohne Anführungszeichen sind Fehler",
+  syntaxTip_jsonc: "Als JSON mit Kommentaren (JSONC) prüfen. Kommentare sind erlaubt; abschließende Kommas, einfache Anführungszeichen und Schlüssel ohne Anführungszeichen sind Fehler",
   syntaxTip_json5: "Als JSON5 lesen. Mehr als ein Wert wird als Fehler gemeldet, statt als JSON Lines behandelt zu werden",
   syntaxTip_lines: "Jede Zeile als einen strikten JSON-Wert lesen. Jede fehlerhafte Zeile wird gemeldet",
   // 지원 파일 형식 (v0.49.0)
@@ -1497,7 +1511,7 @@ UI.it = {
   tomlT008: "chiave `{0}` duplicata", tomlT008h: "una chiave può essere definita una sola volta in una tabella; eliminane una o rinominala",
   tomlT009: "la tabella `{0}` è già definita o è in conflitto con un valore", tomlT009h: "ogni [tabella] può comparire una sola volta; per voci ripetute usa [[name]]",
   tomlT010: "l'array o la tabella inline non è chiuso", tomlT010h: "separa gli elementi con `,` e chiudi con `]` o `}`",
-  jsonTip: "Controllo della sintassi JSON/JSON5 (J001-J019). Si controllano solo gli errori di sintassi e viene mostrato solo il primo errore. Passa il puntatore su una sottolineatura per vedere il messaggio.",
+  jsonTip: "Controllo della sintassi JSON/JSON5 (J001-J020). Si controllano solo gli errori di sintassi e viene mostrato solo il primo errore. Passa il puntatore su una sottolineatura per vedere il messaggio.",
   jsonJ001: "il commento non è chiuso", jsonJ001h: "chiudi con `*/` un commento aperto con `/*`",
   jsonJ002: "escape esadecimale non valido", jsonJ002h: "`\\x` richiede 2 cifre esadecimali e `\\u` ne richiede 4",
   jsonJ003: "la stringa non è chiusa", jsonJ003h: "aggiungi le virgolette di chiusura; una stringa non può estendersi su più righe",
@@ -1517,10 +1531,12 @@ UI.it = {
   jsonJ017: "il numero `{0}` non è ammesso in JSON", jsonJ017h: "scrivi i numeri come `-1.5e3`; un `+` iniziale, zeri iniziali in più, `.5`, `1.`, esadecimale, Infinity e NaN sono solo di JSON5",
   jsonJ018: "l'escape `{0}` non è ammesso in JSON", jsonJ018h: "JSON ammette solo `\\\"` `\\\\` `\\/` `\\b` `\\f` `\\n` `\\r` `\\t` `\\uXXXX` (`\\x`, `\\v`, `\\0` e le continuazioni di riga sono di JSON5)",
   jsonJ019: "carattere di controllo dentro una stringa", jsonJ019h: "fai l'escape dei caratteri di controllo come la tabulazione, per esempio `\\t`",
-  syntaxN: "Sintassi: {0}", syntax_auto: "automatica", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines",
+  jsonJ020: "la virgola finale non è ammessa in JSONC", jsonJ020h: "togli la virgola subito prima di `}` o `]` (JSON5 la ammette, e anche alcuni strumenti come `settings.json` di VS Code o `tsconfig.json` la accettano)",
+  syntaxN: "Sintassi: {0}", syntax_auto: "automatica", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines", syntax_jsonc: "JSONC",
   syntaxTip: "Scegli la sintassi usata per leggere questo file. Aprendo un altro file si torna ad automatica.",
   syntaxTip_auto: "Legge con le regole JSON5 e riconosce come JSON Lines i file con un valore per riga (qualunque sia l'estensione)",
   syntaxTip_json: "Controlla come JSON rigoroso. Commenti, virgole finali, apici singoli e chiavi senza virgolette sono errori",
+  syntaxTip_jsonc: "Controlla come JSON con commenti (JSONC). I commenti sono ammessi; virgole finali, apici singoli e chiavi senza virgolette sono errori",
   syntaxTip_json5: "Legge come JSON5. Più di un valore viene segnalato come errore invece di essere trattato come JSON Lines",
   syntaxTip_lines: "Legge ogni riga come un valore JSON rigoroso. Ogni riga errata viene segnalata",
   // 지원 파일 형식 (v0.49.0)
@@ -1636,7 +1652,7 @@ UI.es = {
   tomlT008: "clave duplicada `{0}`", tomlT008h: "una clave solo se puede definir una vez en una tabla; quite una o cámbiele el nombre",
   tomlT009: "la tabla `{0}` ya está definida o entra en conflicto con un valor", tomlT009h: "cada [tabla] solo puede aparecer una vez; use [[nombre]] para entradas repetidas",
   tomlT010: "la matriz o la tabla en línea no está cerrada", tomlT010h: "separe los elementos con `,` y cierre con `]` o `}`",
-  jsonTip: "Verificación de sintaxis JSON/JSON5 (J001-J019). Solo se comprueban errores de sintaxis y solo se muestra el primer error. Pase el cursor sobre un subrayado para ver el mensaje.",
+  jsonTip: "Verificación de sintaxis JSON/JSON5 (J001-J020). Solo se comprueban errores de sintaxis y solo se muestra el primer error. Pase el cursor sobre un subrayado para ver el mensaje.",
   jsonJ001: "el comentario no está cerrado", jsonJ001h: "cierre con `*/` un comentario abierto con `/*`",
   jsonJ002: "escape hexadecimal no válido", jsonJ002h: "`\\x` necesita 2 dígitos hexadecimales y `\\u` necesita 4",
   jsonJ003: "la cadena no está cerrada", jsonJ003h: "añada las comillas de cierre; una cadena no puede ocupar varias líneas",
@@ -1656,10 +1672,12 @@ UI.es = {
   jsonJ017: "el número `{0}` no está permitido en JSON", jsonJ017h: "escriba los números como `-1.5e3`; un `+` inicial, ceros iniciales de más, `.5`, `1.`, hexadecimales, Infinity y NaN son solo de JSON5",
   jsonJ018: "el escape `{0}` no está permitido en JSON", jsonJ018h: "JSON solo admite `\\\"` `\\\\` `\\/` `\\b` `\\f` `\\n` `\\r` `\\t` `\\uXXXX` (`\\x`, `\\v`, `\\0` y las continuaciones de línea son de JSON5)",
   jsonJ019: "carácter de control dentro de una cadena", jsonJ019h: "escape los caracteres de control, como el tabulador, por ejemplo `\\t`",
-  syntaxN: "Sintaxis: {0}", syntax_auto: "automática", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines",
+  jsonJ020: "la coma final no está permitida en JSONC", jsonJ020h: "quite la coma justo antes de `}` o `]` (JSON5 la permite, y algunas herramientas como `settings.json` de VS Code o `tsconfig.json` también la aceptan)",
+  syntaxN: "Sintaxis: {0}", syntax_auto: "automática", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines", syntax_jsonc: "JSONC",
   syntaxTip: "Elija la sintaxis con la que se lee este archivo. Al abrir otro archivo vuelve a automática.",
   syntaxTip_auto: "Lee con las reglas de JSON5 y reconoce como JSON Lines los archivos con un valor por línea (sea cual sea la extensión)",
   syntaxTip_json: "Verifica como JSON estricto. Los comentarios, las comas finales, las comillas simples y las claves sin comillas son errores",
+  syntaxTip_jsonc: "Verifica como JSON con comentarios (JSONC). Los comentarios están permitidos; las comas finales, las comillas simples y las claves sin comillas son errores",
   syntaxTip_json5: "Lee como JSON5. Si hay más de un valor, se informa como error en lugar de tratarlo como JSON Lines",
   syntaxTip_lines: "Lee cada línea como un valor JSON estricto. Se informa de cada línea incorrecta",
   // 지원 파일 형식 (v0.49.0)
@@ -1776,7 +1794,7 @@ UI.pt = {
   tomlT008: "chave duplicada `{0}`", tomlT008h: "uma chave só pode ser definida uma vez em uma tabela; remova uma ou renomeie",
   tomlT009: "a tabela `{0}` já foi definida ou entra em conflito com um valor", tomlT009h: "cada [tabela] só pode aparecer uma vez; use [[nome]] para entradas repetidas",
   tomlT010: "o array ou a tabela em linha não está fechado", tomlT010h: "separe os itens com `,` e feche com `]` ou `}`",
-  jsonTip: "Verificação de sintaxe JSON/JSON5 (J001-J019). Somente erros de sintaxe são verificados e somente o primeiro erro é mostrado. Passe o mouse sobre um sublinhado para ver a mensagem.",
+  jsonTip: "Verificação de sintaxe JSON/JSON5 (J001-J020). Somente erros de sintaxe são verificados e somente o primeiro erro é mostrado. Passe o mouse sobre um sublinhado para ver a mensagem.",
   jsonJ001: "o comentário não está fechado", jsonJ001h: "feche com `*/` um comentário aberto com `/*`",
   jsonJ002: "escape hexadecimal inválido", jsonJ002h: "`\\x` precisa de 2 dígitos hexadecimais e `\\u` precisa de 4",
   jsonJ003: "a string não está fechada", jsonJ003h: "adicione as aspas de fechamento; uma string não pode ocupar várias linhas",
@@ -1796,10 +1814,12 @@ UI.pt = {
   jsonJ017: "o número `{0}` não é permitido em JSON", jsonJ017h: "escreva números como `-1.5e3`; um `+` inicial, zeros à esquerda a mais, `.5`, `1.`, hexadecimal, Infinity e NaN são somente do JSON5",
   jsonJ018: "o escape `{0}` não é permitido em JSON", jsonJ018h: "JSON aceita somente `\\\"` `\\\\` `\\/` `\\b` `\\f` `\\n` `\\r` `\\t` `\\uXXXX` (`\\x`, `\\v`, `\\0` e continuações de linha são do JSON5)",
   jsonJ019: "caractere de controle dentro de uma string", jsonJ019h: "use escape nos caracteres de controle, como a tabulação, por exemplo `\\t`",
-  syntaxN: "Sintaxe: {0}", syntax_auto: "automática", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines",
+  jsonJ020: "vírgula final não é permitida em JSONC", jsonJ020h: "remova a vírgula logo antes de `}` ou `]` (JSON5 permite, e algumas ferramentas como o `settings.json` do VS Code e o `tsconfig.json` também aceitam)",
+  syntaxN: "Sintaxe: {0}", syntax_auto: "automática", syntax_json: "JSON", syntax_json5: "JSON5", syntax_lines: "JSON Lines", syntax_jsonc: "JSONC",
   syntaxTip: "Escolha a sintaxe usada para ler este arquivo. Ao abrir outro arquivo, volta para automática.",
   syntaxTip_auto: "Lê com as regras do JSON5 e reconhece como JSON Lines os arquivos com um valor por linha (seja qual for a extensão)",
   syntaxTip_json: "Verifica como JSON estrito. Comentários, vírgulas finais, aspas simples e chaves sem aspas são erros",
+  syntaxTip_jsonc: "Verifica como JSON com comentários (JSONC). Comentários são permitidos; vírgulas finais, aspas simples e chaves sem aspas são erros",
   syntaxTip_json5: "Lê como JSON5. Mais de um valor é informado como erro em vez de ser tratado como JSON Lines",
   syntaxTip_lines: "Lê cada linha como um valor JSON estrito. Cada linha incorreta é informada",
   // 지원 파일 형식 (v0.49.0)
@@ -2171,6 +2191,7 @@ function highlight(src, lang) {
 // opt(JSON Lines의 한 줄을 읽을 때): line0 = 그 줄 앞의 줄 수(줄 번호에 더함), id0 = 노드 번호를 시작할 값, strict = 엄격한 JSON(J013~J019)
 function json5Tree(src, opt) {
   const line0 = (opt && opt.line0) || 0;
+  const jsonc = !!(opt && opt.jsonc);   // JSONC: strict와 같이 켜면 주석만 허용하고 나머지는 엄격한 JSON (끝 쉼표는 J020)
   const strict = !!(opt && opt.strict);   // 엄격한 JSON: JSON5 전용 문법(주석·끝 쉼표·작은따옴표·따옴표 없는 키·JSON5 숫자·JSON5 이스케이프)을 오류로 알림
   const starts = [0];
   for (let k = 0; k < src.length; k++) if (src[k] === "\n") starts.push(k + 1);
@@ -2201,8 +2222,8 @@ function json5Tree(src, opt) {
     for (;;) {
       const c = src[i];
       if (c !== undefined && /\s/.test(c)) i++;
-      else if (c === "/" && src[i + 1] === "/") { if (strict) fail("J013", "comments are not allowed in JSON", i, 2); while (i < src.length && src[i] !== "\n") i++; }
-      else if (c === "/" && src[i + 1] === "*") { if (strict) fail("J013", "comments are not allowed in JSON", i, 2); const e = src.indexOf("*/", i + 2); if (e < 0) fail("J001", "unclosed comment", i, 2); i = e + 2; }
+      else if (c === "/" && src[i + 1] === "/") { if (strict && !jsonc) fail("J013", "comments are not allowed in JSON", i, 2); while (i < src.length && src[i] !== "\n") i++; }
+      else if (c === "/" && src[i + 1] === "*") { if (strict && !jsonc) fail("J013", "comments are not allowed in JSON", i, 2); const e = src.indexOf("*/", i + 2); if (e < 0) fail("J001", "unclosed comment", i, 2); i = e + 2; }
       else return;
     }
   };
@@ -2255,7 +2276,7 @@ function json5Tree(src, opt) {
       try {
         for (;;) {
           ws();
-          if (src[i] === "}") { if (strict && comma >= 0) fail("J014", "trailing comma is not allowed in JSON", comma, 1); i++; break; }
+          if (src[i] === "}") { if (strict && comma >= 0) fail(jsonc ? "J020" : "J014", jsonc ? "trailing comma is not allowed in JSONC" : "trailing comma is not allowed in JSON", comma, 1); i++; break; }
           comma = -1; ks = i; const name = key(); ws();
           if (src[i] !== ":") fail("J005", "':' expected", i, 1);
           i++;
@@ -2271,7 +2292,7 @@ function json5Tree(src, opt) {
       try {
         for (;;) {
           ws();
-          if (src[i] === "]") { if (strict && comma >= 0) fail("J014", "trailing comma is not allowed in JSON", comma, 1); i++; break; }
+          if (src[i] === "]") { if (strict && comma >= 0) fail(jsonc ? "J020" : "J014", jsonc ? "trailing comma is not allowed in JSONC" : "trailing comma is not allowed in JSON", comma, 1); i++; break; }
           comma = -1;
           kids.push(value(kids.length, depth + 1)); ws();
           if (src[i] === ",") { comma = i; i++; }
@@ -2335,11 +2356,11 @@ function jsonLinesOf(text, e) {
 }
 
 // ---------- JSON 문법 고르기 (파일마다, 열려 있는 동안만) ----------
-// "auto" = 지금까지처럼 JSON5 규칙으로 읽고 JSON Lines는 알아봄, "json" = 엄격한 JSON, "json5" = JSON5(JSON Lines 알아보지 않음), "lines" = 줄마다 엄격한 JSON
+// "auto" = 지금까지처럼 JSON5 규칙으로 읽고 JSON Lines는 알아봄, "json" = 엄격한 JSON, "jsonc" = 주석만 허용하는 JSON(끝 쉼표는 오류), "json5" = JSON5(JSON Lines 알아보지 않음), "lines" = 줄마다 엄격한 JSON
 let jsonSyntax = "auto";
-const JSON_SYNTAXES = ["auto", "json", "json5", "lines"];
+const JSON_SYNTAXES = ["auto", "json", "jsonc", "json5", "lines"];
 /// 파일 전체를 고른 문법으로 읽는다 ("lines"는 json5Lines를 따로 부른다). 틀리면 json5Tree와 같은 오류를 던진다
-function jsonTreeOf(text) { return json5Tree(text, { strict: jsonSyntax === "json" }); }
+function jsonTreeOf(text) { return json5Tree(text, { strict: jsonSyntax === "json" || jsonSyntax === "jsonc", jsonc: jsonSyntax === "jsonc" }); }
 // ---------- .ui 오류·경고 설명 번역 (원문 영어 → 번역) ----------
 // 원본: tile_font_editor_cpp의 language/ko/ui-check.json5 (섹션 "ui-check"). 그 파일을 고치면 이 표도 같게 고친다.
 // {} 자리표시자는 원문과 같은 개수·순서. 없는 키나 빈 글이면 영어 원문을 쓴다.

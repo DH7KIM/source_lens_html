@@ -2,6 +2,16 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.73.0 (2026-10-23)
+
+### source-viewer.html
+
+- **JSON 파일의 문법 상자에 `JSONC` 항목을 더함** (`문법: 자동 / JSON / JSONC / JSON5 / JSON Lines`). JSONC는 주석을 허용하는 JSON: `//`·`/* */` 주석은 되고, 나머지는 엄격한 JSON으로 검사함(작은따옴표·따옴표 없는 키·JSON5 숫자·이스케이프는 오류). 끝 쉼표는 새 코드 **J020**(`JSONC에서는 마지막 항목 뒤에 쉼표를 쓸 수 없습니다`)으로 오류이고, 도움말에 JSON5와 일부 도구(VS Code `settings.json`·`tsconfig.json`)는 받아들인다고 알려 줌. 고른 문법은 다른 문법 선택처럼 열린 그 파일에만 적용됨.
+- **안 바꾼 것**: `자동`은 `.jsonc`를 포함해 모든 JSON 파일을 지금처럼 JSON5 규칙으로 읽고, `JSON`도 엄격한 JSON 그대로. `.jsonc` 파일을 처음부터 `JSONC`로 여는 것은 다음 버전 후보(TODO).
+- 번역 키 4개(`syntax_jsonc`·`syntaxTip_jsonc`·`jsonJ020`·`jsonJ020h`)를 10개 언어 모두에 더함(키 237 → 241개, 10개 언어 모두 같음). `jsonTip`의 검사 코드 범위도 J001~J020으로 고침. 번역은 Claude 초안이고 원어민 확인 전.
+- 시험: JSONC에서는 주석이 통과하고 JSON에서는 J013, 끝 쉼표는 JSONC J020·JSON J014·JSON5 통과, 작은따옴표는 JSONC에서 J015, 닫히지 않은 주석은 JSONC에서 J001, `자동`·`JSON`·`JSON5` 결과는 그대로, 상자에 `문법: JSONC`와 오류 줄이 화면에 보임, 10개 언어에서 설명·선택지 글이 나옴, 오류 없음.
+- 파일 용량 420,337 → 424,868바이트.
+
 ## v0.72.0 (2026-10-23)
 
 ### source-viewer.html

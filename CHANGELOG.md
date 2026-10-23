@@ -2,6 +2,16 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.73.0 (2026-10-23)
+
+### source-viewer.html
+
+- **Added a `JSONC` item to the syntax box of JSON files** (`Syntax: auto / JSON / JSONC / JSON5 / JSON Lines`). JSONC is JSON with comments: `//` and `/* */` comments are allowed, and everything else is checked as strict JSON (single quotes, unquoted keys, JSON5 numbers and escapes are errors). A trailing comma is an error with the new code **J020** (`trailing comma is not allowed in JSONC`); the help says that JSON5 and some tools (VS Code `settings.json`, `tsconfig.json`) accept it. The choice only applies to the open file, like the other syntax choices.
+- **Not changed**: `auto` still reads every JSON file with JSON5 rules (including `.jsonc`), and `JSON` is still strict JSON. Making `.jsonc` files start as `JSONC` is left for a later version (TODO).
+- 4 translation keys (`syntax_jsonc`, `syntaxTip_jsonc`, `jsonJ020`, `jsonJ020h`) added to all 10 languages (keys 237 -> 241, the same in all 10 languages), and the check code range in `jsonTip` is now J001-J020. The translations are Claude drafts, not yet checked by native speakers.
+- Tested: comments pass in JSONC but not in JSON (J013); a trailing comma gives J020 in JSONC, J014 in JSON and passes in JSON5; single quotes give J015 in JSONC; an unclosed comment gives J001 in JSONC; the results of `auto`, `JSON` and `JSON5` did not change; the box shows `Syntax: JSONC` and the error line shows on screen; the message and the choice text appear in all 10 languages; no errors.
+- File size 420,337 -> 424,868 bytes.
+
 ## v0.72.0 (2026-10-23)
 
 ### source-viewer.html

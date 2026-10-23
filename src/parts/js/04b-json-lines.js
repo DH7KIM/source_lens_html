@@ -33,8 +33,8 @@ function jsonLinesOf(text, e) {
 }
 
 // ---------- JSON 문법 고르기 (파일마다, 열려 있는 동안만) ----------
-// "auto" = 지금까지처럼 JSON5 규칙으로 읽고 JSON Lines는 알아봄, "json" = 엄격한 JSON, "json5" = JSON5(JSON Lines 알아보지 않음), "lines" = 줄마다 엄격한 JSON
+// "auto" = 지금까지처럼 JSON5 규칙으로 읽고 JSON Lines는 알아봄, "json" = 엄격한 JSON, "jsonc" = 주석만 허용하는 JSON(끝 쉼표는 오류), "json5" = JSON5(JSON Lines 알아보지 않음), "lines" = 줄마다 엄격한 JSON
 let jsonSyntax = "auto";
-const JSON_SYNTAXES = ["auto", "json", "json5", "lines"];
+const JSON_SYNTAXES = ["auto", "json", "jsonc", "json5", "lines"];
 /// 파일 전체를 고른 문법으로 읽는다 ("lines"는 json5Lines를 따로 부른다). 틀리면 json5Tree와 같은 오류를 던진다
-function jsonTreeOf(text) { return json5Tree(text, { strict: jsonSyntax === "json" }); }
+function jsonTreeOf(text) { return json5Tree(text, { strict: jsonSyntax === "json" || jsonSyntax === "jsonc", jsonc: jsonSyntax === "jsonc" }); }

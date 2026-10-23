@@ -15,6 +15,7 @@
 // opt(JSON Lines의 한 줄을 읽을 때): line0 = 그 줄 앞의 줄 수(줄 번호에 더함), id0 = 노드 번호를 시작할 값, strict = 엄격한 JSON(J013~J019)
 function json5Tree(src, opt) {
   const line0 = (opt && opt.line0) || 0;
+  const jsonc = !!(opt && opt.jsonc);   // JSONC: strict와 같이 켜면 주석만 허용하고 나머지는 엄격한 JSON (끝 쉼표는 J020)
   const strict = !!(opt && opt.strict);   // 엄격한 JSON: JSON5 전용 문법(주석·끝 쉼표·작은따옴표·따옴표 없는 키·JSON5 숫자·JSON5 이스케이프)을 오류로 알림
   const starts = [0];
   for (let k = 0; k < src.length; k++) if (src[k] === "\n") starts.push(k + 1);
@@ -45,8 +46,8 @@ function json5Tree(src, opt) {
     for (;;) {
       const c = src[i];
       if (c !== undefined && /\s/.test(c)) i++;
-      else if (c === "/" && src[i + 1] === "/") { if (strict) fail("J013", "comments are not allowed in JSON", i, 2); while (i < src.length && src[i] !== "\n") i++; }
-      else if (c === "/" && src[i + 1] === "*") { if (strict) fail("J013", "comments are not allowed in JSON", i, 2); const e = src.indexOf("*/", i + 2); if (e < 0) fail("J001", "unclosed comment", i, 2); i = e + 2; }
+      else if (c === "/" && src[i + 1] === "/") { if (strict && !jsonc) fail("J013", "comments are not allowed in JSON", i, 2); while (i < src.length && src[i] !== "\n") i++; }
+      else if (c === "/" && src[i + 1] === "*") { if (strict && !jsonc) fail("J013", "comments are not allowed in JSON", i, 2); const e = src.indexOf("*/", i + 2); if (e < 0) fail("J001", "unclosed comment", i, 2); i = e + 2; }
       else return;
     }
   };
@@ -99,7 +100,7 @@ function json5Tree(src, opt) {
       try {
         for (;;) {
           ws();
-          if (src[i] === "}") { if (strict && comma >= 0) fail("J014", "trailing comma is not allowed in JSON", comma, 1); i++; break; }
+          if (src[i] === "}") { if (strict && comma >= 0) fail(jsonc ? "J020" : "J014", jsonc ? "trailing comma is not allowed in JSONC" : "trailing comma is not allowed in JSON", comma, 1); i++; break; }
           comma = -1; ks = i; const name = key(); ws();
           if (src[i] !== ":") fail("J005", "':' expected", i, 1);
           i++;
@@ -115,7 +116,7 @@ function json5Tree(src, opt) {
       try {
         for (;;) {
           ws();
-          if (src[i] === "]") { if (strict && comma >= 0) fail("J014", "trailing comma is not allowed in JSON", comma, 1); i++; break; }
+          if (src[i] === "]") { if (strict && comma >= 0) fail(jsonc ? "J020" : "J014", jsonc ? "trailing comma is not allowed in JSONC" : "trailing comma is not allowed in JSON", comma, 1); i++; break; }
           comma = -1;
           kids.push(value(kids.length, depth + 1)); ws();
           if (src[i] === ",") { comma = i; i++; }
