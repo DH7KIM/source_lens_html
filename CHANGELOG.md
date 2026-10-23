@@ -2,6 +2,18 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.76.0 (2026-10-23)
+
+### source-viewer.html · joining tool
+
+- **The version and the date are now managed in one place, `src/version.txt`** (the `version.txt` method of `tile_font_editor_cpp`). Two lines: the version (`0.76.0`), then the date of the update (`2026-10-23`). The date is the one written in this file, not the day of joining, so joining the same version again later gives the same result and `--check` stays reliable.
+- **`tools/merge-parts.cpp` replaces `{{VERSION}}` with the version and `{{DATE}}` with the date after joining.** If `version.txt` is missing, does not have 2 lines, or is malformed (version `number.number.number`, date `YYYY-MM-DD`), it stops with an error (exit code 2) and does not write the joined file. CRLF line ends and empty lines are accepted. The output shows the version, the date and how many were replaced. A warning is shown if there is no `{{VERSION}}` at all.
+- The top comment of `src/parts/00-head.html` is now `Source Viewer v{{VERSION}} ({{DATE}})`. In the joined `source-viewer.html` only this one comment line changes (`v0.75.0` -> `v0.76.0 (2026-10-23)`). Nothing is shown on the screen yet (the display in the settings window is the next version).
+- From now on, to raise the version edit only `src/version.txt`, not `00-head.html`. `--check` compares the result after the replacement, so right after changing `version.txt` a "different" result is normal.
+- Added a "Version" section to `src/README.ko.md` and `src/README.md`.
+- Tested: normal join and `--check` (equal); changing `version.txt` shows in the comment and `--check` reports a difference (exit code 1); a missing file, a single line, a malformed version (`v0.1`) and a malformed date (`2026-13-40`) each give an error (exit code 2); CRLF and empty lines are accepted; no `{{` is left in the result; the only difference in the joined HTML is the one comment line.
+- File size 427,102 -> 427,115 bytes.
+
 ## v0.75.0 (2026-10-23)
 
 ### source-viewer.html

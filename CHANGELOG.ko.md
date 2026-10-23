@@ -2,6 +2,18 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.76.0 (2026-10-23)
+
+### source-viewer.html · 합치기 도구
+
+- **버전과 날짜를 `src/version.txt` 한 곳에서만 관리**하게 함 (`tile_font_editor_cpp`의 `version.txt` 방식). 두 줄: 첫 줄 버전(`0.76.0`), 둘째 줄 업데이트한 날짜(`2026-10-23`). 날짜는 합친 날이 아니라 이 파일에 적은 날짜라서, 같은 버전을 나중에 다시 합쳐도 결과가 같고 `--check`가 그대로 믿을 만함.
+- **`tools/merge-parts.cpp`가 합친 뒤 `{{VERSION}}`을 버전으로, `{{DATE}}`를 날짜로 바꿈.** `version.txt`가 없거나 줄이 2개가 아니거나 형식이 틀리면(버전 `숫자.숫자.숫자`, 날짜 `YYYY-MM-DD`) 오류(코드 2)로 멈추고 합친 파일을 쓰지 않음. 줄 끝 CRLF·빈 줄은 허용. 출력에 버전·날짜와 바꾼 개수를 보여 줌. `{{VERSION}}`이 하나도 없으면 경고.
+- `src/parts/00-head.html` 맨 위 주석을 `Source Viewer v{{VERSION}} ({{DATE}})`로 바꿈. 합친 `source-viewer.html`에서 바뀐 곳은 이 주석 한 줄뿐(`v0.75.0` → `v0.76.0 (2026-10-23)`). 화면에는 아직 아무것도 안 보임(설정 창 표시는 다음 버전).
+- 앞으로 버전을 올릴 때는 `00-head.html`이 아니라 `src/version.txt`만 고침. `--check`는 바꿔 넣은 뒤의 결과와 비교하므로 `version.txt`를 바꾼 직후에는 "다름"이 정상.
+- `src/README.ko.md`·`src/README.md`에 "버전" 설명을 더함.
+- 시험: 정상 합치기와 `--check`(같음), `version.txt`를 바꾸면 주석에 반영되고 `--check`는 다름(코드 1), 파일 없음·한 줄뿐·버전 형식 틀림(`v0.1`)·날짜 형식 틀림(`2026-13-40`)은 각각 오류(코드 2), CRLF와 빈 줄 허용, 결과에 `{{`가 남지 않음, 합친 HTML 차이는 주석 한 줄뿐.
+- 파일 용량 427,102 → 427,115바이트.
+
 ## v0.75.0 (2026-10-23)
 
 ### source-viewer.html

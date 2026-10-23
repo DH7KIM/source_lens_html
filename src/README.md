@@ -35,7 +35,11 @@ To check that the joined file equals another file byte for byte (for example aft
 tools/merge-parts src source-viewer.merged.html --check source-viewer.html
 ```
 
-The exit code is 0 when done (and equal), 1 when the check finds a difference, 2 on an error (for example a missing part). The tool uses plain `#include` and not C++ modules on purpose: it is one small file, and `import std;` would need an extra build step.
+The exit code is 0 when done (and equal), 1 when the check finds a difference, 2 on an error (for example a missing part, or a missing or malformed `version.txt`). The tool uses plain `#include` and not C++ modules on purpose: it is one small file, and `import std;` would need an extra build step.
+
+## Version (`version.txt`)
+
+The version and the date are edited in **one place only**: [`version.txt`](version.txt). It has two lines: the version (`0.76.0`), then the date of the update (`2026-10-23`). When joining, the tool replaces every `{{VERSION}}` in the parts with the version and every `{{DATE}}` with the date (for now they are in the top comment of `00-head.html`). If the file is missing or malformed, the tool stops with an error and does not write the joined file. To raise the version, edit only `version.txt` and join again. `--check` compares the result after the replacement, so after changing `version.txt` a "different" result is normal.
 
 ## Parts
 

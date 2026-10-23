@@ -35,7 +35,11 @@ tools/merge-parts src source-viewer.html
 tools/merge-parts src source-viewer.merged.html --check source-viewer.html
 ```
 
-끝날 때 코드는 0 = 끝남(비교하면 같음), 1 = 비교해서 다름, 2 = 오류(예: 조각이 없음)입니다. 이 도구는 일부러 C++ 모듈이 아니라 `#include`를 씁니다. 작은 파일 하나라서, `import std;`로 하면 준비 단계가 늘어나기 때문입니다.
+끝날 때 코드는 0 = 끝남(비교하면 같음), 1 = 비교해서 다름, 2 = 오류(예: 조각이 없음, `version.txt`가 없거나 형식이 틀림)입니다. 이 도구는 일부러 C++ 모듈이 아니라 `#include`를 씁니다. 작은 파일 하나라서, `import std;`로 하면 준비 단계가 늘어나기 때문입니다.
+
+## 버전 (`version.txt`)
+
+버전과 날짜는 [`version.txt`](version.txt) **한 곳에서만** 고칩니다. 두 줄이고, 첫 줄은 버전(`0.76.0`), 둘째 줄은 업데이트한 날짜(`2026-10-23`)입니다. 합칠 때 도구가 조각 안의 `{{VERSION}}`을 버전으로, `{{DATE}}`를 날짜로 바꿉니다 (지금은 `00-head.html`의 맨 위 주석에 있음). 파일이 없거나 형식이 틀리면 오류로 멈추고 합친 파일을 쓰지 않습니다. 버전을 올릴 때는 `version.txt`만 고치고 다시 합칩니다. `--check`는 바꿔 넣은 뒤의 결과와 비교하므로, `version.txt`를 바꾸고 나서는 "다름"이 나오는 것이 정상입니다.
 
 ## 조각
 
