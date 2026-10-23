@@ -92,6 +92,7 @@ UI.es = {
   typesColExt: "Extensión · Nombre de archivo", typesColExtTip: "Extensiones (*.cpp) y nombres de archivo (Makefile) que aparecen en la lista", typesColLang: "Lenguaje", typesColLangTip: "El lenguaje o formato del archivo", typesColColor: "Resaltado de sintaxis", typesColColorTip: "Si el texto de código se colorea según la sintaxis",
   typesColCheck: "Verificador de sintaxis", typesColCheckTip: "Si un verificador encuentra errores de sintaxis y los marca en las líneas de código",
   typesColTreeTip: "Indica si el archivo se puede ver como un árbol desplegable",
+  typesColDocTip: "Indica si el archivo se puede ver como documento renderizado",
   typesYes: "Sí", typesNo: "No", typesNote: "Los archivos con extensiones que no están en esta tabla no aparecen en la lista.", typesClose: "Cerrar", typesCloseTip: "Cerrar esta ventana",
   typesCurrent: "Tipo del archivo abierto",
   typesFilterHint: "Filtrar por extensión, nombre de archivo o lenguaje (p. ej. py)", typesFilterTip: "Muestra solo las filas cuya extensión, nombre de archivo o lenguaje empieza por el texto que escriba. Si no coincide ninguna, ese tipo no es admitido", typesNone: "“{0}”: tipo no admitido",

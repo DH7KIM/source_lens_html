@@ -92,6 +92,7 @@ UI.it = {
   typesColExt: "Estensione · Nome file", typesColExtTip: "Estensioni (*.cpp) e nomi di file (Makefile) che compaiono nell'elenco", typesColLang: "Linguaggio", typesColLangTip: "Il linguaggio o il formato del file", typesColColor: "Evidenziazione della sintassi", typesColColorTip: "Indica se il testo sorgente è colorato in base alla sintassi",
   typesColCheck: "Controllo della sintassi", typesColCheckTip: "Indica se esiste un controllo che trova gli errori di sintassi e li segnala sulle righe sorgente",
   typesColTreeTip: "Indica se il file può essere visualizzato come albero espandibile",
+  typesColDocTip: "Indica se il file può essere visualizzato come documento formattato",
   typesYes: "Sì", typesNo: "No", typesNote: "I file con estensioni che non sono in questa tabella non compaiono nell'elenco.", typesClose: "Chiudi", typesCloseTip: "Chiude questa finestra",
   typesCurrent: "Tipo del file aperto",
   typesFilterHint: "Filtra per estensione, nome file o linguaggio (es. py)", typesFilterTip: "Mostra solo le righe la cui estensione, nome file o linguaggio inizia con il testo digitato. Se non c'è nessuna corrispondenza, il tipo non è supportato", typesNone: "“{0}”: tipo non supportato",

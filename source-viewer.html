@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.74.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.75.0  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -556,6 +556,7 @@ UI.ko = {
   typesColExt: "확장자 · 파일 이름", typesColExtTip: "목록에 나타나는 확장자(*.cpp)와 파일 이름(Makefile)입니다", typesColLang: "언어", typesColLangTip: "파일이 어떤 언어·형식인지 보여 줍니다", typesColColor: "색칠", typesColColorTip: "소스 코드를 문법에 따라 색칠해서 보여 주는지 나타냅니다",
   typesColCheck: "문법 검사기", typesColCheckTip: "문법 오류를 찾아 소스 줄에 표시하는 검사기가 있는지 나타냅니다",
   typesColTreeTip: "계층(트리)으로 펼쳐 볼 수 있는지 나타냅니다",
+  typesColDocTip: "문서 모양(렌더링)으로 볼 수 있는지 나타냅니다",
   typesYes: "있음", typesNo: "없음", typesNote: "이 표에 없는 확장자의 파일은 목록에 나타나지 않습니다.", typesClose: "닫기", typesCloseTip: "이 창을 닫습니다",
   typesCurrent: "지금 열어 둔 파일의 종류",
   typesFilterHint: "확장자·파일 이름·언어로 찾기 (예: py)", typesFilterTip: "입력한 문자로 시작하는 확장자·파일 이름·언어만 보여 줍니다. 찾는 것이 없으면 지원하지 않는 형식입니다", typesNone: "“{0}”: 지원하지 않는 형식입니다",
@@ -698,6 +699,7 @@ UI.en = {
   typesColExt: "Extension · File name", typesColExtTip: "Extensions (*.cpp) and file names (Makefile) that appear in the list", typesColLang: "Language", typesColLangTip: "The language or format of the file", typesColColor: "Syntax highlighting", typesColColorTip: "Whether the source text is colored by syntax",
   typesColCheck: "Syntax checker", typesColCheckTip: "Whether a checker finds syntax errors and marks them on the source lines",
   typesColTreeTip: "Whether the file can be viewed as an expandable tree",
+  typesColDocTip: "Whether the file can be viewed as a rendered document",
   typesYes: "Yes", typesNo: "No", typesNote: "Files with extensions that are not in this table do not appear in the list.", typesClose: "Close", typesCloseTip: "Close this window",
   typesCurrent: "Type of the open file",
   typesFilterHint: "Filter by extension, file name or language (e.g. py)", typesFilterTip: "Shows only the rows whose extension, file name or language starts with the text you type. If nothing matches, that type is not supported", typesNone: "“{0}”: not a supported type",
@@ -840,6 +842,7 @@ UI.ja = {
   typesColExt: "拡張子・ファイル名", typesColExtTip: "一覧に表示される拡張子（*.cpp）とファイル名（Makefile）です", typesColLang: "言語", typesColLangTip: "ファイルの言語・形式です", typesColColor: "シンタックスハイライト", typesColColorTip: "ソースの文字を構文に合わせて色分けして表示するかどうかです",
   typesColCheck: "構文チェック", typesColCheckTip: "構文エラーを見つけてソースの行に表示するチェック機能があるかどうかです",
   typesColTreeTip: "階層(ツリー)として展開して表示できるかを示します",
+  typesColDocTip: "ドキュメントの見た目(レンダリング)で表示できるかを示します",
   typesYes: "あり", typesNo: "なし", typesNote: "この表にない拡張子のファイルは、一覧に表示されません。", typesClose: "閉じる", typesCloseTip: "このウィンドウを閉じます",
   typesCurrent: "開いているファイルの種類",
   typesFilterHint: "拡張子・ファイル名・言語で絞り込み（例: py）", typesFilterTip: "入力した文字で始まる拡張子・ファイル名・言語の行だけを表示します。何も見つからなければ、対応していない形式です", typesNone: "「{0}」: 対応していない形式です",
@@ -982,6 +985,7 @@ UI["zh-cn"] = {
   typesColExt: "扩展名 · 文件名", typesColExtTip: "列表中会出现的扩展名(*.cpp)和文件名(Makefile)", typesColLang: "语言", typesColLangTip: "文件所属的语言或格式", typesColColor: "语法高亮", typesColColorTip: "是否按语法给源码文字着色",
   typesColCheck: "语法检查器", typesColCheckTip: "是否有能找出语法错误并标在源码行上的检查器",
   typesColTreeTip: "表示是否可以按层级(树)展开查看",
+  typesColDocTip: "表示是否可以按文档样式(渲染)查看",
   typesYes: "有", typesNo: "无", typesNote: "扩展名不在此表中的文件不会出现在列表中。", typesClose: "关闭", typesCloseTip: "关闭此窗口",
   typesCurrent: "当前打开文件的类型",
   typesFilterHint: "按扩展名、文件名或语言筛选(例如: py)", typesFilterTip: "只显示扩展名、文件名或语言以所输入文字开头的行。如果没有匹配项,则表示不支持该格式", typesNone: "“{0}”:不支持的格式",
@@ -1124,6 +1128,7 @@ UI["zh-tw"] = {
   typesColExt: "副檔名 · 檔案名稱", typesColExtTip: "清單中會出現的副檔名(*.cpp)與檔案名稱(Makefile)", typesColLang: "語言", typesColLangTip: "檔案所屬的語言或格式", typesColColor: "語法醒目提示", typesColColorTip: "是否依語法為原始碼文字上色",
   typesColCheck: "語法檢查器", typesColCheckTip: "是否有能找出語法錯誤並標在原始碼行上的檢查器",
   typesColTreeTip: "表示是否可以依階層(樹狀)展開檢視",
+  typesColDocTip: "表示是否可以依文件樣式(算繪)檢視",
   typesYes: "有", typesNo: "無", typesNote: "副檔名不在此表中的檔案不會出現在清單中。", typesClose: "關閉", typesCloseTip: "關閉此視窗",
   typesCurrent: "目前開啟檔案的類型",
   typesFilterHint: "依副檔名、檔案名稱或語言篩選(例如: py)", typesFilterTip: "只顯示副檔名、檔案名稱或語言以所輸入文字開頭的列。若沒有符合項目,表示不支援該格式", typesNone: "「{0}」:不支援的格式",
@@ -1267,6 +1272,7 @@ UI.fr = {
   typesColExt: "Extension · Nom de fichier", typesColExtTip: "Extensions (*.cpp) et noms de fichiers (Makefile) qui apparaissent dans la liste", typesColLang: "Langage", typesColLangTip: "Le langage ou le format du fichier", typesColColor: "Coloration syntaxique", typesColColorTip: "Indique si le texte source est coloré selon la syntaxe",
   typesColCheck: "Vérificateur de syntaxe", typesColCheckTip: "Indique s'il existe un vérificateur qui trouve les erreurs de syntaxe et les signale sur les lignes source",
   typesColTreeTip: "Indique si le fichier peut être affiché sous forme d'arbre dépliable",
+  typesColDocTip: "Indique si le fichier peut être affiché sous forme de document mis en forme",
   typesYes: "Oui", typesNo: "Non", typesNote: "Les fichiers dont l'extension ne figure pas dans ce tableau n'apparaissent pas dans la liste.", typesClose: "Fermer", typesCloseTip: "Fermer cette fenêtre",
   typesCurrent: "Type du fichier ouvert",
   typesFilterHint: "Filtrer par extension, nom de fichier ou langage (ex. py)", typesFilterTip: "Affiche seulement les lignes dont l'extension, le nom de fichier ou le langage commence par le texte saisi. Si rien ne correspond, ce type n'est pas pris en charge", typesNone: "« {0} » : type non pris en charge",
@@ -1409,6 +1415,7 @@ UI.de = {
   typesColExt: "Endung · Dateiname", typesColExtTip: "Endungen (*.cpp) und Dateinamen (Makefile), die in der Liste erscheinen", typesColLang: "Sprache", typesColLangTip: "Die Sprache oder das Format der Datei", typesColColor: "Syntaxhervorhebung", typesColColorTip: "Ob der Quelltext nach Syntax eingefärbt wird",
   typesColCheck: "Syntaxprüfung", typesColCheckTip: "Ob eine Prüfung Syntaxfehler findet und in den Quellzeilen markiert",
   typesColTreeTip: "Zeigt an, ob die Datei als aufklappbarer Baum angezeigt werden kann",
+  typesColDocTip: "Zeigt an, ob die Datei als gerendertes Dokument angezeigt werden kann",
   typesYes: "Ja", typesNo: "Nein", typesNote: "Dateien mit Endungen, die nicht in dieser Tabelle stehen, erscheinen nicht in der Liste.", typesClose: "Schließen", typesCloseTip: "Dieses Fenster schließen",
   typesCurrent: "Typ der geöffneten Datei",
   typesFilterHint: "Nach Endung, Dateiname oder Sprache filtern (z. B. py)", typesFilterTip: "Zeigt nur die Zeilen, deren Endung, Dateiname oder Sprache mit dem eingegebenen Text beginnt. Wenn nichts passt, wird dieser Typ nicht unterstützt", typesNone: "„{0}“: nicht unterstützter Typ",
@@ -1551,6 +1558,7 @@ UI.it = {
   typesColExt: "Estensione · Nome file", typesColExtTip: "Estensioni (*.cpp) e nomi di file (Makefile) che compaiono nell'elenco", typesColLang: "Linguaggio", typesColLangTip: "Il linguaggio o il formato del file", typesColColor: "Evidenziazione della sintassi", typesColColorTip: "Indica se il testo sorgente è colorato in base alla sintassi",
   typesColCheck: "Controllo della sintassi", typesColCheckTip: "Indica se esiste un controllo che trova gli errori di sintassi e li segnala sulle righe sorgente",
   typesColTreeTip: "Indica se il file può essere visualizzato come albero espandibile",
+  typesColDocTip: "Indica se il file può essere visualizzato come documento formattato",
   typesYes: "Sì", typesNo: "No", typesNote: "I file con estensioni che non sono in questa tabella non compaiono nell'elenco.", typesClose: "Chiudi", typesCloseTip: "Chiude questa finestra",
   typesCurrent: "Tipo del file aperto",
   typesFilterHint: "Filtra per estensione, nome file o linguaggio (es. py)", typesFilterTip: "Mostra solo le righe la cui estensione, nome file o linguaggio inizia con il testo digitato. Se non c'è nessuna corrispondenza, il tipo non è supportato", typesNone: "“{0}”: tipo non supportato",
@@ -1693,6 +1701,7 @@ UI.es = {
   typesColExt: "Extensión · Nombre de archivo", typesColExtTip: "Extensiones (*.cpp) y nombres de archivo (Makefile) que aparecen en la lista", typesColLang: "Lenguaje", typesColLangTip: "El lenguaje o formato del archivo", typesColColor: "Resaltado de sintaxis", typesColColorTip: "Si el texto de código se colorea según la sintaxis",
   typesColCheck: "Verificador de sintaxis", typesColCheckTip: "Si un verificador encuentra errores de sintaxis y los marca en las líneas de código",
   typesColTreeTip: "Indica si el archivo se puede ver como un árbol desplegable",
+  typesColDocTip: "Indica si el archivo se puede ver como documento renderizado",
   typesYes: "Sí", typesNo: "No", typesNote: "Los archivos con extensiones que no están en esta tabla no aparecen en la lista.", typesClose: "Cerrar", typesCloseTip: "Cerrar esta ventana",
   typesCurrent: "Tipo del archivo abierto",
   typesFilterHint: "Filtrar por extensión, nombre de archivo o lenguaje (p. ej. py)", typesFilterTip: "Muestra solo las filas cuya extensión, nombre de archivo o lenguaje empieza por el texto que escriba. Si no coincide ninguna, ese tipo no es admitido", typesNone: "“{0}”: tipo no admitido",
@@ -1836,6 +1845,7 @@ UI.pt = {
   typesColExt: "Extensão · Nome do arquivo", typesColExtTip: "Extensões (*.cpp) e nomes de arquivo (Makefile) que aparecem na lista", typesColLang: "Linguagem", typesColLangTip: "A linguagem ou o formato do arquivo", typesColColor: "Realce de sintaxe", typesColColorTip: "Se o texto do código é colorido conforme a sintaxe",
   typesColCheck: "Verificador de sintaxe", typesColCheckTip: "Se um verificador encontra erros de sintaxe e os marca nas linhas de código",
   typesColTreeTip: "Indica se o arquivo pode ser visualizado como uma árvore expansível",
+  typesColDocTip: "Indica se o arquivo pode ser visualizado como documento renderizado",
   typesYes: "Sim", typesNo: "Não", typesNote: "Arquivos com extensões que não estão nesta tabela não aparecem na lista.", typesClose: "Fechar", typesCloseTip: "Fechar esta janela",
   typesCurrent: "Tipo do arquivo aberto",
   typesFilterHint: "Filtrar por extensão, nome de arquivo ou linguagem (ex.: py)", typesFilterTip: "Mostra somente as linhas cuja extensão, nome de arquivo ou linguagem começa com o texto digitado. Se nada corresponder, esse tipo não é compatível", typesNone: "“{0}”: tipo não compatível",
@@ -4165,11 +4175,13 @@ function wireTableDialog(dlg, closeBtn) {
 }
 // ======================= 지원 파일 형식 (머리 막대 단추 + 모달 표 창) =======================
 // FILE_TYPES(02-file-kinds.js)를 읽어 그린다. 표를 따로 두지 않아서 파일 종류를 더하면 이 창도 같이 늘어난다.
-// 열: 확장자·파일 이름 / 언어 / 설명 / 색칠 / 문법 검사기 / 계층 보기. 위쪽 필터 상자로 행을 거른다 (입력한 글자로 시작하는 것만, 설명은 찾지 않음)
+// 열: 확장자·파일 이름 / 언어 / 설명 / 색칠 / 문법 검사기 / 계층 보기 / 문서 보기. 위쪽 필터 상자로 행을 거른다 (입력한 글자로 시작하는 것만, 설명은 찾지 않음)
 const CHECK_NAMES = { ui: ".ui", toml: "TOML", json: "JSON" };   // 문법 검사기 이름 (번역하지 않는 고유 이름)
 // 색칠이 되는지: 색칠 규칙 표(RULES)에 있거나 .ui 전용 색칠이면 됨. md는 문서로 그려서 색칠 열에서는 없음으로 보임
 // 계층 보기(트리)가 되는지: JSON 계열(json·json5, JSON Lines 포함). 단추가 보이는 조건(isJsonFile)과 같은 기준
 const hasTreeView = lang => lang === "json" || lang === "json5";
+// 문서 보기(마크다운을 문서 모양으로)가 되는지: md. 문서 보기 단추가 보이는 조건(isMd)과 같은 기준
+const hasDocView = lang => lang === "md";
 const hasColors = lang => lang === "ui" || !!RULES[LANG_ALIAS[lang] || lang];
 
 // 화면 언어에 따라 바뀌는 고정 글자 (단추·창 제목·필터·닫기). drawStatic()에서 부름
@@ -4186,13 +4198,13 @@ function mark(on, label) {   // ✓ / — 는 색만으로 구분하지 않게 �
 
 function drawTypesTable() {
   const th = (key, tipKey) => `<th title="${esc(t(tipKey))}">${esc(t(key))}</th>`;
-  let h = `<table class="dlg-table types-table"><thead><tr>${th("typesColExt", "typesColExtTip")}${th("typesColLang", "typesColLangTip")}${th("typesColDesc", "typesColDescTip")}${th("typesColColor", "typesColColorTip")}${th("typesColCheck", "typesColCheckTip")}${th("treeTree", "typesColTreeTip")}</tr></thead><tbody>`;
+  let h = `<table class="dlg-table types-table"><thead><tr>${th("typesColExt", "typesColExtTip")}${th("typesColLang", "typesColLangTip")}${th("typesColDesc", "typesColDescTip")}${th("typesColColor", "typesColColorTip")}${th("typesColCheck", "typesColCheckTip")}${th("treeTree", "typesColTreeTip")}${th("doc", "typesColDocTip")}</tr></thead><tbody>`;
   const curType = cur ? typeOf(cur) : null;   // 지금 열어 둔 파일의 종류 (없으면 강조 없음)
   for (const ft of FILE_TYPES) {
     const keys = [...(ft.exts || []).map(e => "*." + e), ...(ft.names || [])];
     const find = [...keys.map(k => k.replace(/^\*\./, "")), ...ft.name.split(/[\s/]+/)].join(" ").toLowerCase();   // 필터가 앞부분을 비교하는 낱말들 (확장자는 "*." 없이, 언어 이름은 낱말로 나눔)
     const isCur = ft === curType;
-    h += `<tr data-find="${esc(find)}"${isCur ? ` class="current" aria-current="true" title="${esc(t("typesCurrent"))}"` : ""}><td>${keys.map(k => `<code>${esc(k)}</code>`).join(" ")}</td><td>${esc(ft.name)}</td><td class="desc">${esc(t("desc_" + ft.id))}</td>${mark(hasColors(ft.lang))}${mark(!!ft.check, CHECK_NAMES[ft.check])}${mark(hasTreeView(ft.lang))}</tr>`;
+    h += `<tr data-find="${esc(find)}"${isCur ? ` class="current" aria-current="true" title="${esc(t("typesCurrent"))}"` : ""}><td>${keys.map(k => `<code>${esc(k)}</code>`).join(" ")}</td><td>${esc(ft.name)}</td><td class="desc">${esc(t("desc_" + ft.id))}</td>${mark(hasColors(ft.lang))}${mark(!!ft.check, CHECK_NAMES[ft.check])}${mark(hasTreeView(ft.lang))}${mark(hasDocView(ft.lang))}</tr>`;
   }
   $("typesBody").innerHTML = h + `</tbody></table><p class="dlg-none" id="typesNone" hidden></p><p class="dlg-note">${esc(t("typesNote"))}</p>`;
 }

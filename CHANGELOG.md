@@ -2,6 +2,15 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.75.0 (2026-10-23)
+
+### source-viewer.html
+
+- **Added a `Document view` column to the `Supported file types` window** (last column, after `Tree view`). Only the type that has the document view (markdown `*.md`) gets `✓`; the others get `—`. The column name is the same word as the `Document` button of the file bar. The rule is the same as for showing that button (language `md`), so a new file type needs no extra entry. The remaining columns (build result, layout preview) are left for later versions.
+- 1 translation key (`typesColDocTip`) added to all 10 languages (keys 242 -> 243, the same in all 10 languages). The column name reuses the existing `doc`. The translations are Claude drafts, not yet checked by native speakers.
+- Tested: only the `*.md` row gets `✓` and the others `—`; every row has 7 cells (34 rows); the column name and the tip appear in all 10 languages; no errors.
+- File size 425,992 -> 427,102 bytes.
+
 ## v0.74.0 (2026-10-23)
 
 ### source-viewer.html
