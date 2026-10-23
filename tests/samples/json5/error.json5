@@ -1,0 +1,7 @@
+// JSON5 with a missing comma. Open this file in Source Lens.
+{
+  name: 'source-lens',
+  list: [1, 2, 3,],
+  enabled: true
+  version: 1
+}

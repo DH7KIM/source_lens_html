@@ -1,0 +1,10 @@
+// JSONC sample: comments are allowed, everything else is strict JSON
+{
+  /* block comment */
+  "name": "source-lens",
+  "version": "0.78.0",
+  "enabled": true,
+  "limits": { "min": 0, "max": 100 }, // line comment
+  "list": [1, 2, 3],
+  "url": "http://example.com/*not a comment*/"
+}

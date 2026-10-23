@@ -1,0 +1,14 @@
+# Cargo.lock with syntax errors. Open this file in Source Lens.
+version = 4
+
+[[package]]
+name = "hello
+version = "0.1.0"
+dependencies = [
+ "itoa"
+ "serde",
+]
+
+[[package]
+name = "itoa"
+version = 1.0.11

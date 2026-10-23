@@ -1,0 +1,31 @@
+# YAML sample: comments, scalars, lists, maps, anchors, multi-line text
+name: source-lens
+version: 0.78.0
+enabled: true
+ratio: 1.5
+nothing: null
+
+languages:
+  - ko
+  - en
+  - ja
+
+window:
+  width: 1280
+  height: 720
+
+defaults: &defaults
+  theme: dark
+  font: "Cascadia Code"
+
+user:
+  <<: *defaults
+  font: 'Consolas'
+
+description: |
+  Line one stays as it is.
+  Line two too.
+
+summary: >
+  These lines are folded
+  into a single line.

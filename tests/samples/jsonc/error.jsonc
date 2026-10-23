@@ -1,0 +1,7 @@
+// JSONC with a trailing comma (J020). Choose "JSONC" in the syntax box to see the error
+// (Auto treats .jsonc like JSON5, which allows trailing commas).
+{
+  "name": "source-lens",
+  "list": [1, 2, 3,],
+  "enabled": true
+}
