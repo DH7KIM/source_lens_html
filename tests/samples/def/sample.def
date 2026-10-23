@@ -1,0 +1,7 @@
+; Module definition file sample: names exported from a DLL
+LIBRARY "hello"
+EXPORTS
+    hello_init      @1
+    hello_run       @2
+    hello_version   @3 NONAME
+    hello_counter   DATA

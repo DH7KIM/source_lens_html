@@ -1,0 +1,6 @@
+2026-10-23 09:00:01 INFO  server started on port 8080
+2026-10-23 09:00:02 INFO  loaded 12 files from D:\Projects\source_lens_html
+2026-10-23 09:00:15 WARN  file is larger than 1.5 MB, skipping colors: big.json
+2026-10-23 09:01:07 ERROR cannot open 'missing.txt': file not found
+2026-10-23 09:01:07 INFO  retrying in 5 seconds (attempt 2 of 3)
+2026-10-23 09:01:12 INFO  done

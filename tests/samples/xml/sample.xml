@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- XML sample: elements, attributes, text, comments, CDATA -->
+<library name="Source Lens" version="1.0">
+  <book id="b1" lang="en">
+    <title>Reading Source Code</title>
+    <author>A. Writer</author>
+    <price currency="USD">12.50</price>
+  </book>
+  <book id="b2" lang="ko">
+    <title>소스 코드 읽기</title>
+    <author>김 작가</author>
+    <note><![CDATA[Text with <special> characters & no escaping.]]></note>
+  </book>
+  <empty-element flag="true"/>
+</library>
