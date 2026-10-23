@@ -98,6 +98,7 @@ UI.ja = {
   // 설정 창 (v0.63.0 글꼴 설정으로 시작, v0.64.0에서 `설정`으로 이름을 바꾸고 테마를 옮김)
   settingsTitle: "設定", fontLigatures: "合字（リガチャ）",
   fontLigaturesDesc: "`!=`・`->`・`=>` のような記号を1つの形につなげて表示します。オフにするとソースを書かれたとおりに表示します（初期値: オフ）。合字に対応したフォント（Cascadia Code など）でのみ見た目が変わります",
+  fontLabel: "コードフォント", fontAuto: "自動", fontGeneric: "既定の等幅", fontMissing: "未インストール",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "説明", typesColDescTip: "どんなファイルかの説明です",
   desc_cpp: "C++のソース・ヘッダファイル",

@@ -99,6 +99,7 @@ UI.fr = {
   // 설정 창 (v0.63.0 글꼴 설정으로 시작, v0.64.0에서 `설정`으로 이름을 바꾸고 테마를 옮김)
   settingsTitle: "Paramètres", fontLigatures: "Ligatures",
   fontLigaturesDesc: "Dessine des symboles comme `!=`, `->` et `=>` reliés en une seule forme. Désactivées, le code source s'affiche tel qu'il est écrit (par défaut : désactivées). Seules les polices qui prennent en charge les ligatures, comme Cascadia Code, changent d'aspect",
+  fontLabel: "Police du code", fontAuto: "Auto", fontGeneric: "Chasse fixe par défaut", fontMissing: "non installée",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Description", typesColDescTip: "De quel genre de fichier il s'agit",
   desc_cpp: "Fichiers source et en-tête C++",

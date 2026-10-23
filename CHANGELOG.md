@@ -2,6 +2,17 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.70.0 (2026-10-23)
+
+### source-viewer.html
+
+- **Added a `Code font` line to the settings window**: choices `Auto`, `Cascadia Code`, `Cascadia Mono`, `Consolas`, `D2Coding`, `Default monospace`. The chosen font is put at the front of the CSS variable `--mono`, followed by the original order (`"Cascadia Code", "Cascadia Mono", Consolas, "D2Coding", "Malgun Gothic", monospace`), so characters the font does not have (such as Korean) are drawn with the next font. The source, the tree view, markdown code and the sample line all change at once.
+- The value is remembered as `sv-font` (`""` = auto), one value regardless of the folder. The default is `Auto` (looks the same as before).
+- Fonts that are not installed are detected by measuring text width (compared with both `serif` and `sans-serif`: the default `monospace` of Chrome on Windows is Consolas, so comparing only with `monospace` would wrongly report Consolas as missing). A missing font is disabled in the list and marked `(not installed)`. If a remembered font disappears later, it behaves like `Auto` but the remembered value is not deleted.
+- 4 translation keys (`fontLabel`, `fontAuto`, `fontGeneric`, `fontMissing`) added to all 10 languages (keys 228 -> 232, the same in all 10 languages). The translations are Claude drafts, not yet checked by native speakers.
+- Tested: the line name and the choices appear in all 10 languages, choosing `Default monospace` changes `--mono` and saves `sv-font`, a missing font stored in `sv-font` behaves like `Auto` and the value stays, an installed font (DejaVu Sans Mono in the test environment) can be chosen, no errors. The real look on the user's Windows screen (Cascadia Code, Consolas, D2Coding) is for the user to check.
+- File size 413,056 -> 417,023 bytes.
+
 ## v0.69.0 (2026-10-23)
 
 ### source-viewer.html

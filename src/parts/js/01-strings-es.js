@@ -98,6 +98,7 @@ UI.es = {
   // 설정 창 (v0.63.0 글꼴 설정으로 시작, v0.64.0에서 `설정`으로 이름을 바꾸고 테마를 옮김)
   settingsTitle: "Ajustes", fontLigatures: "Ligaduras",
   fontLigaturesDesc: "Dibuja símbolos como `!=`, `->` y `=>` unidos en una sola forma. Desactivadas, el código fuente se muestra tal como está escrito (predeterminado: desactivadas). Solo cambian de aspecto las fuentes que admiten ligaduras, como Cascadia Code",
+  fontLabel: "Fuente del código", fontAuto: "Automática", fontGeneric: "Monoespaciada predeterminada", fontMissing: "no instalada",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Descripción", typesColDescTip: "Qué tipo de archivo es",
   desc_cpp: "Archivos de código fuente y de encabezado de C++",

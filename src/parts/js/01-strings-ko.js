@@ -98,6 +98,7 @@ UI.ko = {
   // 설정 창 (v0.63.0 글꼴 설정으로 시작, v0.64.0에서 `설정`으로 이름을 바꾸고 테마를 옮김)
   settingsTitle: "설정", fontLigatures: "합자",
   fontLigaturesDesc: "`!=`·`->`·`=>` 같은 기호를 이어서 한 모양으로 그립니다. 끄면 소스를 글자 그대로 봅니다 (기본: 끔). 합자를 지원하는 글꼴(예: Cascadia Code)에서만 달라 보입니다",
+  fontLabel: "코드 글꼴", fontAuto: "자동", fontGeneric: "기본 고정폭", fontMissing: "설치 안 됨",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "설명", typesColDescTip: "어떤 파일인지 설명합니다",
   desc_cpp: "C++ 소스·헤더 파일",

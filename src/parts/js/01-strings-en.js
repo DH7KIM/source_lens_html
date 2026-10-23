@@ -98,6 +98,7 @@ UI.en = {
   // 설정 창 (v0.63.0 글꼴 설정으로 시작, v0.64.0에서 `설정`으로 이름을 바꾸고 테마를 옮김)
   settingsTitle: "Settings", fontLigatures: "Ligatures",
   fontLigaturesDesc: "Draws symbols such as `!=`, `->` and `=>` joined into one shape. Off shows the source exactly as written (default: off). Only fonts that support ligatures, such as Cascadia Code, look different",
+  fontLabel: "Code font", fontAuto: "Auto", fontGeneric: "Default monospace", fontMissing: "not installed",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Description", typesColDescTip: "What kind of file it is",
   desc_cpp: "C++ source and header files",

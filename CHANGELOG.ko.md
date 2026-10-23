@@ -2,6 +2,17 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.70.0 (2026-10-23)
+
+### source-viewer.html
+
+- **설정 창에 `코드 글꼴` 줄을 더함**: 선택지 `자동`·`Cascadia Code`·`Cascadia Mono`·`Consolas`·`D2Coding`·`기본 고정폭`. 고른 글꼴을 CSS 변수 `--mono` 맨 앞에 두고 뒤에 원래 순서(`"Cascadia Code", "Cascadia Mono", Consolas, "D2Coding", "Malgun Gothic", monospace`)를 이어 붙여서, 그 글꼴에 없는 글자(한글 등)는 다음 글꼴로 그려짐. 소스·계층 보기·마크다운 코드·미리 보기 줄이 모두 바로 달라짐.
+- 값은 `sv-font`(`""` = 자동)로 기억, 폴더와 상관없이 하나. 기본은 `자동`(이전과 같은 모양).
+- 설치 안 된 글꼴은 글자 폭을 재서 가려냄(`serif`·`sans-serif` 두 가지와 각각 비교: Windows Chrome의 기본 `monospace`가 Consolas라서 `monospace`하고만 비교하면 Consolas가 없다고 잘못 나오기 때문). 없는 글꼴은 선택지를 끄고 `(설치 안 됨)`을 붙임. 기억한 글꼴이 나중에 없어지면 `자동`처럼 동작하되 기억한 값은 지우지 않음.
+- 번역 키 4개(`fontLabel`·`fontAuto`·`fontGeneric`·`fontMissing`)를 10개 언어 모두에 더함(키 228 → 232개, 10개 언어 모두 같음). 번역은 Claude 초안이고 원어민 확인 전.
+- 시험: 10개 언어에서 줄 이름·선택지가 나옴, `기본 고정폭`을 고르면 `--mono`가 바뀌고 `sv-font`에 저장됨, 없는 글꼴이 저장돼 있어도 `자동`처럼 동작하고 값이 남음, 설치된 글꼴(시험 환경의 DejaVu Sans Mono)은 고를 수 있음, 오류 없음. 사용자의 Windows 화면(Cascadia Code·Consolas·D2Coding)에서 실제 모양은 사용자가 확인.
+- 파일 용량 413,056 → 417,023바이트.
+
 ## v0.69.0 (2026-10-23)
 
 ### source-viewer.html
