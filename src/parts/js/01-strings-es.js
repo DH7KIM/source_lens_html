@@ -104,6 +104,7 @@ UI.es = {
   fontLigaturesDesc: "Dibuja símbolos como `!=`, `->` y `=>` unidos en una sola forma. Desactivadas, el código fuente se muestra tal como está escrito (predeterminado: desactivadas). Solo cambian de aspecto las fuentes que admiten ligaduras, como Cascadia Code",
   fontLabel: "Fuente del código", fontAuto: "Automática", fontGeneric: "Monoespaciada predeterminada", fontMissing: "no instalada",
   fontSizeLabel: "Tamaño de la fuente del código", fontSizeSmall: "Pequeño", fontSizeNormal: "Normal", fontSizeLarge: "Grande", fontSizeXLarge: "Muy grande",
+  versionLine: "Source Viewer versión {0} (actualizado: {1})",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Descripción", typesColDescTip: "Qué tipo de archivo es",
   desc_cpp: "Archivos de código fuente y de encabezado de C++",

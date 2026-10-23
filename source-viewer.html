@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Source Viewer</title>
 <!--
-  Source Viewer v0.76.0 (2026-10-23)  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
+  Source Viewer v0.77.0 (2026-10-23)  (Source Lens: source_lens_html, MIT License, KIM DONG HAN)
   Source Viewer: 이 폴더의 소스 파일(C++ / Rust / 빌드 파일 / 마크다운)을 브라우저에서 바로 보는 단일 HTML 파일.
   - 외부 파일·라이브러리 없음. Chrome / Edge 권장 (File System Access API)
   - 처음 한 번 이 파일이 있는 폴더(source)를 고르면, 다음부터는 목록에서 클릭만으로 파일을 본다.
@@ -250,6 +250,7 @@
   .set-row { display: flex; align-items: center; gap: 8px; padding-top: 14px; font-weight: 600; cursor: pointer; }
   .set-row input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); cursor: pointer; }
   .set-desc { margin: 6px 0 0 24px; color: var(--muted); font-size: 13px; }
+  .set-version { margin: 16px 0 0; color: var(--muted); font-size: 13px; }
   .font-sample { margin: 12px 0 0 24px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); font: var(--code-size, 13.5px)/1.6 var(--mono); white-space: pre-wrap; }
   .lang-table tbody tr { cursor: pointer; }
   .lang-table tbody tr:not(.current):hover td { background: color-mix(in srgb, var(--accent) 10%, transparent); }
@@ -418,6 +419,7 @@
     <label class="set-row"><input type="checkbox" id="fontLig"><span id="fontLigName"></span></label>
     <p class="set-desc" id="fontLigDesc"></p>
     <div class="font-sample" id="fontSample" aria-hidden="true"></div>
+    <p class="set-version" id="settingsVersion"></p>
   </div>
 </dialog>
 <input type="file" id="dirInput" webkitdirectory multiple hidden>
@@ -568,6 +570,7 @@ UI.ko = {
   fontLigaturesDesc: "`!=`·`->`·`=>` 같은 기호를 이어서 한 모양으로 그립니다. 끄면 소스를 글자 그대로 봅니다 (기본: 끔). 합자를 지원하는 글꼴(예: Cascadia Code)에서만 달라 보입니다",
   fontLabel: "코드 글꼴", fontAuto: "자동", fontGeneric: "기본 고정폭", fontMissing: "설치 안 됨",
   fontSizeLabel: "코드 글자 크기", fontSizeSmall: "작게", fontSizeNormal: "보통", fontSizeLarge: "크게", fontSizeXLarge: "아주 크게",
+  versionLine: "Source Viewer 버전 {0} (업데이트: {1})",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "설명", typesColDescTip: "어떤 파일인지 설명합니다",
   desc_cpp: "C++ 소스·헤더 파일",
@@ -711,6 +714,7 @@ UI.en = {
   fontLigaturesDesc: "Draws symbols such as `!=`, `->` and `=>` joined into one shape. Off shows the source exactly as written (default: off). Only fonts that support ligatures, such as Cascadia Code, look different",
   fontLabel: "Code font", fontAuto: "Auto", fontGeneric: "Default monospace", fontMissing: "not installed",
   fontSizeLabel: "Code font size", fontSizeSmall: "Small", fontSizeNormal: "Normal", fontSizeLarge: "Large", fontSizeXLarge: "Extra large",
+  versionLine: "Source Viewer version {0} (updated: {1})",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Description", typesColDescTip: "What kind of file it is",
   desc_cpp: "C++ source and header files",
@@ -854,6 +858,7 @@ UI.ja = {
   fontLigaturesDesc: "`!=`・`->`・`=>` のような記号を1つの形につなげて表示します。オフにするとソースを書かれたとおりに表示します（初期値: オフ）。合字に対応したフォント（Cascadia Code など）でのみ見た目が変わります",
   fontLabel: "コードフォント", fontAuto: "自動", fontGeneric: "既定の等幅", fontMissing: "未インストール",
   fontSizeLabel: "コードの文字サイズ", fontSizeSmall: "小", fontSizeNormal: "標準", fontSizeLarge: "大", fontSizeXLarge: "特大",
+  versionLine: "Source Viewer バージョン {0} (更新日: {1})",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "説明", typesColDescTip: "どんなファイルかの説明です",
   desc_cpp: "C++のソース・ヘッダファイル",
@@ -997,6 +1002,7 @@ UI["zh-cn"] = {
   fontLigaturesDesc: "将 `!=`、`->`、`=>` 等符号连成一个图形显示。关闭时按源码原样显示(默认: 关闭)。只有支持连字的字体(如 Cascadia Code)才会有变化",
   fontLabel: "代码字体", fontAuto: "自动", fontGeneric: "默认等宽", fontMissing: "未安装",
   fontSizeLabel: "代码字号", fontSizeSmall: "小", fontSizeNormal: "标准", fontSizeLarge: "大", fontSizeXLarge: "特大",
+  versionLine: "Source Viewer 版本 {0}(更新日期:{1})",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "说明", typesColDescTip: "说明这是什么文件",
   desc_cpp: "C++ 源文件和头文件",
@@ -1140,6 +1146,7 @@ UI["zh-tw"] = {
   fontLigaturesDesc: "將 `!=`、`->`、`=>` 等符號連成一個圖形顯示。關閉時依原始碼原樣顯示(預設: 關閉)。只有支援連字的字型(如 Cascadia Code)才會有變化",
   fontLabel: "程式碼字型", fontAuto: "自動", fontGeneric: "預設等寬", fontMissing: "未安裝",
   fontSizeLabel: "程式碼字級", fontSizeSmall: "小", fontSizeNormal: "標準", fontSizeLarge: "大", fontSizeXLarge: "特大",
+  versionLine: "Source Viewer 版本 {0}(更新日期:{1})",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "說明", typesColDescTip: "說明這是什麼檔案",
   desc_cpp: "C++ 原始碼與標頭檔",
@@ -1284,6 +1291,7 @@ UI.fr = {
   fontLigaturesDesc: "Dessine des symboles comme `!=`, `->` et `=>` reliés en une seule forme. Désactivées, le code source s'affiche tel qu'il est écrit (par défaut : désactivées). Seules les polices qui prennent en charge les ligatures, comme Cascadia Code, changent d'aspect",
   fontLabel: "Police du code", fontAuto: "Auto", fontGeneric: "Chasse fixe par défaut", fontMissing: "non installée",
   fontSizeLabel: "Taille de la police du code", fontSizeSmall: "Petite", fontSizeNormal: "Normale", fontSizeLarge: "Grande", fontSizeXLarge: "Très grande",
+  versionLine: "Source Viewer version {0} (mise à jour : {1})",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Description", typesColDescTip: "De quel genre de fichier il s'agit",
   desc_cpp: "Fichiers source et en-tête C++",
@@ -1427,6 +1435,7 @@ UI.de = {
   fontLigaturesDesc: "Zeichnet Symbole wie `!=`, `->` und `=>` zu einer Form verbunden. Aus zeigt den Quelltext genau wie geschrieben (Standard: aus). Nur Schriften, die Ligaturen unterstützen, etwa Cascadia Code, sehen anders aus",
   fontLabel: "Code-Schriftart", fontAuto: "Automatisch", fontGeneric: "Standard-Festbreite", fontMissing: "nicht installiert",
   fontSizeLabel: "Schriftgröße des Codes", fontSizeSmall: "Klein", fontSizeNormal: "Normal", fontSizeLarge: "Groß", fontSizeXLarge: "Sehr groß",
+  versionLine: "Source Viewer Version {0} (aktualisiert: {1})",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Beschreibung", typesColDescTip: "Was für eine Datei es ist",
   desc_cpp: "C++-Quelltext- und Headerdateien",
@@ -1570,6 +1579,7 @@ UI.it = {
   fontLigaturesDesc: "Disegna simboli come `!=`, `->` e `=>` uniti in un'unica forma. Disattivate, il sorgente è mostrato esattamente come scritto (predefinito: disattivate). Cambiano aspetto solo i caratteri che supportano le legature, come Cascadia Code",
   fontLabel: "Carattere del codice", fontAuto: "Automatico", fontGeneric: "Spaziatura fissa predefinita", fontMissing: "non installato",
   fontSizeLabel: "Dimensione del carattere del codice", fontSizeSmall: "Piccola", fontSizeNormal: "Normale", fontSizeLarge: "Grande", fontSizeXLarge: "Molto grande",
+  versionLine: "Source Viewer versione {0} (aggiornato: {1})",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Descrizione", typesColDescTip: "Che tipo di file è",
   desc_cpp: "File sorgente e header C++",
@@ -1713,6 +1723,7 @@ UI.es = {
   fontLigaturesDesc: "Dibuja símbolos como `!=`, `->` y `=>` unidos en una sola forma. Desactivadas, el código fuente se muestra tal como está escrito (predeterminado: desactivadas). Solo cambian de aspecto las fuentes que admiten ligaduras, como Cascadia Code",
   fontLabel: "Fuente del código", fontAuto: "Automática", fontGeneric: "Monoespaciada predeterminada", fontMissing: "no instalada",
   fontSizeLabel: "Tamaño de la fuente del código", fontSizeSmall: "Pequeño", fontSizeNormal: "Normal", fontSizeLarge: "Grande", fontSizeXLarge: "Muy grande",
+  versionLine: "Source Viewer versión {0} (actualizado: {1})",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Descripción", typesColDescTip: "Qué tipo de archivo es",
   desc_cpp: "Archivos de código fuente y de encabezado de C++",
@@ -1857,6 +1868,7 @@ UI.pt = {
   fontLigaturesDesc: "Desenha símbolos como `!=`, `->` e `=>` unidos em uma só forma. Desativadas, o código-fonte aparece exatamente como foi escrito (padrão: desativadas). Só mudam de aparência as fontes que oferecem suporte a ligaduras, como Cascadia Code",
   fontLabel: "Fonte do código", fontAuto: "Automática", fontGeneric: "Monoespaçada padrão", fontMissing: "não instalada",
   fontSizeLabel: "Tamanho da fonte do código", fontSizeSmall: "Pequeno", fontSizeNormal: "Normal", fontSizeLarge: "Grande", fontSizeXLarge: "Muito grande",
+  versionLine: "Source Viewer versão {0} (atualizado: {1})",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Descrição", typesColDescTip: "Que tipo de arquivo é",
   desc_cpp: "Arquivos de código-fonte e de cabeçalho de C++",
@@ -4345,12 +4357,21 @@ function drawFontSizeSelect() {
   sel.value = codeSize;
 }
 
+// 버전·날짜 (v0.77.0): 합칠 때 src/version.txt의 값으로 바뀜 (tools/merge-parts가 아래 두 상수의 자리표시를 바꿔 넣음). 버전은 version.txt 한 곳에서만 고침
+const APP_VERSION = "0.77.0", APP_DATE = "2026-10-23";
+// 날짜는 화면 언어에 맞춰 보임 (Intl.DateTimeFormat). APP_DATE는 "YYYY-MM-DD"라서 시간대 때문에 하루 밀리지 않게 숫자로 나눠 만듦. 언어를 못 읽으면 적힌 그대로
+function dateText(iso) {
+  const [y, m, d] = iso.split("-").map(Number);
+  try { return new Intl.DateTimeFormat(uiLang, { dateStyle: "medium" }).format(new Date(y, m - 1, d)); } catch { return iso; }
+}
+
 // 화면 언어에 따라 바뀌는 고정 글자. drawStatic()에서 부름
 function drawSettingsStatic() {
   $("settingsBtn").title = t("settingsTitle"); $("settingsBtn").setAttribute("aria-label", t("settingsTitle"));   // 글자 없는 단추라 풍선은 이름만 (Windows처럼)
   $("settingsTitle").textContent = t("settingsTitle");
   $("fontLabel").textContent = t("fontLabel"); drawFontSelect();
   $("fontSizeLabel").textContent = t("fontSizeLabel"); drawFontSizeSelect();
+  $("settingsVersion").textContent = t("versionLine", APP_VERSION, dateText(APP_DATE));
   $("fontLigName").textContent = t("fontLigatures"); $("fontLigDesc").textContent = t("fontLigaturesDesc");
   $("settingsClose").textContent = t("typesClose"); $("settingsClose").title = t("typesCloseTip");
 }

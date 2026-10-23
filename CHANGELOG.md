@@ -2,6 +2,18 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.77.0 (2026-10-23)
+
+### source-viewer.html
+
+- **The settings window now shows a version line at the bottom**: `Source Viewer version 0.77.0 (updated: Oct 23, 2026)`. The values come from `src/version.txt` (v0.76.0); when joining, `merge-parts` replaces the placeholders of `APP_VERSION` and `APP_DATE` in `12b-settings.js` (to raise the version, edit only `version.txt`).
+- **The date follows the screen language** (`Intl.DateTimeFormat`, `dateStyle: "medium"`): Korean `2026. 10. 23.`, English `Oct 23, 2026`, Japanese `2026/10/23`, Chinese `2026年10月23日`, German `23.10.2026`, and so on. The date of `version.txt` (`YYYY-MM-DD`) is split into numbers, so the time zone cannot move it by a day. The line changes at once when the language changes.
+- 1 translation key (`versionLine`) added to all 10 languages (keys 243 -> 244, the same in all 10 languages, same `{0}` and `{1}` places). The translations are Claude drafts, not yet checked by native speakers.
+- The line has the same muted color and 13px as the description texts of the settings window (`.set-version`). It is not added to `docs-viewer.html` (it does not use the joining tool and has its own version; next version if needed).
+- Added the place where it is shown to the "Version" section of `src/README.ko.md` and `src/README.md`.
+- Tested: in all 10 languages `version 0.77.0` and the date in that language appear; key count 244 and places match; the constants `APP_VERSION` and `APP_DATE` equal the values of `version.txt`; no placeholder (`{{`) is left in the joined result (2 of each replaced); in a narrow window (420px) nothing overflows sideways and it scrolls vertically; no errors.
+- File size 427,115 -> 428,625 bytes.
+
 ## v0.76.0 (2026-10-23)
 
 ### source-viewer.html · joining tool

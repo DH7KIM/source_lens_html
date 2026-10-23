@@ -60,12 +60,21 @@ function drawFontSizeSelect() {
   sel.value = codeSize;
 }
 
+// 버전·날짜 (v0.77.0): 합칠 때 src/version.txt의 값으로 바뀜 (tools/merge-parts가 아래 두 상수의 자리표시를 바꿔 넣음). 버전은 version.txt 한 곳에서만 고침
+const APP_VERSION = "{{VERSION}}", APP_DATE = "{{DATE}}";
+// 날짜는 화면 언어에 맞춰 보임 (Intl.DateTimeFormat). APP_DATE는 "YYYY-MM-DD"라서 시간대 때문에 하루 밀리지 않게 숫자로 나눠 만듦. 언어를 못 읽으면 적힌 그대로
+function dateText(iso) {
+  const [y, m, d] = iso.split("-").map(Number);
+  try { return new Intl.DateTimeFormat(uiLang, { dateStyle: "medium" }).format(new Date(y, m - 1, d)); } catch { return iso; }
+}
+
 // 화면 언어에 따라 바뀌는 고정 글자. drawStatic()에서 부름
 function drawSettingsStatic() {
   $("settingsBtn").title = t("settingsTitle"); $("settingsBtn").setAttribute("aria-label", t("settingsTitle"));   // 글자 없는 단추라 풍선은 이름만 (Windows처럼)
   $("settingsTitle").textContent = t("settingsTitle");
   $("fontLabel").textContent = t("fontLabel"); drawFontSelect();
   $("fontSizeLabel").textContent = t("fontSizeLabel"); drawFontSizeSelect();
+  $("settingsVersion").textContent = t("versionLine", APP_VERSION, dateText(APP_DATE));
   $("fontLigName").textContent = t("fontLigatures"); $("fontLigDesc").textContent = t("fontLigaturesDesc");
   $("settingsClose").textContent = t("typesClose"); $("settingsClose").title = t("typesCloseTip");
 }

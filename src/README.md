@@ -39,7 +39,7 @@ The exit code is 0 when done (and equal), 1 when the check finds a difference, 2
 
 ## Version (`version.txt`)
 
-The version and the date are edited in **one place only**: [`version.txt`](version.txt). It has two lines: the version (`0.76.0`), then the date of the update (`2026-10-23`). When joining, the tool replaces every `{{VERSION}}` in the parts with the version and every `{{DATE}}` with the date (for now they are in the top comment of `00-head.html`). If the file is missing or malformed, the tool stops with an error and does not write the joined file. To raise the version, edit only `version.txt` and join again. `--check` compares the result after the replacement, so after changing `version.txt` a "different" result is normal.
+The version and the date are edited in **one place only**: [`version.txt`](version.txt). It has two lines: the version (`0.76.0`), then the date of the update (`2026-10-23`). When joining, the tool replaces every `{{VERSION}}` in the parts with the version and every `{{DATE}}` with the date (for now they are in the top comment of `00-head.html` and in `APP_VERSION` / `APP_DATE` of `12b-settings.js`, and shown on the last line of the settings window). If the file is missing or malformed, the tool stops with an error and does not write the joined file. To raise the version, edit only `version.txt` and join again. `--check` compares the result after the replacement, so after changing `version.txt` a "different" result is normal.
 
 ## Parts
 

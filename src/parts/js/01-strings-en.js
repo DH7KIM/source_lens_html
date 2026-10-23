@@ -104,6 +104,7 @@ UI.en = {
   fontLigaturesDesc: "Draws symbols such as `!=`, `->` and `=>` joined into one shape. Off shows the source exactly as written (default: off). Only fonts that support ligatures, such as Cascadia Code, look different",
   fontLabel: "Code font", fontAuto: "Auto", fontGeneric: "Default monospace", fontMissing: "not installed",
   fontSizeLabel: "Code font size", fontSizeSmall: "Small", fontSizeNormal: "Normal", fontSizeLarge: "Large", fontSizeXLarge: "Extra large",
+  versionLine: "Source Viewer version {0} (updated: {1})",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Description", typesColDescTip: "What kind of file it is",
   desc_cpp: "C++ source and header files",

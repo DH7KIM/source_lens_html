@@ -104,6 +104,7 @@ UI.ko = {
   fontLigaturesDesc: "`!=`·`->`·`=>` 같은 기호를 이어서 한 모양으로 그립니다. 끄면 소스를 글자 그대로 봅니다 (기본: 끔). 합자를 지원하는 글꼴(예: Cascadia Code)에서만 달라 보입니다",
   fontLabel: "코드 글꼴", fontAuto: "자동", fontGeneric: "기본 고정폭", fontMissing: "설치 안 됨",
   fontSizeLabel: "코드 글자 크기", fontSizeSmall: "작게", fontSizeNormal: "보통", fontSizeLarge: "크게", fontSizeXLarge: "아주 크게",
+  versionLine: "Source Viewer 버전 {0} (업데이트: {1})",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "설명", typesColDescTip: "어떤 파일인지 설명합니다",
   desc_cpp: "C++ 소스·헤더 파일",

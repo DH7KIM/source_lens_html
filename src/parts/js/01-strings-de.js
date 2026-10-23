@@ -104,6 +104,7 @@ UI.de = {
   fontLigaturesDesc: "Zeichnet Symbole wie `!=`, `->` und `=>` zu einer Form verbunden. Aus zeigt den Quelltext genau wie geschrieben (Standard: aus). Nur Schriften, die Ligaturen unterstützen, etwa Cascadia Code, sehen anders aus",
   fontLabel: "Code-Schriftart", fontAuto: "Automatisch", fontGeneric: "Standard-Festbreite", fontMissing: "nicht installiert",
   fontSizeLabel: "Schriftgröße des Codes", fontSizeSmall: "Klein", fontSizeNormal: "Normal", fontSizeLarge: "Groß", fontSizeXLarge: "Sehr groß",
+  versionLine: "Source Viewer Version {0} (aktualisiert: {1})",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Beschreibung", typesColDescTip: "Was für eine Datei es ist",
   desc_cpp: "C++-Quelltext- und Headerdateien",

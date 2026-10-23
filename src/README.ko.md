@@ -39,7 +39,7 @@ tools/merge-parts src source-viewer.merged.html --check source-viewer.html
 
 ## 버전 (`version.txt`)
 
-버전과 날짜는 [`version.txt`](version.txt) **한 곳에서만** 고칩니다. 두 줄이고, 첫 줄은 버전(`0.76.0`), 둘째 줄은 업데이트한 날짜(`2026-10-23`)입니다. 합칠 때 도구가 조각 안의 `{{VERSION}}`을 버전으로, `{{DATE}}`를 날짜로 바꿉니다 (지금은 `00-head.html`의 맨 위 주석에 있음). 파일이 없거나 형식이 틀리면 오류로 멈추고 합친 파일을 쓰지 않습니다. 버전을 올릴 때는 `version.txt`만 고치고 다시 합칩니다. `--check`는 바꿔 넣은 뒤의 결과와 비교하므로, `version.txt`를 바꾸고 나서는 "다름"이 나오는 것이 정상입니다.
+버전과 날짜는 [`version.txt`](version.txt) **한 곳에서만** 고칩니다. 두 줄이고, 첫 줄은 버전(`0.76.0`), 둘째 줄은 업데이트한 날짜(`2026-10-23`)입니다. 합칠 때 도구가 조각 안의 `{{VERSION}}`을 버전으로, `{{DATE}}`를 날짜로 바꿉니다 (지금은 `00-head.html`의 맨 위 주석과 `12b-settings.js`의 `APP_VERSION`·`APP_DATE`에 있고, 설정 창 맨 아래 줄에 보임). 파일이 없거나 형식이 틀리면 오류로 멈추고 합친 파일을 쓰지 않습니다. 버전을 올릴 때는 `version.txt`만 고치고 다시 합칩니다. `--check`는 바꿔 넣은 뒤의 결과와 비교하므로, `version.txt`를 바꾸고 나서는 "다름"이 나오는 것이 정상입니다.
 
 ## 조각
 
