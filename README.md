@@ -36,7 +36,7 @@ Skipped folders: `obj`, `gcm.cache`, `.git`, `target`, `node_modules`, `bin`, `b
 
 ## Tests
 
-`tests/samples/` holds example folders (`project`, `docs`). Open a viewer and choose one of them to check every file type, the tree and the `.ui` errors.
+`tests/samples/` holds sample files, one folder per file type (`json`, `toml`, `ui`, `markdown`, …; the folder name is the `id` in the `Supported file types` table), and two sample projects for folder-level features: `project` (hand-made test files for the compiler output, the tree and links) and `Compiler-output` (real GCC and Rust output). Open a viewer and choose `tests/samples` (or one folder in it) to check every file type, the tree and the errors.
 The `.ui` check must give exactly the same output as `tests/ui/error/*.expected` in `tile_font_editor_cpp`.
 
 ## Development
