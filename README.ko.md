@@ -36,7 +36,7 @@ English: [README.md](README.md)
 
 ## 시험
 
-`tests/samples/`에 파일 종류마다 폴더 하나(`json`, `toml`, `ui`, `markdown` …, 폴더 이름은 `지원 파일 형식` 표의 `id`)가 있고, 폴더 단위 기능을 시험하는 예제 프로젝트 둘이 있습니다: `project`(컴파일러 결과·트리·링크를 시험하려고 손으로 만든 파일)와 `Compiler-output`(실제 GCC·Rust 출력). 뷰어를 열고 `tests/samples`(또는 그 안의 폴더 하나)를 고르면 모든 파일 종류, 트리, 오류 표시를 확인할 수 있습니다.
+`tests/samples/`에 파일 종류마다 폴더 하나(`json`, `toml`, `ui`, `markdown` …, 폴더 이름은 `지원 파일 형식` 표의 `id`)가 있고, 폴더 단위 기능을 시험하는 예제 프로젝트 둘이 있습니다: `project`(컴파일러 결과·트리·링크를 시험하려고 손으로 만든 파일)와 `compiler_output`(실제 GCC·Rust 출력). 뷰어를 열고 `tests/samples`(또는 그 안의 폴더 하나)를 고르면 모든 파일 종류, 트리, 오류 표시를 확인할 수 있습니다.
 `.ui` 검사 결과는 `tile_font_editor_cpp`의 `tests/ui/error/*.expected`와 글자 하나까지 같아야 합니다.
 
 ## 개발
