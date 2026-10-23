@@ -95,7 +95,7 @@ UI.fr = {
   typesColTreeTip: "Indique si le fichier peut être affiché sous forme d'arbre dépliable",
   typesColDocTip: "Indique si le fichier peut être affiché sous forme de document mis en forme",
   compilerOutput: "Sortie du compilateur", typesColCompilerTip: "Indique si les erreurs et avertissements du compilateur sont affichés sur les lignes source",
-  typesYes: "Oui", typesNo: "Non", typesNote: "Les fichiers dont l'extension ne figure pas dans ce tableau n'apparaissent pas dans la liste.", typesClose: "Fermer", typesCloseTip: "Fermer cette fenêtre",
+  typesYes: "Oui", typesNo: "Non", typesNote: "Les fichiers dont l'extension ne figure pas dans ce tableau n'apparaissent pas dans la liste.", typesBlocked: "Pour des raisons de sécurité, les navigateurs basés sur Chromium peuvent omettre les fichiers de cette extension lors de l'ouverture d'un dossier.", typesClose: "Fermer", typesCloseTip: "Fermer cette fenêtre",
   typesCurrent: "Type du fichier ouvert",
   typesFilterHint: "Filtrer par extension, nom de fichier ou langage (ex. py)", typesFilterTip: "Affiche seulement les lignes dont l'extension, le nom de fichier ou le langage commence par le texte saisi. Si rien ne correspond, ce type n'est pas pris en charge", typesNone: "« {0} » : type non pris en charge",
   // 언어 선택 창 (v0.62.0)

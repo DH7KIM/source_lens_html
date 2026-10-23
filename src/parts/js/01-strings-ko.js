@@ -94,7 +94,7 @@ UI.ko = {
   typesColTreeTip: "계층(트리)으로 펼쳐 볼 수 있는지 나타냅니다",
   typesColDocTip: "문서 모양(렌더링)으로 볼 수 있는지 나타냅니다",
   compilerOutput: "컴파일러 결과", typesColCompilerTip: "컴파일러의 오류·경고를 소스 줄에 보여 주는지 나타냅니다",
-  typesYes: "있음", typesNo: "없음", typesNote: "이 표에 없는 확장자의 파일은 목록에 나타나지 않습니다.", typesClose: "닫기", typesCloseTip: "이 창을 닫습니다",
+  typesYes: "있음", typesNo: "없음", typesNote: "이 표에 없는 확장자의 파일은 목록에 나타나지 않습니다.", typesBlocked: "보안상의 이유로 크롬 계열 브라우저는 폴더를 열 때 이 확장자의 파일을 목록에서 뺄 수 있습니다.", typesClose: "닫기", typesCloseTip: "이 창을 닫습니다",
   typesCurrent: "지금 열어 둔 파일의 종류",
   typesFilterHint: "확장자·파일 이름·언어로 찾기 (예: py)", typesFilterTip: "입력한 문자로 시작하는 확장자·파일 이름·언어만 보여 줍니다. 찾는 것이 없으면 지원하지 않는 형식입니다", typesNone: "“{0}”: 지원하지 않는 형식입니다",
   // 언어 선택 창 (v0.62.0)

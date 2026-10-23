@@ -94,7 +94,7 @@ UI.it = {
   typesColTreeTip: "Indica se il file può essere visualizzato come albero espandibile",
   typesColDocTip: "Indica se il file può essere visualizzato come documento formattato",
   compilerOutput: "Output del compilatore", typesColCompilerTip: "Indica se gli errori e gli avvisi del compilatore vengono mostrati sulle righe sorgente",
-  typesYes: "Sì", typesNo: "No", typesNote: "I file con estensioni che non sono in questa tabella non compaiono nell'elenco.", typesClose: "Chiudi", typesCloseTip: "Chiude questa finestra",
+  typesYes: "Sì", typesNo: "No", typesNote: "I file con estensioni che non sono in questa tabella non compaiono nell'elenco.", typesBlocked: "Per motivi di sicurezza, i browser basati su Chromium possono omettere i file con questa estensione quando si apre una cartella.", typesClose: "Chiudi", typesCloseTip: "Chiude questa finestra",
   typesCurrent: "Tipo del file aperto",
   typesFilterHint: "Filtra per estensione, nome file o linguaggio (es. py)", typesFilterTip: "Mostra solo le righe la cui estensione, nome file o linguaggio inizia con il testo digitato. Se non c'è nessuna corrispondenza, il tipo non è supportato", typesNone: "“{0}”: tipo non supportato",
   // 언어 선택 창 (v0.62.0)

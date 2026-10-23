@@ -94,7 +94,7 @@ UI.en = {
   typesColTreeTip: "Whether the file can be viewed as an expandable tree",
   typesColDocTip: "Whether the file can be viewed as a rendered document",
   compilerOutput: "Compiler output", typesColCompilerTip: "Whether compiler errors and warnings are shown on the source lines",
-  typesYes: "Yes", typesNo: "No", typesNote: "Files with extensions that are not in this table do not appear in the list.", typesClose: "Close", typesCloseTip: "Close this window",
+  typesYes: "Yes", typesNo: "No", typesNote: "Files with extensions that are not in this table do not appear in the list.", typesBlocked: "For security reasons, Chromium-based browsers may leave out files with this extension when a folder is opened.", typesClose: "Close", typesCloseTip: "Close this window",
   typesCurrent: "Type of the open file",
   typesFilterHint: "Filter by extension, file name or language (e.g. py)", typesFilterTip: "Shows only the rows whose extension, file name or language starts with the text you type. If nothing matches, that type is not supported", typesNone: "“{0}”: not a supported type",
   // 언어 선택 창 (v0.62.0)

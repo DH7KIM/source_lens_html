@@ -241,6 +241,8 @@
   .types-table td code { font-family: var(--mono); font-size: 13px; white-space: nowrap; }
   .types-table .mark { white-space: nowrap; cursor: help; }
   .types-table .no { color: var(--muted); }
+  .blocked { display: inline-block; color: var(--warn, #c77700); cursor: help; margin-left: 3px; vertical-align: -2px; }
+  .blocked svg { display: block; }
   .mode-seg button[aria-pressed="true"] { background: var(--accent); color: var(--bg); font-weight: 700; }
   /* JSON·JSON5 계층 보기 (.code 안에 그림). 객체·배열 아이콘, 접기·펼치기, 오른쪽 끝은 소스 줄 번호 */
   .tj-root { padding: 8px 12px 40px; font: var(--code-size, 13.5px)/1.6 var(--mono); }

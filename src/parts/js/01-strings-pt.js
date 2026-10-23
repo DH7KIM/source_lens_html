@@ -95,7 +95,7 @@ UI.pt = {
   typesColTreeTip: "Indica se o arquivo pode ser visualizado como uma árvore expansível",
   typesColDocTip: "Indica se o arquivo pode ser visualizado como documento renderizado",
   compilerOutput: "Resultado do compilador", typesColCompilerTip: "Indica se os erros e avisos do compilador são mostrados nas linhas de código",
-  typesYes: "Sim", typesNo: "Não", typesNote: "Arquivos com extensões que não estão nesta tabela não aparecem na lista.", typesClose: "Fechar", typesCloseTip: "Fechar esta janela",
+  typesYes: "Sim", typesNo: "Não", typesNote: "Arquivos com extensões que não estão nesta tabela não aparecem na lista.", typesBlocked: "Por motivos de segurança, navegadores baseados em Chromium podem omitir arquivos com esta extensão ao abrir uma pasta.", typesClose: "Fechar", typesCloseTip: "Fechar esta janela",
   typesCurrent: "Tipo do arquivo aberto",
   typesFilterHint: "Filtrar por extensão, nome de arquivo ou linguagem (ex.: py)", typesFilterTip: "Mostra somente as linhas cuja extensão, nome de arquivo ou linguagem começa com o texto digitado. Se nada corresponder, esse tipo não é compatível", typesNone: "“{0}”: tipo não compatível",
   // 언어 선택 창 (v0.62.0)

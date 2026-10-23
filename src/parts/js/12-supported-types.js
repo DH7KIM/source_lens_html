@@ -11,6 +11,10 @@ const hasDocView = lang => lang === "md";
 // (코드는 일반 글이 아닌 모든 파일에서 로그 경로를 찾지만, TOML·YAML 같은 파일에는 컴파일 결과가 나올 수 없어서 표에는 안 보임)
 const hasCompilerOutput = lang => lang === "cpp" || lang === "rust";
 const hasColors = lang => lang === "ui" || !!RULES[LANG_ALIAS[lang] || lang];
+// 크롬 계열이 폴더 열기(폴더 핸들)에서 목록에서 빼는 위험 확장자 (Chromium 이슈 380857453, ext-check.html로 확인). 파일 목록 방식·다른 브라우저에서는 열림.
+const CHROME_BLOCKED = new Set(["ini", "cfg", "manifest"]);
+// 경고 표시는 이모지가 아니라 직접 그린 인라인 SVG(삼각형 안 느낌표, 17칸·선 1px). 풍선·읽어 주는 글은 typesBlocked
+const blockedMark = () => `<span class="blocked" title="${esc(t("typesBlocked"))}" role="img" aria-label="${esc(t("typesBlocked"))}"><svg viewBox="0 0 17 17" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M8.5 1.5L15.5 14.5H1.5Z M8.5 6V10 M8.5 12V12.5"/></svg></span>`;
 
 // 화면 언어에 따라 바뀌는 고정 글자 (단추·창 제목·필터·닫기). drawStatic()에서 부름
 function drawTypesStatic() {
@@ -32,9 +36,9 @@ function drawTypesTable() {
     const keys = [...(ft.exts || []).map(e => "*." + e), ...(ft.names || [])];
     const find = [...keys.map(k => k.replace(/^\*\./, "")), ...ft.name.split(/[\s/]+/)].join(" ").toLowerCase();   // 필터가 앞부분을 비교하는 낱말들 (확장자는 "*." 없이, 언어 이름은 낱말로 나눔)
     const isCur = ft === curType;
-    h += `<tr data-find="${esc(find)}"${isCur ? ` class="current" aria-current="true" title="${esc(t("typesCurrent"))}"` : ""}><td>${keys.map(k => `<code>${esc(k)}</code>`).join(" ")}</td><td>${esc(ft.name)}</td><td class="desc">${esc(t("desc_" + ft.id))}</td>${mark(hasColors(ft.lang))}${mark(!!ft.check, CHECK_NAMES[ft.check])}${mark(hasTreeView(ft.lang))}${mark(hasDocView(ft.lang))}${mark(hasCompilerOutput(ft.lang))}</tr>`;
+    h += `<tr data-find="${esc(find)}"${isCur ? ` class="current" aria-current="true" title="${esc(t("typesCurrent"))}"` : ""}><td>${keys.map(k => `<code>${esc(k)}</code>` + (CHROME_BLOCKED.has(k.replace(/^\*\./, "")) ? blockedMark() : "")).join(" ")}</td><td>${esc(ft.name)}</td><td class="desc">${esc(t("desc_" + ft.id))}</td>${mark(hasColors(ft.lang))}${mark(!!ft.check, CHECK_NAMES[ft.check])}${mark(hasTreeView(ft.lang))}${mark(hasDocView(ft.lang))}${mark(hasCompilerOutput(ft.lang))}</tr>`;
   }
-  $("typesBody").innerHTML = h + `</tbody></table><p class="dlg-none" id="typesNone" hidden></p><p class="dlg-note">${esc(t("typesNote"))}</p>`;
+  $("typesBody").innerHTML = h + `</tbody></table><p class="dlg-none" id="typesNone" hidden></p><p class="dlg-note">${esc(t("typesNote"))}</p><p class="dlg-note">${blockedMark()} ${esc(t("typesBlocked"))}</p>`;
 }
 
 // 필터·창 열기·닫기는 공통 부분(11a-dialog-table.js)을 씀. 필터는 확장자·파일 이름·언어 이름의 낱말이 입력한 글로 시작하는 행만 보임

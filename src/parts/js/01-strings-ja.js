@@ -94,7 +94,7 @@ UI.ja = {
   typesColTreeTip: "階層(ツリー)として展開して表示できるかを示します",
   typesColDocTip: "ドキュメントの見た目(レンダリング)で表示できるかを示します",
   compilerOutput: "コンパイラ出力", typesColCompilerTip: "コンパイラのエラー・警告をソースの行に表示できるかを示します",
-  typesYes: "あり", typesNo: "なし", typesNote: "この表にない拡張子のファイルは、一覧に表示されません。", typesClose: "閉じる", typesCloseTip: "このウィンドウを閉じます",
+  typesYes: "あり", typesNo: "なし", typesNote: "この表にない拡張子のファイルは、一覧に表示されません。", typesBlocked: "セキュリティ上の理由から、Chromium 系ブラウザーではフォルダーを開いたときにこの拡張子のファイルが一覧に表示されないことがあります。", typesClose: "閉じる", typesCloseTip: "このウィンドウを閉じます",
   typesCurrent: "開いているファイルの種類",
   typesFilterHint: "拡張子・ファイル名・言語で絞り込み（例: py）", typesFilterTip: "入力した文字で始まる拡張子・ファイル名・言語の行だけを表示します。何も見つからなければ、対応していない形式です", typesNone: "「{0}」: 対応していない形式です",
   // 언어 선택 창 (v0.62.0)

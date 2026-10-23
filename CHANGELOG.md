@@ -2,6 +2,16 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.79.0 (2026-10-23)
+
+### source-viewer.html
+
+- **The `Supported file types` table now marks extensions that Chromium-based browsers leave out when a folder is opened**: a warning triangle (hand-drawn inline SVG, not an emoji) with a tooltip next to `.ini`, `.cfg` and `.manifest`, plus one explanatory line under the table. Chrome and Edge drop files with "dangerous" extensions from the folder-handle listing (Chromium issue 380857453, intended behavior). The file-list method and other browsers still open them. They stay in the supported list.
+- One translation key (`typesBlocked`) was added to all 10 languages (keys 246 -> 247, identical everywhere). Translations are Claude drafts, not yet checked by native speakers.
+- Tested: only the three extensions are marked (`*.ini *.cfg`, `*.manifest`), every row still has 8 cells (34 rows), tooltip and note appear in all 10 languages, visible in light and dark themes, no errors.
+- File size 430,606 -> 433,120 bytes.
+- Left in the TODO: the header file count does not tell about files that could not be read (test folder shows `81`, actual 84).
+
 ## v0.78.0 (2026-10-23)
 
 ### source-viewer.html
