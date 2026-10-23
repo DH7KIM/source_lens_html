@@ -1,0 +1,15 @@
+# Git ignore sample: comments, wildcards, folders, negation
+# build output
+build/
+/dist
+*.o
+*.exe
+
+# keep one file
+!important.o
+
+# any folder named temp, at any depth
+**/temp/
+
+# a single file
+secrets.txt
