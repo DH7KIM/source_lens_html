@@ -2,6 +2,13 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.72.0 (2026-10-23)
+
+### source-viewer.html
+
+- **Corrected a wrong comment** in `09-source-folder.js` (comment only, no behavior change): it said the subfolder depth is remembered "per folder", but `KEY` is the path of this HTML file (`location.pathname`), so there is one value per HTML file path, not per opened folder.
+- File size 420,269 -> 420,337 bytes (the comment and the version line).
+
 ## v0.71.0 (2026-10-23)
 
 ### source-viewer.html

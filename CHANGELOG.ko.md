@@ -2,6 +2,13 @@
 
 English: [CHANGELOG.md](CHANGELOG.md)
 
+## v0.72.0 (2026-10-23)
+
+### source-viewer.html
+
+- **`09-source-folder.js`의 틀린 주석을 고침**(주석만, 동작은 그대로): 하위 폴더 단계가 "폴더마다 기억"된다고 적혀 있었지만, `KEY`는 이 HTML 파일의 경로(`location.pathname`)라서 연 폴더마다가 아니라 HTML 파일 경로마다 하나임.
+- 파일 용량 420,269 → 420,337바이트(주석과 버전 줄).
+
 ## v0.71.0 (2026-10-23)
 
 ### source-viewer.html

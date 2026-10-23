@@ -26,7 +26,7 @@ try { jsonTree = localStorage.getItem("sv-json-tree:" + KEY) === "1"; } catch (e
 let treeShown = false;   // 지금 계층으로 보여 주고 있는지 (오류면 소스 보기로 돌아가므로 jsonTree와 다를 수 있음)
 let showDiag = true;     // .ui·toml 오류를 줄 아래에 보일지
 try { showDiag = localStorage.getItem("sv-diag:" + KEY) !== "0"; } catch (e) {}
-// 읽을 하위 폴더 단계: 2 / 4 / 6 / 8 / 제한 없음(0). 기본 4. 폴더(열쇠)마다 기억
+// 읽을 하위 폴더 단계: 2 / 4 / 6 / 8 / 제한 없음(0). 기본 4. 이 HTML 파일 경로(KEY = location.pathname)마다 하나씩 기억 (폴더마다가 아님)
 const DEPTHS = [2, 4, 6, 8, 0];
 let maxDepth = 4;
 try { const raw = localStorage.getItem("sv-depth:" + KEY); if (raw !== null && DEPTHS.includes(+raw)) maxDepth = +raw; } catch (e) {}
