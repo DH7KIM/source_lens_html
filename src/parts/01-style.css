@@ -104,7 +104,7 @@
   body.dragging .start .box { border-color: var(--accent); }
 
   /* 소스 보기: 자기 영역 안에서 스크롤, 줄 번호는 왼쪽에 고정 */
-  .code { position: sticky; top: calc(var(--hdr, 49px) + var(--bar)); height: calc(100vh - var(--hdr, 49px) - var(--bar)); overflow: auto; font: 13.5px/1.6 var(--mono); }
+  .code { position: sticky; top: calc(var(--hdr, 49px) + var(--bar)); height: calc(100vh - var(--hdr, 49px) - var(--bar)); overflow: auto; font: var(--code-size, 13.5px)/1.6 var(--mono); }
   .code .lines { display: inline-block; min-width: 100%; padding: 8px 0 40px; }
   .code .r { display: flex; }
   .code .no {
@@ -230,7 +230,7 @@
   .set-row { display: flex; align-items: center; gap: 8px; padding-top: 14px; font-weight: 600; cursor: pointer; }
   .set-row input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); cursor: pointer; }
   .set-desc { margin: 6px 0 0 24px; color: var(--muted); font-size: 13px; }
-  .font-sample { margin: 12px 0 0 24px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); font: 13.5px/1.6 var(--mono); white-space: pre-wrap; }
+  .font-sample { margin: 12px 0 0 24px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); font: var(--code-size, 13.5px)/1.6 var(--mono); white-space: pre-wrap; }
   .lang-table tbody tr { cursor: pointer; }
   .lang-table tbody tr:not(.current):hover td { background: color-mix(in srgb, var(--accent) 10%, transparent); }
   .lang-table tbody tr:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
@@ -242,7 +242,7 @@
   .types-table .no { color: var(--muted); }
   .mode-seg button[aria-pressed="true"] { background: var(--accent); color: var(--bg); font-weight: 700; }
   /* JSON·JSON5 계층 보기 (.code 안에 그림). 객체·배열 아이콘, 접기·펼치기, 오른쪽 끝은 소스 줄 번호 */
-  .tj-root { padding: 8px 12px 40px; font: 13.5px/1.6 var(--mono); }
+  .tj-root { padding: 8px 12px 40px; font: var(--code-size, 13.5px)/1.6 var(--mono); }
   .tj summary, .tj-row { display: flex; align-items: center; gap: 4px; padding: 0 8px; border-radius: 4px; white-space: pre; }
   .tj summary { cursor: pointer; list-style: none; user-select: none; }
   .tj summary::-webkit-details-marker { display: none; }

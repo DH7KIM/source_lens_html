@@ -1,5 +1,5 @@
 // ======================= 설정 (머리 막대 톱니 단추 + 설정 창) =======================
-// 지금은 테마(v0.64.0에서 머리 막대에서 옮김, 선택 상자 #theme과 그 동작은 17-themes.js)와 합자(ligature) 켜기/끄기. 하위 단계(v0.66.0에서 옮김, 선택 상자 #depth와 그 동작은 16-start.js), 코드 글꼴 고르기(v0.70.0). 글자 크기는 이 창에 다음 버전에서 더함. 창 닫기는 공통 부분(11a-dialog-table.js)을 씀
+// 지금은 테마(v0.64.0에서 머리 막대에서 옮김, 선택 상자 #theme과 그 동작은 17-themes.js)와 합자(ligature) 켜기/끄기. 하위 단계(v0.66.0에서 옮김, 선택 상자 #depth와 그 동작은 16-start.js), 코드 글꼴 고르기(v0.70.0), 코드 글자 크기(v0.71.0). 창 닫기는 공통 부분(11a-dialog-table.js)을 씀
 // 합자: 코드 글꼴이 `->`·`!=`·`=>` 같은 글자를 한 모양으로 합쳐 그리는 것. 기본은 끔(소스를 글자 그대로 보여 줌). 값은 sv-ligatures ("1" = 켬), 폴더와 상관없이 하나
 let ligatures = false;
 try { ligatures = localStorage.getItem("sv-ligatures") === "1"; } catch (e) {}
@@ -44,11 +44,28 @@ function drawFontSelect() {
   sel.value = codeFont;
 }
 
+// 코드 글자 크기 (v0.71.0): 소스·계층 보기·미리 보기 줄의 글자 크기만 바뀜(마크다운 본문과 화면 글자는 그대로). CSS 변수 --code-size를 바꿈. 값은 sv-font-size ("" = 보통 13.5px), 폴더와 상관없이 하나
+const FONT_SIZES = [["small", "12px", "fontSizeSmall"], ["", "13.5px", "fontSizeNormal"], ["large", "15.5px", "fontSizeLarge"], ["xlarge", "18px", "fontSizeXLarge"]];
+let codeSize = "";
+try { codeSize = localStorage.getItem("sv-font-size") || ""; } catch (e) {}
+if (!FONT_SIZES.some(z => z[0] === codeSize)) codeSize = "";   // 목록에 없는 값은 보통
+function applyCodeSize() {
+  const px = FONT_SIZES.find(z => z[0] === codeSize)[1];
+  if (codeSize) document.documentElement.style.setProperty("--code-size", px); else document.documentElement.style.removeProperty("--code-size");
+}
+applyCodeSize();
+function drawFontSizeSelect() {
+  const sel = $("fontSizeSel"); sel.innerHTML = "";
+  for (const [value, , key] of FONT_SIZES) { const o = document.createElement("option"); o.value = value; o.textContent = t(key); sel.appendChild(o); }
+  sel.value = codeSize;
+}
+
 // 화면 언어에 따라 바뀌는 고정 글자. drawStatic()에서 부름
 function drawSettingsStatic() {
   $("settingsBtn").title = t("settingsTitle"); $("settingsBtn").setAttribute("aria-label", t("settingsTitle"));   // 글자 없는 단추라 풍선은 이름만 (Windows처럼)
   $("settingsTitle").textContent = t("settingsTitle");
   $("fontLabel").textContent = t("fontLabel"); drawFontSelect();
+  $("fontSizeLabel").textContent = t("fontSizeLabel"); drawFontSizeSelect();
   $("fontLigName").textContent = t("fontLigatures"); $("fontLigDesc").textContent = t("fontLigaturesDesc");
   $("settingsClose").textContent = t("typesClose"); $("settingsClose").title = t("typesCloseTip");
 }
@@ -67,4 +84,9 @@ $("fontSel").onchange = () => {
   codeFont = $("fontSel").value;
   applyCodeFont();
   try { localStorage.setItem("sv-font", codeFont); } catch (e) {}
+};
+$("fontSizeSel").onchange = () => {
+  codeSize = $("fontSizeSel").value;
+  applyCodeSize();
+  try { localStorage.setItem("sv-font-size", codeSize); } catch (e) {}
 };

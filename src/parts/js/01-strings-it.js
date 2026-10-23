@@ -99,6 +99,7 @@ UI.it = {
   settingsTitle: "Impostazioni", fontLigatures: "Legature",
   fontLigaturesDesc: "Disegna simboli come `!=`, `->` e `=>` uniti in un'unica forma. Disattivate, il sorgente è mostrato esattamente come scritto (predefinito: disattivate). Cambiano aspetto solo i caratteri che supportano le legature, come Cascadia Code",
   fontLabel: "Carattere del codice", fontAuto: "Automatico", fontGeneric: "Spaziatura fissa predefinita", fontMissing: "non installato",
+  fontSizeLabel: "Dimensione del carattere del codice", fontSizeSmall: "Piccola", fontSizeNormal: "Normale", fontSizeLarge: "Grande", fontSizeXLarge: "Molto grande",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Descrizione", typesColDescTip: "Che tipo di file è",
   desc_cpp: "File sorgente e header C++",

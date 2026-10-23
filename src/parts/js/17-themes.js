@@ -97,6 +97,7 @@ function applyTheme(id) {
   if (th.id) root.style.colorScheme = th.dark ? "dark" : "light";
   themeId = th.id;
   $("theme").value = th.id;
+  applyCodeFont(); applyCodeSize();   // 위에서 인라인 스타일을 모두 지웠으니 설정 창에서 고른 코드 글꼴·글자 크기(12b-settings.js)를 다시 입힘 (v0.71.0, v0.70.0의 새로 고침 뒤 풀리는 버그)
 }
 try { applyTheme(localStorage.getItem("sv-theme") || ""); } catch (e) { applyTheme(""); }
 $("theme").onchange = () => { applyTheme($("theme").value); try { localStorage.setItem("sv-theme", themeId); } catch (e) {} };

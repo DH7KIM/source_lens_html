@@ -100,6 +100,7 @@ UI.pt = {
   settingsTitle: "Configurações", fontLigatures: "Ligaduras",
   fontLigaturesDesc: "Desenha símbolos como `!=`, `->` e `=>` unidos em uma só forma. Desativadas, o código-fonte aparece exatamente como foi escrito (padrão: desativadas). Só mudam de aparência as fontes que oferecem suporte a ligaduras, como Cascadia Code",
   fontLabel: "Fonte do código", fontAuto: "Automática", fontGeneric: "Monoespaçada padrão", fontMissing: "não instalada",
+  fontSizeLabel: "Tamanho da fonte do código", fontSizeSmall: "Pequeno", fontSizeNormal: "Normal", fontSizeLarge: "Grande", fontSizeXLarge: "Muito grande",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Descrição", typesColDescTip: "Que tipo de arquivo é",
   desc_cpp: "Arquivos de código-fonte e de cabeçalho de C++",

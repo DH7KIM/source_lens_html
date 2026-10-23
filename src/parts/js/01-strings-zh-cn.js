@@ -99,6 +99,7 @@ UI["zh-cn"] = {
   settingsTitle: "设置", fontLigatures: "连字",
   fontLigaturesDesc: "将 `!=`、`->`、`=>` 等符号连成一个图形显示。关闭时按源码原样显示(默认: 关闭)。只有支持连字的字体(如 Cascadia Code)才会有变化",
   fontLabel: "代码字体", fontAuto: "自动", fontGeneric: "默认等宽", fontMissing: "未安装",
+  fontSizeLabel: "代码字号", fontSizeSmall: "小", fontSizeNormal: "标准", fontSizeLarge: "大", fontSizeXLarge: "特大",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "说明", typesColDescTip: "说明这是什么文件",
   desc_cpp: "C++ 源文件和头文件",

@@ -2,6 +2,16 @@
 
 Korean: [CHANGELOG.ko.md](CHANGELOG.ko.md)
 
+## v0.71.0 (2026-10-23)
+
+### source-viewer.html
+
+- **Added a `Code font size` line to the settings window**: `Small` (12px), `Normal` (13.5px, default), `Large` (15.5px), `Extra large` (18px). It changes the CSS variable `--code-size`, so the source, the tree view and the sample line change together. The markdown body text and the other text on the screen stay the same (code only). The value is remembered as `sv-font-size` (`""` = normal), one value regardless of the folder. A value that is not in the list is treated as normal.
+- **Fixed a v0.70.0 bug**: when a theme is applied (`applyTheme` in `17-themes.js`), all inline styles were removed, so the chosen code font (`--mono`) was lost after a reload or a theme change. The code font and the font size are now applied again at the end of applying a theme. Fixed in the same version because the font size does not work without it.
+- 5 translation keys (`fontSizeLabel`, `fontSizeSmall`, `fontSizeNormal`, `fontSizeLarge`, `fontSizeXLarge`) added to all 10 languages (keys 232 -> 237, the same in all 10 languages). The translations are Claude drafts, not yet checked by native speakers.
+- Tested: in all four sizes the computed font size of the source, the tree view and the sample line changes while other text (such as the header) does not, the font and the size are kept after a reload and a theme change, an unknown stored value is treated as normal, the line name and the choices appear in all 10 languages, no errors.
+- File size 417,023 -> 420,269 bytes.
+
 ## v0.70.0 (2026-10-23)
 
 ### source-viewer.html

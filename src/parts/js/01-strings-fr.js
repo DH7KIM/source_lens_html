@@ -100,6 +100,7 @@ UI.fr = {
   settingsTitle: "Paramètres", fontLigatures: "Ligatures",
   fontLigaturesDesc: "Dessine des symboles comme `!=`, `->` et `=>` reliés en une seule forme. Désactivées, le code source s'affiche tel qu'il est écrit (par défaut : désactivées). Seules les polices qui prennent en charge les ligatures, comme Cascadia Code, changent d'aspect",
   fontLabel: "Police du code", fontAuto: "Auto", fontGeneric: "Chasse fixe par défaut", fontMissing: "non installée",
+  fontSizeLabel: "Taille de la police du code", fontSizeSmall: "Petite", fontSizeNormal: "Normale", fontSizeLarge: "Grande", fontSizeXLarge: "Très grande",
   // 지원 파일 형식: 설명 열 (v0.51.0)
   typesColDesc: "Description", typesColDescTip: "De quel genre de fichier il s'agit",
   desc_cpp: "Fichiers source et en-tête C++",
